@@ -47,6 +47,16 @@ def test_read_artifact_no_frontmatter(tmp_path):
     assert meta.artifact_id == ""
 
 
+def test_read_artifact_missing_closing_fence_raises(tmp_path):
+    # Opening fence but no closing `---` — locks current behavior: read_artifact
+    # raises a bare ValueError (str.index finds no "\n---\n"). The validate layer
+    # (Task 9) catches this and emits a malformed-frontmatter Issue.
+    p = tmp_path / "broken.md"
+    p.write_text("---\nartifact_id: ART-1\nkind: charter\nbody that never closes\n")
+    with pytest.raises(ValueError):
+        io.read_artifact(p)
+
+
 def read_artifact_dummy() -> tuple[ArtifactMeta, str]:
     """Test-only helper: build a valid ArtifactMeta for round-trip checks."""
     meta = ArtifactMeta(

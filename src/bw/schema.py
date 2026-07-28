@@ -165,25 +165,37 @@ class Assumption:
         # a checkable invariant. `test_achilles_heel_is_high_high` is the coverage.
         return self.impact == Impact.high and self.uncertainty == Uncertainty.high
 
-    def check_invariants(self) -> bool:
-        """Validate this assumption's invariants.
+    def invariant_violations(self) -> list[str]:
+        """Return this assumption's invariant-violation messages (non-raising).
 
-        Raises ValidationError on violation. Returns the falsified flag
-        (falsified backtrack is enforced in ledger_ops, not here).
+        Single source of truth for the achilles/L4 predicate —
+        :meth:`check_invariants`, :func:`ledger_ops.validate_one`, and
+        :func:`validate.validate_all` all read from here.
 
         Invariant 1 (is_achilles_heel <==> high x high) is satisfied by
         construction (see the property) and is therefore not checked here.
         """
-        # Achilles heel that is validated must have evidence_level >= L4.
+        violations: list[str] = []
         if (
             self.is_achilles_heel
             and self.validation_status == ValidationStatus.validated
             and self.evidence_level < EvidenceLevel.L4
         ):
-            raise ValidationError(
+            violations.append(
                 f"Assumption {self.id}: achilles heel validated below L4 "
                 f"(got {_enum_value(self.evidence_level)})"
             )
+        return violations
+
+    def check_invariants(self) -> bool:
+        """Validate this assumption's invariants.
+
+        Raises ValidationError on violation. Returns the falsified flag
+        (falsified backtrack is enforced in ledger_ops, not here).
+        """
+        violations = self.invariant_violations()
+        if violations:
+            raise ValidationError(violations[0])
 
         return self.validation_status == ValidationStatus.falsified
 

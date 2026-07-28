@@ -134,17 +134,7 @@ def validate_one(root: Path, id: str) -> list[str]:
     if target is None:
         raise KeyError(id)
 
-    violations: list[str] = []
-    if (
-        target.is_achilles_heel
-        and target.validation_status == schema.ValidationStatus.validated
-        and target.evidence_level < schema.EvidenceLevel.L4
-    ):
-        violations.append(
-            f"Assumption {target.id}: achilles heel validated below L4 "
-            f"(got {target.evidence_level.value})"
-        )
-    return violations
+    return target.invariant_violations()
 
 
 def _neighbors(node: schema.Assumption, direction: str,
