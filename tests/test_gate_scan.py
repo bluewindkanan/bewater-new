@@ -201,6 +201,16 @@ def test_insights_without_signoff_blocks(tmp_project):
     assert not ins.passed and ins.blocking
 
 
+def test_insights_mixed_signoff_blocks(tmp_project):
+    # One insights artifact signed, one not -> blocks (brief: "each").
+    _complete(tmp_project, subject="sol-01")
+    _mk(tmp_project, "artifacts/discover/insights2.md", "insights", "discover", signoffs=[])
+    r = gate_scan.scan(tmp_project, "G1", subject="sol-01")
+    ins = next(c for c in r.criteria if c.name == "insights")
+    assert not ins.passed and ins.blocking
+    assert "go" not in r.exit_allowed
+
+
 # --- strategy -------------------------------------------------------------
 
 def test_strategy_not_locked_blocks(tmp_project):

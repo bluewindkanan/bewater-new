@@ -19,7 +19,7 @@ from . import io, paths, schema
 # Reuse the validate module's notion of "dual-sided complete" so the gate and
 # the system validator agree on what counts as single-sided. Imported lazily
 # to avoid an import cycle at module load.
-from .validate import _single_sided_violations  # noqa: F401  (re-exported intent)
+from .validate import _DUAL_SIDED_KINDS, _single_sided_violations  # noqa: F401  (re-exported intent)
 
 
 # --- result types ---------------------------------------------------------
@@ -49,12 +49,6 @@ _BLOCKED_EXITS = ["conditional-go", "recycle", "pivot", "kill"]
 
 _HYP_MIN, _HYP_MAX = 2, 5
 _OA_MIN, _OA_MAX = 2, 4
-_DUAL_SIDED_KINDS = {
-    schema.ArtifactKind.charter,
-    schema.ArtifactKind.directional_hypothesis,
-    schema.ArtifactKind.concept,
-    schema.ArtifactKind.solution,
-}
 
 
 # --- artifact loading -----------------------------------------------------
@@ -123,13 +117,16 @@ def _score_directional_hypotheses(arts, _active) -> Criterion:
 
 def _score_insights(arts, _active) -> Criterion:
     insights = [m for m in arts if m.kind == schema.ArtifactKind.insights]
-    has_signoff = any(
+    if not insights:
+        return Criterion("insights", False, True, "gate-criteria-incomplete: no insights artifact")
+    # Each insights artifact must carry an F/P/E/T signoff (brief: "each").
+    all_signed = all(
         any((s.get("what") if isinstance(s, dict) else None) == "F/P/E/T"
             for s in (m.signoffs or []))
         for m in insights
     )
-    if not has_signoff:
-        return Criterion("insights", False, True, "gate-criteria-incomplete: no F/P/E/T signoff")
+    if not all_signed:
+        return Criterion("insights", False, True, "gate-criteria-incomplete: missing F/P/E/T signoff on one or more insights")
     return Criterion("insights", True, True, None)
 
 
