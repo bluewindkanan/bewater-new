@@ -1,6 +1,6 @@
-import sys
+import sys  # pragma: no cover
 
-from bw.cli import main
+from bw.cli import main  # pragma: no cover
 
-if __name__ == "__main__":
-    sys.exit(main())
+if __name__ == "__main__":  # pragma: no cover
+    sys.exit(main())  # pragma: no cover

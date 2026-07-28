@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from . import io, schema
-from .paths import artifacts_dir, gates_dir, ledger_path
+from .paths import artifacts_dir, ledger_path
 
 # Per-stage artifact subdirs (new in T4 — no existing path helper covers them).
 STAGE_ARTIFACT_DIRS = ("immersion", "discover", "define", "ideate", "shape", "handoff")
@@ -32,9 +32,8 @@ def scaffold(root: Path, force: bool = False) -> None:
 
     (root / _BEWATER / "state" / "gates").mkdir(parents=True, exist_ok=True)
     (root / _BEWATER / "knowledge-base").mkdir(parents=True, exist_ok=True)
-    # Touch the canonical artifact dirs (also created via paths helpers below).
+    # Touch the canonical artifact dirs and per-stage subdirs.
     artifacts_dir(root).mkdir(parents=True, exist_ok=True)
-    gates_dir(root).mkdir(parents=True, exist_ok=True)
     for stage in STAGE_ARTIFACT_DIRS:
         (artifacts_dir(root) / stage).mkdir(parents=True, exist_ok=True)
 

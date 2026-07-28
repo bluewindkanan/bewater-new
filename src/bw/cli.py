@@ -85,8 +85,11 @@ def build_parser() -> argparse.ArgumentParser:
     # --- hash ---
     p_hash = sub.add_parser("hash", help="content-hash an artifact; refresh dependency hashes")
     p_hash.add_argument("path", help="artifact file to hash")
-    p_hash.add_argument("--refresh-deps", action="store_true", help="refresh dependents' last_validated_against hashes")
-    p_hash.add_argument("--stale", action="store_true", help="report whether the given artifact has stale deps")
+    hash_mode = p_hash.add_mutually_exclusive_group()
+    hash_mode.add_argument("--refresh-deps", action="store_true",
+                           help="refresh dependents' last_validated_against hashes")
+    hash_mode.add_argument("--stale", action="store_true",
+                           help="report whether the given artifact has stale deps")
 
     # --- gate-scan ---
     p_gate = sub.add_parser("gate-scan", help="compute gate evidence pass/fail (G1)")
@@ -220,13 +223,13 @@ def _cmd_hash(args) -> int:
         stale = hashing.is_stale(root, artifact)
         print(f"bw hash: {artifact} is {'STALE' if stale else 'fresh'}")
         return 0
-    if args.refresh_deps:
-        root = paths.find_project_root(artifact.parent)
-        hashing.refresh_deps(root, artifact)
-        print(f"bw hash: refreshed deps for {artifact}")
+    # Hash the body FIRST so refresh_deps (if requested) captures the NEW hash;
+    # doing it in the other order leaves dependents recording the stale hash.
     h = hashing.hash_artifact(artifact)
     print(f"bw hash: {artifact} hash={h}")
     if args.refresh_deps:
+        root = paths.find_project_root(artifact.parent)
+        hashing.refresh_deps(root, artifact)
         print("  (deps refreshed)")
     return 0
 

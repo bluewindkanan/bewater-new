@@ -127,6 +127,16 @@ def test_validate_cycle_dedup(tmp_project):
     assert len(cyc) == 1
 
 
+def test_validate_flags_affects_only_cycle(tmp_project):
+    # I1: a cycle formed solely via `affects` edges (no derived_from back-edge)
+    # must still be flagged — lineage must be acyclic in both directions.
+    _add_raw(tmp_project, "A-001", statement="a", affects=["A-002"])
+    _add_raw(tmp_project, "A-002", statement="b", affects=["A-001"])
+    issues = validate.validate_all(tmp_project)
+    cyc = [i for i in issues if i.kind == "cycle"]
+    assert len(cyc) == 1
+
+
 # --- single-sided ---
 
 @pytest.mark.parametrize("kind", ["charter", "directional-hypothesis", "concept", "solution"])

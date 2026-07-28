@@ -322,8 +322,7 @@ def backtrack(root: Path, falsified_id: str) -> BacktrackResult:
         raise KeyError(falsified_id)
 
     falsified = by_id[falsified_id]
-    layer = schema.Layer(falsified.layer.value) if not isinstance(falsified.layer, schema.Layer) else falsified.layer
-    loop_type, depth_target = _LAYER_LOOP.get(layer, ("large", "Discover"))
+    loop_type, depth_target = _LAYER_LOOP.get(falsified.layer, ("large", "Discover"))
 
     affected_ids = trace(root, falsified_id, "downstream")
 

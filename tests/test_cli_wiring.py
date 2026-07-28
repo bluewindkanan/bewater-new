@@ -182,6 +182,42 @@ def test_hash_stale(tmp_project, capsys):
     assert "STALE" in capsys.readouterr().out
 
 
+def test_hash_refresh_deps_captures_new_hash(tmp_project, capsys):
+    # C1: hashing the upstream then --refresh-deps must propagate the NEW hash
+    # so dependents are fresh, not stale, the instant the command returns.
+    from bw import hashing, io
+    arts = tmp_project / "_bewater" / "artifacts" / "discover"
+    arts.mkdir(parents=True, exist_ok=True)
+    upstream = arts / "insights.md"
+    upstream.write_text(
+        "---\nartifact_id: INS-1\nkind: research\nstage: discover\nstatus: final\nhash: ''\n---\nubody"
+    )
+    dep = arts / "hyp.md"
+    dep.write_text(
+        "---\n"
+        "artifact_id: HYP-1\nkind: research\nstage: discover\nstatus: final\nhash: ''\n"
+        "last_validated_against:\n  - {id: INS-1, hash: stale-old}\n"
+        "---\nhbody"
+    )
+    rc = cli.main(["hash", str(upstream), "--refresh-deps"])
+    assert rc == 0
+    new_hash = io.read_artifact(upstream)[0].hash
+    assert new_hash == hashing.content_hash("ubody")
+    recorded = io.read_artifact(dep)[0].last_validated_against[0]["hash"]
+    assert recorded == new_hash  # dependent captured the upstream's NEW hash
+    assert hashing.is_stale(tmp_project, dep) is False
+
+
+def test_hash_stale_and_refresh_deps_mutually_exclusive(tmp_project):
+    # I2: argparse should reject --stale + --refresh-deps with exit code 2.
+    art = tmp_project / "_bewater" / "artifacts" / "discover" / "x.md"
+    art.parent.mkdir(parents=True, exist_ok=True)
+    art.write_text("---\nartifact_id: x\nkind: research\nstage: discover\nstatus: draft\nhash: ''\n---\nbody")
+    with pytest.raises(SystemExit) as exc:
+        cli.main(["hash", str(art), "--stale", "--refresh-deps"])
+    assert exc.value.code == 2
+
+
 # --- init ---
 
 def test_init_creates_tree(tmp_path, capsys):

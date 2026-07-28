@@ -1,4 +1,4 @@
-import pytest, yaml, os
+import pytest, yaml
 from pathlib import Path
 
 @pytest.fixture

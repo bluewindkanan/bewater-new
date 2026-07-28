@@ -55,10 +55,10 @@ class Issue:
 
 
 def _iter_artifacts(root: Path):
-    """Yield ``(path, ArtifactMeta)`` for every readable .md under artifacts/.
+    """Yield the Path of each readable ``.md`` artifact under artifacts/.
 
-    Skips files whose frontmatter is malformed, yielding them via the caller's
-    malformed-frontmatter handling instead.
+    Malformed files are yielded too (the caller's read surfaces a
+    malformed-frontmatter Issue); only unreadable duplicates are skipped.
     """
     art_dir = paths.artifacts_dir(root)
     if not art_dir.is_dir():
@@ -128,17 +128,21 @@ def validate_all(root: Path) -> list[Issue]:
                 issues.append(Issue(scope=a.id, kind="dangling-ref",
                                     message=f"affects references unknown id {ref!r}"))
 
-    # --- 3. Cycles (dedup: one cycle issue per run) ---
+    # --- 3. Cycles (dedup: one cycle issue per run; either direction) ---
+    # Lineage must be acyclic in BOTH directions: a cycle formed solely via
+    # `affects` edges (downstream) is invisible to an upstream-only walk, so we
+    # trace each assumption in both directions and surface a single cycle Issue.
     cycle_seen = False
-    for a in assumptions:
-        try:
-            ledger_ops.trace(root, a.id, "upstream")
-        except ValidationError as exc:
-            if str(exc).startswith("lineage cycle"):
-                if not cycle_seen:
-                    issues.append(Issue(scope="ledger", kind="cycle", message=str(exc)))
-                    cycle_seen = True
-            # dangling references surfaced by trace are already covered above.
+    for direction in ("upstream", "downstream"):
+        for a in assumptions:
+            try:
+                ledger_ops.trace(root, a.id, direction)
+            except ValidationError as exc:
+                if str(exc).startswith("lineage cycle"):
+                    if not cycle_seen:
+                        issues.append(Issue(scope="ledger", kind="cycle", message=str(exc)))
+                        cycle_seen = True
+                # dangling references surfaced by trace are already covered above.
 
     # --- 5. Missing-final dependencies ---
     referenced: set[str] = set()
