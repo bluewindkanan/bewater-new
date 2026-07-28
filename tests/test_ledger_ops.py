@@ -125,3 +125,71 @@ def test_validate_one_clean_returns_empty(tmp_project):
 def test_validate_one_unknown_id(tmp_project):
     with pytest.raises(KeyError):
         ledger_ops.validate_one(tmp_project, "A-999")
+
+
+def add_raw(root, fields, id_override):
+    """TEST-ONLY helper: write an assumption directly, bypassing add()'s
+    auto-id assignment and invariant checks. Lets tests build cycles and
+    explicit-id graphs that the production write path forbids."""
+    from bw import io, schema
+    payload = _f()
+    payload.update(fields)
+    payload["id"] = id_override
+    for key, default in (
+        ("validation_status", "open"), ("evidence_level", "L1"), ("status", "active"),
+        ("derived_from", []), ("affects", []),
+    ):
+        payload.setdefault(key, default)
+    assumption = schema.Assumption.from_dict(payload)
+    ledger = io.load_ledger(root)
+    ledger.assumptions.append(assumption)
+    io.save_ledger(root, ledger)
+    return assumption
+
+
+def test_trace_upstream_and_downstream(tmp_project):
+    ledger_ops.add(tmp_project, _f(id_override=None, statement="root", layer="root", derived_from=[]))
+    # A-001 root; add A-002 derived_from A-001; A-003 derived_from A-002
+    ledger_ops.add(tmp_project, _f(statement="mid", layer="strategy", derived_from=["A-001"]))
+    ledger_ops.add(tmp_project, _f(statement="leaf", layer="concept", derived_from=["A-002"]))
+    assert ledger_ops.trace(tmp_project, "A-003", "upstream") == ["A-002", "A-001"]
+    assert ledger_ops.trace(tmp_project, "A-001", "downstream") == ["A-002", "A-003"]
+
+
+def test_trace_detects_dangling(tmp_project):
+    ledger_ops.add(tmp_project, _f(derived_from=["NOPE"]))
+    with pytest.raises(ValidationError):
+        ledger_ops.trace(tmp_project, "A-001", "upstream")
+
+
+def test_trace_detects_cycle(tmp_project):
+    ledger_ops.add(tmp_project, _f(statement="a", derived_from=["A-002"]))
+    add_raw(tmp_project, _f(id_override="A-002", statement="b", derived_from=["A-001"]),
+            id_override="A-002")  # bypass for test setup
+    with pytest.raises(ValidationError):
+        ledger_ops.trace(tmp_project, "A-001", "upstream")
+
+
+def test_trace_downstream_via_affects(tmp_project):
+    # downstream must follow `affects` in addition to reverse-derived_from.
+    ledger_ops.add(tmp_project, _f(statement="a"))                  # A-001
+    ledger_ops.add(tmp_project, _f(statement="b", affects=["A-003"]))  # A-002 affects A-003
+    ledger_ops.add(tmp_project, _f(statement="c"))                  # A-003
+    assert ledger_ops.trace(tmp_project, "A-002", "downstream") == ["A-003"]
+
+
+def test_trace_unknown_start_id_raises(tmp_project):
+    with pytest.raises(KeyError):
+        ledger_ops.trace(tmp_project, "A-999", "upstream")
+
+
+def test_trace_empty_when_no_neighbors(tmp_project):
+    ledger_ops.add(tmp_project, _f())  # A-001, isolated
+    assert ledger_ops.trace(tmp_project, "A-001", "upstream") == []
+    assert ledger_ops.trace(tmp_project, "A-001", "downstream") == []
+
+
+def test_trace_default_direction_is_upstream(tmp_project):
+    ledger_ops.add(tmp_project, _f(statement="root", layer="root", derived_from=[]))
+    ledger_ops.add(tmp_project, _f(statement="mid", derived_from=["A-001"]))
+    assert ledger_ops.trace(tmp_project, "A-002") == ["A-001"]

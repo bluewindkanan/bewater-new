@@ -142,3 +142,81 @@ def validate_one(root: Path, id: str) -> list[str]:
             f"(got {target.evidence_level.value})"
         )
     return violations
+
+
+def _neighbors(node: schema.Assumption, direction: str,
+               by_id: dict[str, schema.Assumption]) -> list[str]:
+    """Return the ids directly reachable from ``node`` in ``direction``.
+
+    upstream   -> follow ``derived_from`` (what this depends on).
+    downstream -> follow ``affects`` AND reverse-``derived_from`` (anything
+                  that lists this id in its derived_from, plus what this id
+                  lists in affects).
+    """
+    if direction == "upstream":
+        return list(node.derived_from)
+    # downstream
+    out = list(node.affects)
+    for cand in by_id.values():
+        if node.id in cand.derived_from and cand.id not in out:
+            out.append(cand.id)
+    return out
+
+
+def trace(root: Path, id: str, direction: str = "upstream") -> list[str]:
+    """Return the ordered list of assumption ids reachable from ``id``.
+
+    BFS over the lineage graph (excluding ``id`` itself).
+    - upstream   follows ``derived_from``.
+    - downstream follows ``affects`` and reverse-``derived_from``.
+
+    Raises:
+        ValidationError("dangling reference: <id>") if any referenced id is
+            absent from the ledger.
+        ValidationError("lineage cycle: ...") if the walk revisits an id.
+        KeyError if ``id`` itself is not in the ledger.
+    """
+    if direction not in ("upstream", "downstream"):
+        raise ValueError(f"trace: direction must be 'upstream' or 'downstream', got {direction!r}")
+
+    ledger = io.load_ledger(root)
+    by_id = {a.id: a for a in ledger.assumptions}
+    if id not in by_id:
+        raise KeyError(id)
+
+    visited: set[str] = set()
+    order: list[str] = []
+
+    def _walk(start: str) -> None:
+        # Iterative DFS that detects a real cycle via a gray (on-stack) set.
+        # Stack frames: (id, neighbor_iterator, path). We recurse depth-first so
+        # a true back-edge (neighbor on the current DFS path) is a cycle; a
+        # node reached again after a *completed* subtree (diamond) is not.
+        stack: list[tuple[str, list[str], int, list[str]]] = [
+            (start, _neighbors(by_id[start], direction, by_id), 0, [start])
+        ]
+        gray: set[str] = {start}
+        while stack:
+            cur_id, neighbors, idx, path = stack[-1]
+            if cur_id != id and cur_id not in visited:
+                visited.add(cur_id)
+                order.append(cur_id)
+            if idx < len(neighbors):
+                stack[-1] = (cur_id, neighbors, idx + 1, path)
+                nxt = neighbors[idx]
+                if nxt not in by_id:
+                    raise ValidationError(f"dangling reference: {nxt}")
+                if nxt in gray:
+                    # Back-edge to a node on the current DFS path -> real cycle.
+                    cycle = path[path.index(nxt):] + [nxt] if nxt in path else [nxt, nxt]
+                    raise ValidationError(f"lineage cycle: {' -> '.join(cycle)}")
+                if nxt in visited:
+                    continue  # already fully explored via another branch (diamond)
+                gray.add(nxt)
+                stack.append((nxt, _neighbors(by_id[nxt], direction, by_id), 0, path + [nxt]))
+            else:
+                gray.discard(cur_id)
+                stack.pop()
+
+    _walk(id)
+    return order
