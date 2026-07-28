@@ -159,6 +159,10 @@ class Assumption:
 
     @property
     def is_achilles_heel(self) -> bool:
+        # Invariant 1 (is_achilles_heel <==> impact x uncertainty == high x high)
+        # holds BY CONSTRUCTION here: the flag is derived, never stored. Do not add
+        # a stored is_achilles_heel field — it would duplicate this and re-introduce
+        # a checkable invariant. `test_achilles_heel_is_high_high` is the coverage.
         return self.impact == Impact.high and self.uncertainty == Uncertainty.high
 
     def check_invariants(self) -> bool:
@@ -166,16 +170,11 @@ class Assumption:
 
         Raises ValidationError on violation. Returns the falsified flag
         (falsified backtrack is enforced in ledger_ops, not here).
-        """
-        # (1) is_achilles_heel must agree with high x high.
-        if self.is_achilles_heel != (
-            self.impact == Impact.high and self.uncertainty == Uncertainty.high
-        ):
-            raise ValidationError(
-                f"Assumption {self.id}: is_achilles_heel disagrees with impact x uncertainty"
-            )
 
-        # (2) Achilles heel that is validated must have evidence_level >= L4.
+        Invariant 1 (is_achilles_heel <==> high x high) is satisfied by
+        construction (see the property) and is therefore not checked here.
+        """
+        # Achilles heel that is validated must have evidence_level >= L4.
         if (
             self.is_achilles_heel
             and self.validation_status == ValidationStatus.validated
