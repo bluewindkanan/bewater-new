@@ -193,3 +193,97 @@ def test_trace_default_direction_is_upstream(tmp_project):
     ledger_ops.add(tmp_project, _f(statement="root", layer="root", derived_from=[]))
     ledger_ops.add(tmp_project, _f(statement="mid", derived_from=["A-001"]))
     assert ledger_ops.trace(tmp_project, "A-002") == ["A-001"]
+
+
+# --- Task 8: baseline + backtrack ---
+
+def test_backtrack_depth_by_layer(tmp_project):
+    ledger_ops.add(tmp_project, _f(statement="root", layer="root", derived_from=[]))
+    ledger_ops.add(tmp_project, _f(statement="con", layer="concept", derived_from=["A-001"]))
+    # falsify the concept-level one -> small loop
+    ledger_ops.update(tmp_project, "A-002", {"validation_status": "falsified"})
+    r = ledger_ops.backtrack(tmp_project, "A-002")
+    assert r.loop_type == "small" and r.depth_target == "reframe"
+    # falsify the root one -> large loop to Discover
+    ledger_ops.update(tmp_project, "A-001", {"validation_status": "falsified"})
+    r = ledger_ops.backtrack(tmp_project, "A-001")
+    assert r.loop_type == "large" and r.depth_target == "Discover"
+
+
+def test_backtrack_upgrades_to_large_if_baseline_touched(tmp_project):
+    ledger_ops.add(tmp_project, _f(statement="root", layer="concept", derived_from=[]))
+    ledger_ops.baseline(tmp_project, "G2")
+    ledger_ops.update(tmp_project, "A-001", {"validation_status": "falsified"})
+    r = ledger_ops.backtrack(tmp_project, "A-001")
+    assert r.must_repass_gate == "G2"   # touched baseline -> re-pass original gate
+
+
+def test_backtrack_marks_downstream_stale(tmp_project):
+    # A-002 is downstream of A-001 (derived_from A-001), so falsifying A-001
+    # marks A-002 stale. (affects is a forward/downstream edge per T7; to put
+    # A-002 below A-001 we use derived_from, matching test_backtrack_depth_by_layer.)
+    ledger_ops.add(tmp_project, _f(statement="root", layer="root", derived_from=[]))
+    ledger_ops.add(tmp_project, _f(statement="con", layer="concept", derived_from=["A-001"]))
+    ledger_ops.update(tmp_project, "A-001", {"validation_status": "falsified"})
+    r = ledger_ops.backtrack(tmp_project, "A-001")
+    assert "A-002" in r.affected_ids
+
+
+def test_baseline_snapshots_assumptions_and_artifacts(tmp_project):
+    from bw import io, paths
+    a = ledger_ops.add(tmp_project, _f(statement="root", layer="concept"))
+    # create one artifact with a known hash
+    art_dir = paths.artifacts_dir(tmp_project) / "immersion"
+    art_dir.mkdir(parents=True)
+    meta_body = (
+        "---\n"
+        "artifact_id: ART-1\nkind: charter\nstage: immersion\nstatus: draft\n"
+        "hash: abc123\nlocked: false\nsignoffs: []\nderived_from: []\n"
+        "last_validated_against: []\n"
+        "---\n"
+        "body text"
+    )
+    (art_dir / "charter.md").write_text(meta_body)
+
+    snap = ledger_ops.baseline(tmp_project, "G2")
+    assert "assumptions" in snap and "artifacts" in snap
+    assert a.id in snap["assumptions"]
+    # assumption content_hash is a sha256 hex (64 chars)
+    assert len(snap["assumptions"][a.id]) == 64
+    assert snap["artifacts"]["ART-1"] == "abc123"
+    # persisted on the ledger
+    ledger = io.load_ledger(tmp_project)
+    assert ledger.last_baselined_at == "G2"
+    assert ledger.baseline == snap
+
+
+def test_backtrack_large_loop_for_strategy_and_opportunity(tmp_project):
+    ledger_ops.add(tmp_project, _f(statement="s", layer="strategy", derived_from=[]))
+    r = ledger_ops.backtrack(tmp_project, "A-001")
+    assert r.loop_type == "large" and r.depth_target == "Define"
+    ledger_ops.add(tmp_project, _f(statement="o", layer="opportunity", derived_from=[]))
+    r = ledger_ops.backtrack(tmp_project, "A-002")
+    assert r.loop_type == "large" and r.depth_target == "Define"
+
+
+def test_backtrack_no_baseline_means_no_repass_gate(tmp_project):
+    ledger_ops.add(tmp_project, _f(statement="root", layer="root", derived_from=[]))
+    r = ledger_ops.backtrack(tmp_project, "A-001")
+    assert r.must_repass_gate is None
+
+
+def test_backtrack_upgrades_when_downstream_in_baseline(tmp_project):
+    # falsified id is NOT in baseline, but a downstream affected id IS.
+    ledger_ops.add(tmp_project, _f(statement="root", layer="root", derived_from=[]))
+    ledger_ops.add(tmp_project, _f(statement="con", layer="concept", derived_from=["A-001"]))
+    ledger_ops.baseline(tmp_project, "G2")   # both A-001, A-002 snapshotted
+    ledger_ops.update(tmp_project, "A-001", {"validation_status": "falsified"})
+    r = ledger_ops.backtrack(tmp_project, "A-001")
+    assert "A-002" in r.affected_ids
+    assert r.must_repass_gate == "G2"
+    assert r.loop_type == "large"
+
+
+def test_backtrack_unknown_id_raises(tmp_project):
+    with pytest.raises(KeyError):
+        ledger_ops.backtrack(tmp_project, "A-999")

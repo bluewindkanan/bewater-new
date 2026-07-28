@@ -10,10 +10,13 @@ through these functions so the three invariants are enforced consistently.
 """
 from __future__ import annotations
 
+import hashlib
+import json
 import re
+from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import io, schema
+from . import io, paths, schema
 from .errors import ValidationError
 
 _ID_RE = re.compile(r"^A-(\d+)$")
@@ -166,7 +169,7 @@ def _neighbors(node: schema.Assumption, direction: str,
 def trace(root: Path, id: str, direction: str = "upstream") -> list[str]:
     """Return the ordered list of assumption ids reachable from ``id``.
 
-    BFS over the lineage graph (excluding ``id`` itself).
+    Iterative DFS over the lineage graph (excluding ``id`` itself).
     - upstream   follows ``derived_from``.
     - downstream follows ``affects`` and reverse-``derived_from``.
 
@@ -220,3 +223,137 @@ def trace(root: Path, id: str, direction: str = "upstream") -> list[str]:
 
     _walk(id)
     return order
+
+
+# --- Task 8: baseline + backtrack (回溯治理 routing) ---
+
+# Layer -> (loop_type, depth_target). feature/concept are small loops back to
+# the reframe step; opportunity/strategy are large loops back to Define; root is
+# a large loop all the way back to Discover.
+_LAYER_LOOP = {
+    schema.Layer.feature: ("small", "reframe"),
+    schema.Layer.concept: ("small", "reframe"),
+    schema.Layer.opportunity: ("large", "Define"),
+    schema.Layer.strategy: ("large", "Define"),
+    schema.Layer.root: ("large", "Discover"),
+}
+
+
+@dataclass
+class BacktrackResult:
+    """Routing decision returned by :func:`backtrack`.
+
+    - ``loop_type``: "small" (re-pass reframe) or "large" (re-pass an upstream
+      stage gate).
+    - ``depth_target``: the stage the flow should route to — "reframe" for a
+      small loop; "Discover" / "Define" for a large loop.
+    - ``affected_ids``: the downstream lineage of the falsified assumption
+      (these artifacts become stale at read time via the hash mechanism).
+    - ``must_repass_gate``: the original gate label that must be re-passed when
+      the failure touches the baseline (e.g. "G2"); ``None`` otherwise.
+    """
+    loop_type: str
+    depth_target: str
+    affected_ids: list[str] = field(default_factory=list)
+    must_repass_gate: str | None = None
+
+
+def _assumption_content_hash(assumption: schema.Assumption) -> str:
+    """sha256 of a canonical JSON of ``Assumption.to_dict()``.
+
+    Sorting keys makes the hash stable regardless of dict insertion order.
+    """
+    canonical = json.dumps(assumption.to_dict(), sort_keys=True, ensure_ascii=False)
+    return hashlib.sha256(canonical.encode()).hexdigest()
+
+
+def baseline(root: Path, label: str = "G2") -> dict:
+    """Snapshot current state into ``ledger.baseline`` and stamp ``label``.
+
+    The snapshot has two sections::
+
+        {assumptions: {<assumption_id>: <content_hash>},
+         artifacts:    {<artifact_id>:   <meta.hash>}}
+
+    Assumption content_hash is sha256 of the canonical JSON of
+    ``Assumption.to_dict()``; artifact hash is the artifact's ``meta.hash``
+    (read via ``io.read_artifact`` across ``paths.artifacts_dir``). Persists via
+    ``io.save_ledger`` and returns the snapshot.
+    """
+    ledger = io.load_ledger(root)
+
+    assumptions = {
+        a.id: _assumption_content_hash(a) for a in ledger.assumptions if a.id
+    }
+
+    artifacts: dict[str, str] = {}
+    art_dir = paths.artifacts_dir(root)
+    if art_dir.is_dir():
+        seen: set[Path] = set()
+        for p in sorted(art_dir.rglob("*.md")):
+            rp = p.resolve()
+            if rp in seen:
+                continue
+            seen.add(rp)
+            try:
+                meta, _ = io.read_artifact(p)
+            except (FileNotFoundError, ValueError):
+                continue
+            if meta.artifact_id:
+                artifacts[meta.artifact_id] = meta.hash
+
+    snapshot = {"assumptions": assumptions, "artifacts": artifacts}
+    ledger.baseline = snapshot
+    ledger.last_baselined_at = label
+    io.save_ledger(root, ledger)
+    return snapshot
+
+
+def backtrack(root: Path, falsified_id: str) -> BacktrackResult:
+    """Route the flow to the right upstream stage for a falsified assumption.
+
+    The depth of the loop is decided by the failed assumption's ``layer``:
+    ``feature|concept`` -> small loop (``reframe``); ``opportunity|strategy`` ->
+    large loop (``Define``); ``root`` -> large loop (``Discover``).
+
+    ``affected_ids`` is the downstream lineage via :func:`trace`.
+
+    Baseline-boundary check: if ``ledger.baseline`` is set and either
+    ``falsified_id`` or any ``affected_ids`` is a key in the baseline snapshot
+    (assumption or artifact section), the loop upgrades to ``large`` and
+    ``must_repass_gate`` is set to ``ledger.last_baselined_at`` so the original
+    gate is re-passed.
+
+    Raises ``KeyError`` if ``falsified_id`` is not in the ledger.
+    """
+    ledger = io.load_ledger(root)
+    by_id = {a.id: a for a in ledger.assumptions}
+    if falsified_id not in by_id:
+        raise KeyError(falsified_id)
+
+    falsified = by_id[falsified_id]
+    layer = schema.Layer(falsified.layer.value) if not isinstance(falsified.layer, schema.Layer) else falsified.layer
+    loop_type, depth_target = _LAYER_LOOP.get(layer, ("large", "Discover"))
+
+    affected_ids = trace(root, falsified_id, "downstream")
+
+    must_repass_gate: str | None = None
+    baseline = ledger.baseline
+    if baseline:
+        baseline_keys: set[str] = set()
+        for section in ("assumptions", "artifacts"):
+            section_map = baseline.get(section) or {}
+            baseline_keys.update(section_map.keys())
+        touched = falsified_id in baseline_keys or any(
+            aid in baseline_keys for aid in affected_ids
+        )
+        if touched:
+            loop_type = "large"
+            must_repass_gate = ledger.last_baselined_at
+
+    return BacktrackResult(
+        loop_type=loop_type,
+        depth_target=depth_target,
+        affected_ids=affected_ids,
+        must_repass_gate=must_repass_gate,
+    )
