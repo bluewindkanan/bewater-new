@@ -12,6 +12,7 @@
 # python (bw CLI + tests)
 __pycache__/
 *.py[cod]
+*.egg-info/
 .venv/
 .pytest_cache/
 .ruff_cache/
