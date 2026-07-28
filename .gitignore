@@ -17,6 +17,8 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .hypothesis/
+.coverage
+.coverage.*
 
 # claude local overrides (skills themselves ARE committed)
 .claude/settings.local.json
