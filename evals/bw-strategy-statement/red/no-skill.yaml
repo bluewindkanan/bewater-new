@@ -1,0 +1,9 @@
+scenario_id: BWSS-R1
+target_skill: bw-strategy-statement
+prompt: "Draft a strategy from these hypotheses."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-strategy-statement absent, no strategy artifact is written (RED control)"
+forbidden_behaviors: []
+repetition_count: 1
