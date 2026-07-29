@@ -1,0 +1,9 @@
+scenario_id: BWDH-R1
+target_skill: bw-directional-hypothesis
+prompt: "Compose hypotheses from these insights."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-directional-hypothesis absent, no hypothesis artifact is written (RED control)"
+forbidden_behaviors: []
+repetition_count: 1
