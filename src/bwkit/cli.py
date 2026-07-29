@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -31,6 +32,11 @@ def build_parser() -> argparse.ArgumentParser:
     com = csub.add_parser("commit")
     com.add_argument("path")
     com.add_argument("--expected", type=int, required=True)
+
+    pl = sub.add_parser("plan", help="action-plan applier (idempotent, resumable)")
+    plsub = pl.add_subparsers(dest="plan_cmd", required=True)
+    apl = plsub.add_parser("apply")
+    apl.add_argument("root")
     return p
 
 
@@ -68,4 +74,16 @@ def main(argv=None, *, _stdin=None) -> int:
                 return 1
             print(f"committed revision={r['revision']} hash={r['hash']}")
             return 0
+
+    if args.cmd == "plan":
+        from . import applier
+        if args.plan_cmd == "apply":
+            try:
+                plan = json.loads(stdin.read())
+                result = applier.apply_plan(Path(args.root), plan)
+            except (applier.PlanError, cas.LockError) as e:
+                print(f"error: {e}", file=sys.stderr)
+                return 1
+            print(json.dumps(result))
+            return 0 if result["action_status"] == "applied" else 1
     return 2
