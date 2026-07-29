@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "bewater eval scenario manifest",
+  "type": "object",
+  "required": ["scenario_id", "target_skill", "prompt", "required_assertions", "forbidden_behaviors", "repetition_count"],
+  "properties": {
+    "scenario_id": {"type": "string"},
+    "target_skill": {"type": "string"},
+    "prompt": {"type": "string"},
+    "fixture_refs": {"type": "array", "items": {"type": "string"}},
+    "installed_dependency_skills": {"type": "array", "items": {"type": "string"}},
+    "required_assertions": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "forbidden_behaviors": {"type": "array", "items": {"type": "string"}},
+    "repetition_count": {"type": "integer", "minimum": 1}
+  }
+}
