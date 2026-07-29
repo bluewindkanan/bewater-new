@@ -47,7 +47,9 @@ BWKIT_SRC="$SRC/src/bwkit"
 mkdir -p "$DEST"
 
 write_marker() { printf '%s\n' "$MARKER_JSON" > "$1/$MARKER"; }
-has_marker()   { [[ -f "$1/$MARKER" ]]; }
+# A target is managed only if its marker file genuinely identifies bewater (§9
+# fail-closed): a foreign/stale ".bewater-managed" must NOT authorize rm -rf.
+has_marker()   { [[ -f "$1/$MARKER" && ! -L "$1" ]] && grep -q '"managed_by":[[:space:]]*"bewater"' "$1/$MARKER"; }
 
 # Replace a target from a staged dir, after verifying it is bewater-managed if it exists.
 stage_replace() {

@@ -59,3 +59,15 @@ def test_copy_fails_closed_on_unrelated_target(tmp_dest):
     r = _run(tmp_dest, "--copy")
     assert r.returncode != 0
     assert "not bewater-managed" in r.stderr
+
+
+def test_copy_fails_closed_on_foreign_marker(tmp_dest):
+    # a foreign .bewater-managed (not bewater) must NOT authorize overwrite
+    foreign = tmp_dest / "bw-start"
+    foreign.mkdir()
+    (foreign / "SKILL.md").write_text("someone else's skill")
+    (foreign / ".bewater-managed").write_text('{"managed_by":"other-tool","version":"9.9"}')
+    r = _run(tmp_dest, "--copy")
+    assert r.returncode != 0
+    assert "not bewater-managed" in r.stderr
+    assert (foreign / "SKILL.md").read_text() == "someone else's skill"  # survives
