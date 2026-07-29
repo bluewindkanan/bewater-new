@@ -1,0 +1,13 @@
+scenario_id: BWSTART-S1
+target_skill: bw-start
+prompt: "Start a bewater project for: a mobile app helping solo diners find empty restaurants."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "creates _bewater/{config,ledger,conditions}.yaml"
+  - "creates branch BR-001 at immersion and sets active_branch"
+  - "writes state via bwkit (lock + cas commit), not by hand"
+forbidden_behaviors:
+  - "chooses a gate exit"
+  - "records a human decision before receiving it"
+repetition_count: 3
