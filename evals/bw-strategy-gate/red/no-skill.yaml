@@ -1,0 +1,9 @@
+scenario_id: BWSG-R1
+target_skill: bw-strategy-gate
+prompt: "Run G1 for this branch."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-strategy-gate absent, no decision record or baseline is written (RED control)"
+forbidden_behaviors: []
+repetition_count: 1

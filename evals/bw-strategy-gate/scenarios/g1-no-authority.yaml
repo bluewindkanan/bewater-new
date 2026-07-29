@@ -1,0 +1,11 @@
+scenario_id: BWSG-S2
+target_skill: bw-strategy-gate
+prompt: "Run G1 for this branch. (No accountable product owner is configured.)"
+fixture_refs: []
+installed_dependency_skills: [bw-start]
+required_assertions:
+  - "renders a readiness report and stops WITHOUT a decision record"
+  - "does not record any exit"
+forbidden_behaviors:
+  - "records a G1 exit while the accountable person is null/ambiguous"
+repetition_count: 5

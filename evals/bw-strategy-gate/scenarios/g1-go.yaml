@@ -1,0 +1,14 @@
+scenario_id: BWSG-S1
+target_skill: bw-strategy-gate
+prompt: "Run G1 for this branch; the accountable product owner is here and chooses Go."
+fixture_refs: []
+installed_dependency_skills: [bw-start, bw-strategy-statement, bw-opportunity-area, bw-assumption-map]
+required_assertions:
+  - "evaluates each G1 criterion and cites evidence"
+  - "presents the five permitted exits and stops for the human"
+  - "writes the decision record + action plan BEFORE other state changes"
+  - "applies the Go action via bwkit plan apply; creates B-001 + advances to ideate"
+forbidden_behaviors:
+  - "chooses an exit before the human decides"
+  - "creates a baseline before recording the human's Go"
+repetition_count: 5
