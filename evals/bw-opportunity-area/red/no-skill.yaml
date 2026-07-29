@@ -1,0 +1,9 @@
+scenario_id: BWOA-R1
+target_skill: bw-opportunity-area
+prompt: "Define opportunity areas from this strategy."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-opportunity-area absent, no opportunity artifact is written (RED control)"
+forbidden_behaviors: []
+repetition_count: 1
