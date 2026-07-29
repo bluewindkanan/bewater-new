@@ -62,3 +62,12 @@ def test_stale_pid_dead_is_preemptable(v5_root):
     data["pid"] = 999999  # almost certainly not running
     p.write_text(yaml.safe_dump(data))
     assert cas.acquire_lock(v5_root, owner="s2")["owner"] == "s2"
+
+
+def test_stale_past_ttl_is_preemptable(v5_root):
+    cas.acquire_lock(v5_root, owner="old")
+    p = cas.lock_path(v5_root)
+    data = yaml.safe_load(p.read_text())
+    data["acquired_at"] = -1e9  # distant past -> past ttl even though pid is alive
+    p.write_text(yaml.safe_dump(data))
+    assert cas.acquire_lock(v5_root, owner="s2", ttl_seconds=60)["owner"] == "s2"
