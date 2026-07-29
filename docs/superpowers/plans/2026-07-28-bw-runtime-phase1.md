@@ -1,3 +1,10 @@
+> **⚠️ SUPERSEDED — DO NOT EXECUTE.** This plan builds the abandoned general-purpose
+> `bw` CLI runtime (pre-v5). The authoritative design is
+> `docs/superpowers/specs/2026-07-27-bewater-decision-phase-skills-design.md` (v5.1),
+> which ships markdown skills plus the narrow `bwkit` helper instead of a runtime.
+> This file is retained only as a legacy behavioral oracle per spec §0 and §10.5.
+> Do not implement any task below.
+
 # bw Runtime (Phase 1) Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

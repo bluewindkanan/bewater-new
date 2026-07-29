@@ -18,11 +18,11 @@ bw = "bw.cli:main"
 where = ["src"]
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 testpaths = ["tests"]
 
 [tool.coverage.run]
-source = ["bw"]
+source = ["bw", "bwkit"]
 
 [tool.coverage.report]
 fail_under = 80
