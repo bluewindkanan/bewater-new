@@ -1,0 +1,9 @@
+scenario_id: BWINS-R1
+target_skill: bw-insight-craft
+prompt: "Craft insights from these findings."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-insight-craft absent, no insight artifact is written (RED control)"
+forbidden_behaviors: []
+repetition_count: 1
