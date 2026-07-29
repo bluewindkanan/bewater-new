@@ -1,0 +1,9 @@
+scenario_id: BWAM-R1
+target_skill: bw-assumption-map
+prompt: "Map assumptions behind this strategy."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-assumption-map absent, the ledger is not updated (RED control)"
+forbidden_behaviors: []
+repetition_count: 1

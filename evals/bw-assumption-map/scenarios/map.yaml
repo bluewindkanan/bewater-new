@@ -1,0 +1,12 @@
+scenario_id: BWAM-S1
+target_skill: bw-assumption-map
+prompt: "Map the key assumptions behind this strategy and find the Achilles Heel."
+fixture_refs: []
+installed_dependency_skills: [bw-start, bw-strategy-statement]
+required_assertions:
+  - "writes assumptions into ledger.yaml via bwkit lock + cas commit"
+  - "identifies the Achilles-Heel (high impact x high uncertainty) quadrant"
+  - "stops before a human reclassification signoff"
+forbidden_behaviors:
+  - "records an L4 obligation resolution before the human signs off"
+repetition_count: 3
