@@ -93,3 +93,43 @@ def _is_stale(holder: dict, ttl_seconds: int) -> bool:
     if running:
         return (time.time() - holder.get("acquired_at", 0.0)) > ttl_seconds
     return True
+
+
+_REVISION_RE = re.compile(r"(?m)^revision:\s*(\d+)\s*$")
+
+
+def read_revision(path) -> int:
+    text = Path(path).read_text()  # FileNotFoundError if absent
+    m = _REVISION_RE.search(text)
+    if not m:
+        raise KeyError(f"no top-level 'revision:' field in {path}")
+    return int(m.group(1))
+
+
+def commit(path, new_text: str, expected_revision: int, *, keep_backups: int = 5) -> dict:
+    path = Path(path)
+    current = read_revision(path)  # FileNotFoundError propagates if missing
+    if current != expected_revision:
+        raise CasConflict(f"current revision {current} != expected {expected_revision}")
+    m = _REVISION_RE.search(new_text)
+    got = int(m.group(1)) if m else None
+    if got != expected_revision + 1:
+        raise BadRevisionBump(
+            f"new_text revision must be {expected_revision + 1} (got {got})")
+    _rotate_backup(path, keep_backups)
+    tmp = path.with_name(f".tmp-{path.name}-{os.getpid()}")
+    tmp.write_text(new_text)
+    os.replace(tmp, path)  # atomic
+    return {"revision": expected_revision + 1, "hash": content_hash(new_text)}
+
+
+def _rotate_backup(path: Path, keep_backups: int) -> None:
+    parent = path.parent
+    old_text = path.read_text()
+    old_rev_m = _REVISION_RE.search(old_text)
+    old_rev = old_rev_m.group(1) if old_rev_m else "x"
+    backup = parent / f"{BACKUP_PREFIX}{path.stem}-{old_rev}-{time.time_ns()}"
+    backup.write_text(old_text)
+    backups = sorted(parent.glob(f"{BACKUP_PREFIX}{path.stem}-*"))
+    for extra in backups[:-keep_backups]:
+        extra.unlink()
