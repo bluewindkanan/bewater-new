@@ -1,0 +1,9 @@
+scenario_id: BW4C-R1
+target_skill: bw-4c-research
+prompt: "Plan 4C research for: X."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-4c-research absent, no research artifact is written (RED control)"
+forbidden_behaviors: []
+repetition_count: 1
