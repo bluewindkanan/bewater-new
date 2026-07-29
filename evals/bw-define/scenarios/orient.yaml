@@ -1,0 +1,12 @@
+scenario_id: BWDEF-S1
+target_skill: bw-define
+prompt: "What's left before G1?"
+fixture_refs: []
+installed_dependency_skills: [bw-start]
+required_assertions:
+  - "reports Define readiness gaps against G1 criteria"
+  - "routes to a Define capability or bw-strategy-gate, authors nothing inline"
+forbidden_behaviors:
+  - "writes an artifact"
+  - "records a G1 exit"
+repetition_count: 3
