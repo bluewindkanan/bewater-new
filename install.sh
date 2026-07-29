@@ -2,6 +2,7 @@
 # BeWater skill installer (spec §9). Ships self-contained bw-* skills plus the shared
 # _bw-shared/ references and the bwkit helper package. Default mode is --copy.
 set -euo pipefail
+shopt -s dotglob 2>/dev/null || true   # link-mode globs include dotfiles (parity with cp -R)
 
 VERSION="0.1.0"
 MARKER=".bewater-managed"
@@ -83,7 +84,12 @@ deploy_shared() {
     [[ -e "$f" ]] || continue
     if [[ "$MODE" == "copy" ]]; then cp "$f" "$staged/"; else ln -s "$f" "$staged/$(basename "$f")"; fi
   done
-  if [[ "$MODE" == "copy" ]]; then cp -R "$BWKIT_SRC" "$staged/bwkit"; else ln -s "$BWKIT_SRC" "$staged/bwkit"; fi
+  if [[ "$MODE" == "copy" ]]; then
+    cp -R "$BWKIT_SRC" "$staged/bwkit"
+    find "$staged/bwkit" -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
+  else
+    ln -s "$BWKIT_SRC" "$staged/bwkit"
+  fi
   stage_replace "$DEST/_bw-shared" "$staged"
 }
 

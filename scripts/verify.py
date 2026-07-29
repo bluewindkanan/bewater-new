@@ -46,7 +46,8 @@ def check_skill(name, skills_root=None, evals_root=None):
 
 def check_placeholders(skills_root=None):
     skills_root = SKILLS if skills_root is None else Path(skills_root)
-    bad = [str(p) for p in skills_root.rglob("*.md") if _PLACEHOLDER_RE.search(p.read_text())]
+    bad = [str(p) for p in skills_root.rglob("*.md")
+           if _PLACEHOLDER_RE.search(p.read_text(encoding="utf-8", errors="replace"))]
     return (not bad, bad)
 
 
@@ -56,10 +57,8 @@ def check_local_discovery(skills_root=None):
     return (not missing, missing)
 
 
-def check_installer(repo=None, dest=None):
-    """Run install.sh --copy into an isolated dest; assert managed markers + bwkit runs."""
-    repo = _REPO if repo is None else Path(repo)
-    dest = Path(dest) if dest else Path(tempfile.mkdtemp(prefix="bwverify-"))
+def _installer_ok(repo, dest):
+    """Run install.sh --copy into dest; assert managed markers + deployed bwkit runs."""
     install = Path(repo) / "install.sh"
     if not install.exists():
         return (False, [f"missing {install}"])
@@ -71,12 +70,26 @@ def check_installer(repo=None, dest=None):
     for name in list_skills(Path(repo) / ".claude" / "skills"):
         if not (dest / name / ".bewater-managed").exists():
             return (False, [f"{name} missing managed marker"])
+    if not (dest / "_bw-shared" / ".bewater-managed").exists():
+        return (False, ["_bw-shared missing managed marker"])
+    if not (dest / "_bw-shared" / "bwkit" / "__init__.py").exists():
+        return (False, ["deployed bwkit missing __init__.py"])
     env = {**os.environ, "PYTHONPATH": str(dest / "_bw-shared")}
     rr = subprocess.run([sys.executable, "-m", "bwkit", "--help"],
                         capture_output=True, text=True, env=env)
     if rr.returncode != 0:
         return (False, [f"deployed bwkit not runnable: {rr.stderr.strip()}"])
     return (True, [])
+
+
+def check_installer(repo=None, dest=None):
+    """Run install.sh --copy into an isolated dest; assert managed markers + bwkit runs.
+    Self-created temp dirs are cleaned up; a caller-supplied dest is left intact."""
+    repo = _REPO if repo is None else Path(repo)
+    if dest is not None:
+        return _installer_ok(repo, Path(dest))
+    with tempfile.TemporaryDirectory(prefix="bwverify-") as d:
+        return _installer_ok(repo, Path(d))
 
 
 def main() -> None:

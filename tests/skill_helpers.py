@@ -38,7 +38,7 @@ def validate_skill(skill_dir: Path) -> None:
     if not skill_md.exists():
         raise SkillCheckError(f"missing SKILL.md in {skill_dir}")
 
-    fm = _frontmatter(skill_md.read_text())
+    fm = _frontmatter(skill_md.read_text(encoding="utf-8", errors="replace"))
     if set(fm) != {"name", "description"}:
         raise SkillCheckError(f"frontmatter must be exactly name+description (got {sorted(fm)})")
     desc = str(fm["description"]).strip()
@@ -48,7 +48,7 @@ def validate_skill(skill_dir: Path) -> None:
     refs = skill_dir / "references"
     files = [skill_md, *sorted(refs.rglob("*.md"))] if refs.is_dir() else [skill_md]
     for f in files:
-        text = f.read_text()
+        text = f.read_text(encoding="utf-8", errors="replace")
         if _PLACEHOLDER_RE.search(text):
             raise SkillCheckError(f"placeholder token in {f.name}")
         # references may cite only the sanctioned shared location (../_bw-shared/);
