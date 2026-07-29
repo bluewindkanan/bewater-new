@@ -94,6 +94,12 @@ def test_old_runtime_plan_has_superseded_banner():
 def test_coverage_source_includes_bwkit():
     text = (REPO / "pyproject.toml").read_text()
     assert 'source = ["bw", "bwkit"]' in text
+
+
+def test_pytest_pythonpath_includes_root():
+    # evals/_harness lives at repo root; it must be importable from tests
+    text = (REPO / "pyproject.toml").read_text()
+    assert 'pythonpath = ["src", "."]' in text
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -103,11 +109,19 @@ Expected: FAIL — banner absent; current source is `["bw"]`.
 
 - [ ] **Step 3: Write minimal implementation**
 
-In `pyproject.toml`, replace the coverage source block:
+In `pyproject.toml`, make two changes. Replace the coverage source block:
 
 ```toml
 [tool.coverage.run]
 source = ["bw", "bwkit"]
+```
+
+And replace the pytest pythonpath (so the `evals/` package at repo root is
+importable from tests — Task 7 uses `from evals._harness.loader import …`):
+
+```toml
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]
 ```
 
 Prepend this banner to `docs/superpowers/plans/2026-07-28-bw-runtime-phase1.md` (above the existing `# bw Runtime (Phase 1) Implementation Plan` title):
@@ -767,9 +781,15 @@ def test_end_to_end_lock_and_commit(tmp_path):
 Run: `pytest tests/test_bwkit_smoke.py -v`
 Expected: PASS (implementation from Tasks 2–4 already satisfies it).
 
-- [ ] **Step 3: Run the coverage gate**
+- [ ] **Step 3: Ensure bwkit is installed, then run the coverage gate**
 
-Run: `pytest --cov=bw --cov=bwkit --cov-report=term-missing`
+The smoke test spawns a subprocess `python -m bwkit`, which needs `bwkit`
+resolvable outside pytest's `pythonpath`. Re-install the project editable so
+the new `bwkit` package is registered:
+
+Run: `pip install -e '.[dev]'`
+
+Then run the coverage gate: `pytest --cov=bw --cov=bwkit --cov-report=term-missing`
 Expected: bwkit ≥80%. If any line is uncovered, **add a test that exercises it** (do not delete or weaken tests). Common gaps to cover: the stale-via-ttl branch in `_is_stale` (add a test that preempts a lock whose `acquired_at` is far in the past), and the `running but past ttl` path.
 
 Example ttl-preempt test to add to `tests/test_bwkit_lock.py` if coverage is short:
