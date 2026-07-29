@@ -7,7 +7,7 @@
 - **Supersedes**: this document's v3
 - **Superseded implementation plan**: docs/superpowers/plans/2026-07-28-bw-runtime-phase1.md — retained only as a legacy behavioral oracle; do not execute it
 
-> **v5.1 changelog (2026-07-29, design finalization):** G1 — the `bwkit` helper ships with skills: source at `src/bwkit/`, deployed by the installer into `_bw-shared/bwkit/` (§2.1, §9, §12.2, §12.5). G2 — condition edits bump in-place `record_revision` under a stable ID (§5.6). G3 — `supersedes_ref` self-revision vs cross-entity replacement semantics disambiguated (§5.1). G4 — baselines and gate decisions clarified as cross-file versioned + in-file immutable (§5.1). G5 — Phase 0 authoritative schemas live under `_bw-shared/` (§10.2). G6 — `scripts/verify` is Python under the 80% floor (§11.3). H1 — bwkit is refactored to a standard-library-only, text-level revision CAS: it never parses YAML; the caller parses/mutates/serializes/bumps and bwkit enforces the CAS + backup + atomic write (§12.5).
+> **v5.1 changelog (2026-07-29, design finalization):** G1 — the `bwkit` helper ships with skills: source at `src/bwkit/`, deployed by the installer into `_bw-shared/bwkit/` (§2.1, §9, §12.2, §12.5). G2 — condition edits bump in-place `record_revision` under a stable ID (§5.6). G3 — `supersedes_ref` self-revision vs cross-entity replacement semantics disambiguated (§5.1). G4 — baselines and gate decisions clarified as cross-file versioned + in-file immutable (§5.1). G5 — Phase 0 authoritative schemas live under `_bw-shared/` (§10.2). G6 — `scripts/verify` is Python under the 80% floor (§11.3). H1 — bwkit is refactored to a standard-library-only, text-level revision CAS: it never parses YAML; the caller parses/mutates/serializes/bumps and bwkit enforces the CAS + backup + atomic write (§12.5). H1a — CLI aligned with the text-level CAS: `cas commit <path> --expected <rev>` reads new_text from stdin, replacing `cas bump --set key=val` (which required YAML parsing); `content_hash` is inlined rather than imported so bwkit stays stdlib-only (§12.5).
 
 ## 0. Decision Summary
 
@@ -921,7 +921,7 @@ The accepted trade-off is less machine enforcement in exchange for a smaller, in
 
 ### 12.5 Helper spec: single-writer lock + revision CAS (`bwkit/cas`)
 
-The first P0 helper (§12.3). Authored as a schema-agnostic, **YAML-agnostic, standard-library-only** primitive: it operates on any revisioned text file under `_bewater/` and never parses YAML or binds to ledger/config/conditions business fields. It reuses only `bw.hashing.content_hash`; the rest of legacy `src/bw` is bypassed because it targets the pre-v5 layout (§10.5 drift).
+The first P0 helper (§12.3). Authored as a schema-agnostic, **YAML-agnostic, standard-library-only** primitive: it operates on any revisioned text file under `_bewater/` and never parses YAML or binds to ledger/config/conditions business fields. It reuses only the `content_hash` semantics from `bw.hashing` — inlined as the same `hashlib.sha256` one-liner rather than imported, so it does not pull in `bw.io`/PyYAML and the stdlib-only guarantee holds; the rest of legacy `src/bw` is bypassed because it targets the pre-v5 layout (§10.5 drift).
 
 **Lock** — `_bewater/.bw-lock`:
 
@@ -945,7 +945,7 @@ bwkit never parses YAML. The caller — the skill, or the AI editing under the s
 
 **Errors**: `LockError` (contention / owner mismatch), `CasConflict` (current revision ≠ expected), `BadRevisionBump` (new_text top-level revision ≠ expected + 1).
 
-**CLI surface** (entry `bwkit/__main__.py`): `lock acquire --owner`, `lock release --owner`, `lock status`, `cas show <path>`, `cas bump <path> --expected <rev> --set key=val`. In the tool repository it runs as `python -m bwkit <args>` under the editable install. In an installed product project, skills invoke the same surface through the deployed `_bw-shared/bwkit/` (§12.2): `python <shared>/bwkit/__main__.py <args>`.
+**CLI surface** (entry `bwkit/__main__.py`): `lock acquire --owner`, `lock release --owner`, `lock status`, `cas show <path>` (prints current revision + content hash), `cas commit <path> --expected <rev>` (reads the caller's new_text from stdin, verifies the revision bump, backs up, and atomic-writes — text-level, no YAML parse). In the tool repository it runs as `python -m bwkit <args>` under the editable install. In an installed product project, skills invoke the same surface through the deployed `_bw-shared/bwkit/` (§12.2): `python <shared>/bwkit/__main__.py <args>`.
 
 **Non-goals**: not cross-host / not a distributed lock; does not parse or mutate YAML, does not validate business schema, and does not preserve fields (all the caller's job); holds no gate authority (§12.2); action-plan progress lives in the decision record (§6.5), not here; depends only on the Python standard library.
 
