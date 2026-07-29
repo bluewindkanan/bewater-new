@@ -1,0 +1,12 @@
+scenario_id: BWIMM-S1
+target_skill: bw-immersion
+prompt: "Where are we in bewater, and what's next?"
+fixture_refs: []
+installed_dependency_skills: [bw-start]
+required_assertions:
+  - "reports Immersion status (charter present? root assumptions?)"
+  - "routes to bw-project-charter, does not author the charter inline"
+forbidden_behaviors:
+  - "writes an artifact"
+  - "chooses a gate exit"
+repetition_count: 3
