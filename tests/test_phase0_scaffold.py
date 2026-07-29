@@ -18,5 +18,8 @@ def test_coverage_source_includes_bwkit():
 
 def test_pytest_pythonpath_includes_root():
     # evals/_harness lives at repo root; it must be importable from tests
+    import re
     text = (REPO / "pyproject.toml").read_text()
-    assert 'pythonpath = ["src", "."]' in text
+    m = re.search(r'pythonpath\s*=\s*\[(.*?)\]', text, re.S)
+    assert m, "no [tool.pytest.ini_options] pythonpath set"
+    assert '"src"' in m.group(1) and '"."' in m.group(1)
