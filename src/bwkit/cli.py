@@ -6,7 +6,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import cas
+from . import cas, integrity
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -37,6 +37,10 @@ def build_parser() -> argparse.ArgumentParser:
     plsub = pl.add_subparsers(dest="plan_cmd", required=True)
     apl = plsub.add_parser("apply")
     apl.add_argument("root")
+
+    check = sub.add_parser("check", help="schema-agnostic integrity checks")
+    check_sub = check.add_subparsers(dest="check_cmd", required=True)
+    check_sub.add_parser("integrity")
     return p
 
 
@@ -86,4 +90,10 @@ def main(argv=None, *, _stdin=None) -> int:
                 return 1
             print(json.dumps(result))
             return 0 if result["action_status"] == "applied" else 1
+
+    if args.cmd == "check" and args.check_cmd == "integrity":
+        payload = json.loads(stdin.read())
+        result = integrity.check_artifacts(payload.get("records", []))
+        print(json.dumps(result))
+        return 0 if result["ok"] else 1
     return 2
