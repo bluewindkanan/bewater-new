@@ -1,0 +1,9 @@
+scenario_id: BWDISC-R1
+target_skill: bw-discover
+prompt: "What's next in Discover?"
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-discover absent, no Discover routing is produced (RED control)"
+forbidden_behaviors: []
+repetition_count: 1
