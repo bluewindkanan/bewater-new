@@ -83,3 +83,20 @@ def test_forbidden_artifact_write_when_clean_is_not_triggered(tmp_path):
     out = judge.judge(m, {"transcript_path": str(tmp_path / "t.jsonl")}, _sb(tmp_path))
     assert out["forbidden_triggered"] == []
     assert out["verdict"] == "green"
+
+
+def test_nl_assertion_with_unrelated_passing_check_is_needs_review(tmp_path):
+    # Regression (§11.1): a passing structured check must NOT auto-cover an
+    # UNRELATED NL required_assertion. The NL assertion is its own needs-review
+    # item, and the overall verdict is needs-review (NOT green).
+    t = tmp_path / "t.jsonl"; t.write_text("hello world\n")
+    m = _manifest(
+        [{"id": "c1", "type": "transcript_contains", "params": {"needle": "hello"}}],
+        assertions=["presents the five permitted exits"],  # unrelated to the check
+    )
+    out = judge.judge(m, {"transcript_path": str(t)}, _sb(tmp_path))
+    nl_items = [c for c in out["checks"] if c["id"].startswith("nl-assertion-")]
+    assert len(nl_items) == 1
+    assert nl_items[0]["verdict"] == "needs-review"
+    assert nl_items[0]["detail"] == "presents the five permitted exits"
+    assert out["verdict"] == "needs-review"

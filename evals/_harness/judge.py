@@ -1,8 +1,9 @@
 """Eval judge: structured checks + src/bw oracle + needs-review (spec §11.1).
 
-No LLM-judging-LLM: NL ``required_assertions`` / ``forbidden_behaviors`` that
-lack a matching structured ``check`` are surfaced as ``needs-review`` for a
-human reviewer rather than graded by an LLM.
+No LLM-judging-LLM: every NL ``required_assertion`` and every unmappable NL
+``forbidden_behavior`` is surfaced as its own ``needs-review`` item for a human
+reviewer rather than graded by an LLM. A passing structured check never
+auto-covers an NL assertion.
 """
 from __future__ import annotations
 
@@ -81,7 +82,8 @@ def _glob_files(cwd: Path, paths: list[str]) -> list[Path]:
         if base.is_dir():
             out.extend(sorted(base.rglob("*")))
         else:
-            out.extend(sorted(cwd.glob(raw)) if not p.is_absolute() else sorted(Path("/").glob(str(p))))
+            # Treat raw as a glob pattern relative to cwd (e.g. "ART-*.md").
+            out.extend(sorted(cwd.glob(raw)))
     # Keep only files
     return [f for f in out if f.is_file()]
 
@@ -204,21 +206,17 @@ def judge(manifest: dict, run_artifact: dict, sandbox: Any) -> dict:
     for c in manifest.get("checks", []) or []:
         checks.append(_eval_structured_check(c, transcript, cwd))
 
-    # NL assertions without a matching structured check → needs-review review
-    # items (§11.1: no LLM-judging-LLM). We have no machine mapping from NL
-    # prose to a check id, so an assertion is "covered" only when the scenario
-    # declares at least one structured check; otherwise it is surfaced for a
-    # human reviewer.
-    has_structured = bool(manifest.get("checks"))
-    for assertion in manifest.get("required_assertions", []) or []:
-        verdict = "pass" if has_structured else "needs-review"
+    # Each NL ``required_assertion`` is surfaced as its OWN needs-review item
+    # (§11.1: no LLM-judging-LLM). The manifest schema carries no NL→check id
+    # link, so the spec-correct default is that every NL assertion is human-
+    # reviewed regardless of whether structured checks exist. A passing
+    # structured check never auto-covers an unrelated NL assertion.
+    for i, assertion in enumerate(manifest.get("required_assertions", []) or []):
         checks.append({
-            "id": f"assertion:{assertion}",
-            "type": "nl_required_assertion",
-            "verdict": verdict,
-            "detail": "NL assertion; verified only via accompanying structured check"
-                      if has_structured
-                      else "NL assertion without a matching structured check; needs human review",
+            "id": f"nl-assertion-{i}",
+            "type": "manual",
+            "verdict": "needs-review",
+            "detail": assertion,
         })
 
     forbidden_triggered, forbidden_review = _forbidden_triggered(
