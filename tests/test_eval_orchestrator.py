@@ -187,3 +187,36 @@ def test_run_skill_dependency_key_legacy_is_ignored(tmp_path):
 
     assert "bw-start" not in installed["skills"]
     assert installed["skills"] == ["bw-shape"]
+
+
+def test_run_scenario_persists_durable_transcript_after_sandbox_exits(tmp_path):
+    # Pilot gap F1: the runner writes the transcript into sandbox.temp_home, but
+    # Sandbox.__exit__ removes temp dirs -> the stored transcript_path dangles and
+    # needs-review items become unreviewable. After run_scenario completes (and the
+    # Sandbox has exited), the durable transcript file at the result's
+    # transcript_path MUST still exist (the in-temp-home copy is gone).
+    import json
+
+    m = {"scenario_id": "BWSH-F1", "target_skill": "bw-shape", "prompt": "p",
+         "required_assertions": [], "forbidden_behaviors": [],
+         "repetition_count": 1,
+         "checks": [{"id": "c", "type": "transcript_contains", "params": {"needle": "ok"}}]}
+
+    eval_root = tmp_path / "results"
+    rs = orchestrator.run_scenario(eval_root, REPO, m, mode="green", reps=1,
+                                   run_once=_fake_runner("ok\n"))
+
+    transcript_path = Path(rs[0]["transcript_path"])
+
+    # The durable transcript survives Sandbox cleanup.
+    assert transcript_path.exists(), f"durable transcript missing at {transcript_path}"
+    assert transcript_path.read_text() == "ok\n"
+    # Durable layout: evals/{skill}/{mode}/transcript-{scenario_id}-r{rep}.json
+    assert transcript_path.parent == eval_root / "evals" / "bw-shape" / "green"
+    assert transcript_path.name == "transcript-BWSH-F1-r1.json"
+
+    # The written result record points at the durable path.
+    result_file = eval_root / "evals" / "bw-shape" / "green" / "BWSH-F1-r1.json"
+    record = json.loads(result_file.read_text())
+    assert record["transcript_path"] == str(transcript_path)
+

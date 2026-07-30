@@ -133,71 +133,103 @@ def list_eval_scenarios(evals_root):
                     continue
 
 
+def _result_dir_for_bucket(bucket: str) -> str:
+    """Map a manifest bucket to the result directory name (spec §11.1).
+
+    GREEN scenarios live under the manifest bucket 'scenarios' but their result
+    records are written to evals/{skill}/green/ (result.write_result uses the
+    mode). RED records are written to evals/{skill}/red/.
+    """
+    if bucket == "red":
+        return "red"
+    return "green"
+
+
 def check_eval_results(evals_root=None):
     """For every scenario manifest under evals/*/scenarios/ + evals/*/red/, enforce:
     (a) repetition_count result records with complete §11.1 fields exist;
     (b) every RED control's aggregate verdict is 'red';
     (c) every GREEN result verdict is 'green' (all checks pass, no forbidden triggered);
     (d) any 'needs-review' result carries a non-null reviewer.
-    Before results exist, returns (True, ["eval results: deferred (§11.1)"]) skip notice.
+
+    Coverage model (pilot gap F3): this is a dev-time quality gate, NOT a
+    full-run completeness gate. A scenario with NO result files yet is treated
+    as not-yet-run -> SKIPPED (not a failure). The (a)-(d) rules are enforced
+    ONLY on scenarios that HAVE >=1 result file. Full-run completeness is a
+    separate acceptance concern. Result files are read from the §11.1 result
+    directories: GREEN -> evals/{skill}/green/, RED -> evals/{skill}/red/
+    (pilot gap F2). Before ANY result file exists anywhere, returns the §11.1
+    deferred skip notice.
     """
     evals_root = EVALS if evals_root is None else Path(evals_root)
     details: list[str] = []
 
-    # Collect all expected result files
+    # Collect all expected result files (resolved to the §11.1 result dirs).
     expected_results = []
     for skill, bucket, scenario_id, repetition_count in list_eval_scenarios(evals_root):
+        result_dir = evals_root / skill / _result_dir_for_bucket(bucket)
         for rep in range(1, repetition_count + 1):
-            result_file = evals_root / skill / bucket / f"{scenario_id}-r{rep}.json"
+            result_file = result_dir / f"{scenario_id}-r{rep}.json"
             expected_results.append((skill, bucket, scenario_id, rep, result_file))
 
-    # If no result files exist yet, skip cleanly
+    # If no expected scenarios at all, skip cleanly
     if not expected_results:
         return (True, ["eval results: deferred (§11.1)"])
 
-    # Check if any results exist at all
-    any_results_exist = any(f.exists() for _, _, _, _, f in expected_results)
-    if not any_results_exist:
+    # If no result files exist anywhere yet, skip cleanly
+    if not any(f.exists() for _, _, _, _, f in expected_results):
         return (True, ["eval results: deferred (§11.1)"])
 
-    # Validate each expected result
+    # Enforce rules ONLY on scenarios that have >=1 result file present; scenarios
+    # with no result files yet are not-yet-run -> skipped (not failures).
+    # Group by (skill, bucket, scenario_id) to test presence per scenario.
+    by_scenario: dict[tuple, list] = {}
     for skill, bucket, scenario_id, rep, result_file in expected_results:
-        if not result_file.exists():
-            details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: missing result file")
-            continue
+        by_scenario.setdefault((skill, bucket, scenario_id), []).append(
+            (skill, bucket, scenario_id, rep, result_file))
 
-        try:
-            result = json.loads(result_file.read_text())
-        except json.JSONDecodeError:
-            details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: invalid JSON")
-            continue
+    for (skill, bucket, scenario_id), entries in by_scenario.items():
+        scenario_has_results = any(f.exists() for _, _, _, _, f in entries)
+        if not scenario_has_results:
+            continue  # not-yet-run -> skip
+        for skill, bucket, scenario_id, rep, result_file in entries:
+            if not result_file.exists():
+                # This scenario has SOME reps present but this rep is missing.
+                details.append(f"{skill}/{_result_dir_for_bucket(bucket)}/{scenario_id}-r{rep}: missing result file")
+                continue
 
-        # Check complete §11.1 fields
-        required_fields = [
-            "scenario_id", "target_skill", "mode", "repetition", "verdict",
-            "fresh_context_id", "cwd", "temp_home", "project_local_skills",
-            "global_skills", "model", "transcript_path", "checks",
-            "forbidden_triggered", "reviewer"
-        ]
-        missing_fields = [f for f in required_fields if f not in result]
-        if missing_fields:
-            details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: missing fields {missing_fields}")
-            continue
+            try:
+                result = json.loads(result_file.read_text())
+            except json.JSONDecodeError:
+                details.append(f"{skill}/{_result_dir_for_bucket(bucket)}/{scenario_id}-r{rep}: invalid JSON")
+                continue
 
-        # Validate based on bucket type
-        verdict = result.get("verdict")
-        if bucket == "red":
-            # RED controls: only invalid verdict is 'green' (passed everything it shouldn't)
-            if verdict == "green":
-                details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: RED control has verdict 'green', must be 'red' or 'needs-review'")
-        else:
-            # GREEN scenarios: only invalid verdict is 'red' (failed a hard check)
-            if verdict == "red":
-                details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: GREEN scenario has verdict 'red', must be 'green' or 'needs-review'")
+            # Check complete §11.1 fields
+            required_fields = [
+                "scenario_id", "target_skill", "mode", "repetition", "verdict",
+                "fresh_context_id", "cwd", "temp_home", "project_local_skills",
+                "global_skills", "model", "transcript_path", "checks",
+                "forbidden_triggered", "reviewer"
+            ]
+            missing_fields = [f for f in required_fields if f not in result]
+            if missing_fields:
+                details.append(f"{skill}/{_result_dir_for_bucket(bucket)}/{scenario_id}-r{rep}: missing fields {missing_fields}")
+                continue
 
-        # Check needs-review results have non-null reviewer
-        if verdict == "needs-review" and result.get("reviewer") is None:
-            details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: needs-review verdict requires non-null reviewer")
+            # Validate based on bucket type
+            verdict = result.get("verdict")
+            if bucket == "red":
+                # RED controls: only invalid verdict is 'green' (passed everything it shouldn't)
+                if verdict == "green":
+                    details.append(f"{skill}/{_result_dir_for_bucket(bucket)}/{scenario_id}-r{rep}: RED control has verdict 'green', must be 'red' or 'needs-review'")
+            else:
+                # GREEN scenarios: only invalid verdict is 'red' (failed a hard check)
+                if verdict == "red":
+                    details.append(f"{skill}/{_result_dir_for_bucket(bucket)}/{scenario_id}-r{rep}: GREEN scenario has verdict 'red', must be 'green' or 'needs-review'")
+
+            # Check needs-review results have non-null reviewer
+            if verdict == "needs-review" and result.get("reviewer") is None:
+                details.append(f"{skill}/{_result_dir_for_bucket(bucket)}/{scenario_id}-r{rep}: needs-review verdict requires non-null reviewer")
 
     return (not details, details)
 
