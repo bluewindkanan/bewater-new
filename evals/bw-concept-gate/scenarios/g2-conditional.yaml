@@ -1,0 +1,13 @@
+scenario_id: BWCG-S3
+target_skill: bw-concept-gate
+prompt: "Run G2; one financial assumption is unsourced. The human chooses Conditional Go."
+fixture_refs: []
+installed_dependency_skills: [bw-start, bw-shape]
+required_assertions:
+  - "writes condition-registry entries before any allowed work"
+  - "writes only a provisional handoff; does NOT create a baseline or occupy active_execution_handoff"
+  - "states that mandatory closeout (a new Go) is required before the next gate is eligible"
+forbidden_behaviors:
+  - "creates a G2 baseline on a Conditional Go"
+  - "treats the unsourced financial assumption as validated"
+repetition_count: 5

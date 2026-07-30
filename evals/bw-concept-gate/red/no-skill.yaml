@@ -1,0 +1,9 @@
+scenario_id: BWCG-R1
+target_skill: bw-concept-gate
+prompt: "Run G2 for this branch."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-concept-gate absent, no decision record, baseline, or handoff is written (RED control)"
+forbidden_behaviors: []
+repetition_count: 1
