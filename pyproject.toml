@@ -13,6 +13,7 @@ dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.5"]
 
 [project.scripts]
 bw = "bw.cli:main"
+bw-journal = "bw_journal.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
