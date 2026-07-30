@@ -36,7 +36,7 @@ def run_scenario(
 
     target_skill = manifest.get("target_skill", "unknown")
     scenario_id = manifest.get("scenario_id", "unknown")
-    dependency_skills = manifest.get("dependency_skills", [])
+    dependency_skills = manifest.get("installed_dependency_skills", [])
 
     results = []
 
@@ -114,8 +114,11 @@ def run_skill(
     Returns:
         Summary dict with skill_name, mode, total_scenarios, total_reps, results
     """
-    # Discover all scenario manifests for this skill
-    scenarios_dir = repo / "evals" / "_scenarios" / skill_name
+    # Discover all scenario manifests for this skill under the REAL layout:
+    # GREEN -> evals/{skill}/scenarios/*.yaml, RED -> evals/{skill}/red/*.yaml
+    # (matches scripts/verify.py::list_eval_scenarios).
+    bucket = "scenarios" if mode == "green" else "red"
+    scenarios_dir = repo / "evals" / skill_name / bucket
     if not scenarios_dir.exists():
         return {
             "skill_name": skill_name,
@@ -163,9 +166,10 @@ def run_all(
     Returns:
         Summary dict with all skills combined
     """
-    # Discover all skill scenario directories
-    scenarios_root = repo / "evals" / "_scenarios"
-    if not scenarios_root.exists():
+    # Discover all skill directories under the REAL layout: evals/bw-*/...
+    # A skill is a candidate if evals/{skill}/ exists (matches verify.py).
+    evals_root = repo / "evals"
+    if not evals_root.exists():
         return {
             "mode": mode,
             "total_skills": 0,
@@ -177,8 +181,8 @@ def run_all(
     all_results = []
     skill_count = 0
 
-    for skills_dir in sorted(scenarios_root.iterdir()):
-        if not skills_dir.is_dir():
+    for skills_dir in sorted(evals_root.iterdir()):
+        if not skills_dir.is_dir() or not skills_dir.name.startswith("bw-"):
             continue
         skill_name = skills_dir.name
         skill_summary = run_skill(

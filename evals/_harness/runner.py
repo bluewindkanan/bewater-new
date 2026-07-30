@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import shutil
 import subprocess
-import time
+import uuid
 from pathlib import Path
 from typing import Any
 
@@ -54,9 +54,8 @@ def run_once(prompt: str, sandbox: Any, model: str | None = None) -> dict[str, A
     )
     stdout_bytes, stderr_bytes = proc.communicate()
 
-    # Persist transcript
-    timestamp = int(time.time() * 1000)
-    transcript_path = sandbox.temp_home / f"transcript-{timestamp}.json"
+    # Persist transcript — uuid4 so two reps in the same millisecond never collide.
+    transcript_path = sandbox.temp_home / f"transcript-{uuid.uuid4().hex}.json"
     transcript_path.write_bytes(stdout_bytes)
 
     # Extract session_id as fresh_context_id
@@ -71,6 +70,7 @@ def run_once(prompt: str, sandbox: Any, model: str | None = None) -> dict[str, A
     return {
         "returncode": proc.returncode,
         "stdout": stdout_bytes.decode("utf-8", errors="replace"),
+        "stderr": stderr_bytes.decode("utf-8", errors="replace"),
         "transcript_path": str(transcript_path),
         "fresh_context_id": fresh_context_id,
     }

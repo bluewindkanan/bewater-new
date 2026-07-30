@@ -129,7 +129,11 @@ def _check_oracle_validate_ok(check: dict, cwd: Path) -> dict:
     try:
         issues = list(validate.validate_all(cwd))
         scan = gate_scan.scan(cwd, gate=gate)
-        blocked = bool(getattr(scan, "blocked", False))
+        # Real signal from GateScanResult: a blocking criterion failure withholds
+        # the "go" exit (scan() returns exit_allowed WITHOUT "go"). Equivalently,
+        # any criterion with not passed and blocking. Use the exit-allowed signal
+        # as the source of truth.
+        blocked = "go" not in (getattr(scan, "exit_allowed", []) or [])
         verdict = "pass" if not issues and not blocked else "red"
         detail = f"validate_all={len(issues)} issue(s); gate={gate} blocked={blocked}"
         if issues:

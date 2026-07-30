@@ -37,3 +37,27 @@ def test_run_once_records_nonzero_exit(tmp_path, monkeypatch):
                         type("R", (), {"returncode": 1, "communicate": lambda self: (b"", b"boom")})())
     out = runner.run_once("p", _FakeSandbox(tmp_path))
     assert out["returncode"] == 1 and out["fresh_context_id"] is None
+
+
+def test_run_once_surfaces_stderr(tmp_path, monkeypatch):
+    # M1: stderr is surfaced for pilot diagnostics, not discarded.
+    monkeypatch.setattr(runner, "_popen", lambda cmd, **kw:
+                        type("R", (), {"returncode": 1,
+                                       "communicate": lambda self: (b"", b"kaput")})())
+    out = runner.run_once("p", _FakeSandbox(tmp_path))
+    assert out["stderr"] == "kaput"
+
+
+def test_run_once_transcript_names_are_unique(tmp_path, monkeypatch):
+    # I2: two reps in the same millisecond must not overwrite each other's
+    # transcript (uuid-based naming).
+    def fake_popen(cmd, **kw):
+        class R:
+            returncode = 0
+            def communicate(self): return (b'{"session_id":"s"}', b"")
+        return R()
+    monkeypatch.setattr(runner, "_popen", fake_popen)
+    sb = _FakeSandbox(tmp_path)
+    out1 = runner.run_once("p", sb)
+    out2 = runner.run_once("p", sb)
+    assert out1["transcript_path"] != out2["transcript_path"]

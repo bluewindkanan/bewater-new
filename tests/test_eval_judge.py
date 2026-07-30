@@ -71,6 +71,49 @@ def test_oracle_validate_ok_drift_is_needs_review(tmp_path):
     assert out["reviewer"] is None
 
 
+def test_oracle_validate_ok_blocked_gate_forces_red(tmp_path):
+    # I1 regression: a blocking gate failure (go withheld) must force the oracle
+    # check red even when validate_all is clean. The check reads the REAL
+    # GateScanResult signal (exit_allowed lacks "go"), not a non-existent
+    # `blocked` attr.
+    import sys
+    import types
+    from typing import ClassVar
+
+    class _Scan:
+        # go withheld → blocked. Mirrors GateScanResult when a blocking
+        # criterion fails (exit_allowed == the 4 non-go exits).
+        exit_allowed: ClassVar[list[str]] = ["conditional-go", "recycle", "pivot", "kill"]
+
+    fake_bw = types.ModuleType("bw")
+    fake_validate = types.ModuleType("bw.validate")
+    fake_validate.validate_all = lambda cwd: iter(())  # no issues
+    fake_gate_scan = types.ModuleType("bw.gate_scan")
+    fake_gate_scan.scan = lambda cwd, gate="G1": _Scan()
+    fake_bw.validate = fake_validate
+    fake_bw.gate_scan = fake_gate_scan
+
+    real_bw = sys.modules.get("bw")
+    real_validate = sys.modules.get("bw.validate")
+    real_gate_scan = sys.modules.get("bw.gate_scan")
+    sys.modules["bw"] = fake_bw
+    sys.modules["bw.validate"] = fake_validate
+    sys.modules["bw.gate_scan"] = fake_gate_scan
+    try:
+        m = _manifest([{"id": "o", "type": "oracle_validate_ok", "params": {"gate": "G1"}}])
+        out = judge.judge(m, {"transcript_path": str(tmp_path / "t.jsonl")}, _sb(tmp_path))
+        assert out["checks"][0]["verdict"] == "red"
+        assert out["verdict"] == "red"
+        assert "blocked=True" in out["checks"][0]["detail"]
+    finally:
+        for key, mod in (("bw", real_bw), ("bw.validate", real_validate),
+                         ("bw.gate_scan", real_gate_scan)):
+            if mod is None:
+                sys.modules.pop(key, None)
+            else:
+                sys.modules[key] = mod
+
+
 def test_unknown_check_type_is_needs_review(tmp_path):
     m = _manifest([{"id": "u", "type": "no_such_type", "params": {}}])
     out = judge.judge(m, {"transcript_path": str(tmp_path / "t.jsonl")}, _sb(tmp_path))
