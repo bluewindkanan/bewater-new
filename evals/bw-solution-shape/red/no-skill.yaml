@@ -1,0 +1,9 @@
+scenario_id: BWSO-R1
+target_skill: bw-solution-shape
+prompt: "Shape this concept into a solution."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-solution-shape absent, no solution artifact is written (RED control)"
+forbidden_behaviors: []
+repetition_count: 1
