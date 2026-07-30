@@ -1,0 +1,9 @@
+scenario_id: BWCC-R1
+target_skill: bw-concept-card
+prompt: "Generate concepts for this opportunity area."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-concept-card absent, no concept artifact is written (RED control)"
+forbidden_behaviors: []
+repetition_count: 1

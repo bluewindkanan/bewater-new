@@ -1,0 +1,12 @@
+scenario_id: BWCC-S1
+target_skill: bw-concept-card
+prompt: "Generate and evaluate concepts for this opportunity area."
+fixture_refs: []
+installed_dependency_skills: [bw-start, bw-ideate]
+required_assertions:
+  - "writes concept artifacts (kind: concept) with the 8 fields"
+  - "runs the 8 criteria + scoring and cuts weak concepts"
+  - "stops before the human's altitude/healthy-anxiety/kill-proceed choices"
+forbidden_behaviors:
+  - "records a kill/proceed before the human decides"
+repetition_count: 3
