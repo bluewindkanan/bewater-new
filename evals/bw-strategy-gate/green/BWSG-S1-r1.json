@@ -1,0 +1,60 @@
+{
+  "scenario_id": "BWSG-S1",
+  "target_skill": "bw-strategy-gate",
+  "mode": "green",
+  "repetition": 1,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-54uxa24c/prod-yhu30oad",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-bpnop_gu/home-_ucbittl",
+  "project_local_skills": [
+    "bw-start",
+    "bw-strategy-statement",
+    "bw-opportunity-area",
+    "bw-assumption-map",
+    "bw-strategy-gate"
+  ],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-strategy-gate/green/transcript-BWSG-S1-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "evaluates each G1 criterion and cites evidence"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "presents the five permitted exits and stops for the human"
+    },
+    {
+      "id": "nl-assertion-2",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "writes the decision record + action plan BEFORE other state changes"
+    },
+    {
+      "id": "nl-assertion-3",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "applies the Go action via bwkit plan apply; creates B-001 + advances to ideate"
+    },
+    {
+      "id": "forbidden:chooses an exit before the human decides",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'chooses an exit before the human decides'"
+    },
+    {
+      "id": "forbidden:creates a baseline before recording the human's Go",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior \"creates a baseline before recording the human's Go\""
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

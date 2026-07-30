@@ -1,0 +1,48 @@
+{
+  "scenario_id": "BWSO-S1",
+  "target_skill": "bw-solution-shape",
+  "mode": "green",
+  "repetition": 3,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-es7mg_sz/prod-txkdqi2w",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-ly53v3l0/home-zhciu1_u",
+  "project_local_skills": [
+    "bw-start",
+    "bw-shape",
+    "bw-concept-card",
+    "bw-experiment",
+    "bw-solution-shape"
+  ],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-solution-shape/green/transcript-BWSO-S1-r3.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "writes kind: solution artifacts (stage: shape) with the dual_sided four-field structure"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "requires L4+ evidence before validation_status can become validated"
+    },
+    {
+      "id": "nl-assertion-2",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "stops before the human validation / kill-proceed choice"
+    },
+    {
+      "id": "forbidden:sets validation_status: validated before the human decides",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'sets validation_status: validated before the human decides'"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

@@ -16,6 +16,8 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import yaml
+
 from . import io, paths, schema
 from .errors import ValidationError
 
@@ -31,14 +33,14 @@ _DEFAULTS = {
 
 
 def _existing_ids(ledger: schema.Ledger) -> set[str]:
-    return {a.id for a in ledger.assumptions}
+    return set(ledger.assumptions.keys())
 
 
 def _max_suffix(ledger: schema.Ledger) -> int:
     """Largest numeric suffix across all stored A-NNN ids; 0 if none."""
     hi = 0
-    for a in ledger.assumptions:
-        m = _ID_RE.match(a.id or "")
+    for aid in ledger.assumptions:
+        m = _ID_RE.match(aid or "")
         if m:
             hi = max(hi, int(m.group(1)))
     return hi
@@ -64,7 +66,6 @@ def add(root: Path, fields: dict) -> schema.Assumption:
             raise ValidationError(f"add: id {new_id!r} already exists in ledger")
     else:
         new_id = _next_id(ledger)
-        # Defensive: the generated id must never collide.
         if new_id in existing:
             raise ValidationError(f"add: generated id {new_id!r} collides")
 
@@ -76,7 +77,8 @@ def add(root: Path, fields: dict) -> schema.Assumption:
     assumption = schema.Assumption.from_dict(payload)
     assumption.check_invariants()
 
-    ledger.assumptions.append(assumption)
+    ledger.assumptions[new_id] = assumption
+    ledger.next_id = _max_suffix(ledger) + 1
     io.save_ledger(root, ledger)
     return assumption
 
@@ -91,30 +93,26 @@ def update(root: Path, id: str, changes: dict) -> schema.Assumption:
     """
     ledger = io.load_ledger(root)
 
-    target: schema.Assumption | None = None
-    for a in ledger.assumptions:
-        if a.id == id:
-            target = a
-            break
-    if target is None:
+    if id not in ledger.assumptions:
         raise KeyError(id)
+
+    target = ledger.assumptions[id]
 
     if "id" in changes and changes["id"] != id:
         new_id = changes["id"]
-        if any(a.id == new_id for a in ledger.assumptions):
+        if new_id in ledger.assumptions:
             raise ValidationError(f"update: id {new_id!r} already exists in ledger")
 
     merged = target.to_dict()
     merged.update(changes)
-    # Drop keys that are not Assumption fields (defensive — keeps from_dict clean).
     valid_keys = set(target.to_dict().keys())
     rebuilt = schema.Assumption.from_dict({k: v for k, v in merged.items() if k in valid_keys})
     rebuilt.check_invariants()
 
-    for i, a in enumerate(ledger.assumptions):
-        if a.id == id:
-            ledger.assumptions[i] = rebuilt
-            break
+    # If id changed, delete old key and insert under new key
+    if rebuilt.id != id:
+        del ledger.assumptions[id]
+    ledger.assumptions[rebuilt.id] = rebuilt
     io.save_ledger(root, ledger)
     return rebuilt
 
@@ -126,15 +124,10 @@ def validate_one(root: Path, id: str) -> list[str]:
     ``KeyError`` if ``id`` is not in the ledger.
     """
     ledger = io.load_ledger(root)
-    target: schema.Assumption | None = None
-    for a in ledger.assumptions:
-        if a.id == id:
-            target = a
-            break
-    if target is None:
+    if id not in ledger.assumptions:
         raise KeyError(id)
 
-    return target.invariant_violations()
+    return ledger.assumptions[id].invariant_violations()
 
 
 def _neighbors(node: schema.Assumption, direction: str,
@@ -173,7 +166,7 @@ def trace(root: Path, id: str, direction: str = "upstream") -> list[str]:
         raise ValueError(f"trace: direction must be 'upstream' or 'downstream', got {direction!r}")
 
     ledger = io.load_ledger(root)
-    by_id = {a.id: a for a in ledger.assumptions}
+    by_id = dict(ledger.assumptions)
     if id not in by_id:
         raise KeyError(id)
 
@@ -181,10 +174,6 @@ def trace(root: Path, id: str, direction: str = "upstream") -> list[str]:
     order: list[str] = []
 
     def _walk(start: str) -> None:
-        # Iterative DFS that detects a real cycle via a gray (on-stack) set.
-        # Stack frames: (id, neighbor_iterator, path). We recurse depth-first so
-        # a true back-edge (neighbor on the current DFS path) is a cycle; a
-        # node reached again after a *completed* subtree (diamond) is not.
         stack: list[tuple[str, list[str], int, list[str]]] = [
             (start, _neighbors(by_id[start], direction, by_id), 0, [start])
         ]
@@ -200,11 +189,10 @@ def trace(root: Path, id: str, direction: str = "upstream") -> list[str]:
                 if nxt not in by_id:
                     raise ValidationError(f"dangling reference: {nxt}")
                 if nxt in gray:
-                    # Back-edge to a node on the current DFS path -> real cycle.
                     cycle = path[path.index(nxt):] + [nxt] if nxt in path else [nxt, nxt]
                     raise ValidationError(f"lineage cycle: {' -> '.join(cycle)}")
                 if nxt in visited:
-                    continue  # already fully explored via another branch (diamond)
+                    continue
                 gray.add(nxt)
                 stack.append((nxt, _neighbors(by_id[nxt], direction, by_id), 0, path + [nxt]))
             else:
@@ -215,11 +203,8 @@ def trace(root: Path, id: str, direction: str = "upstream") -> list[str]:
     return order
 
 
-# --- Task 8: baseline + backtrack (回溯治理 routing) ---
+# --- Task 8: baseline + backtrack ---
 
-# Layer -> (loop_type, depth_target). feature/concept are small loops back to
-# the reframe step; opportunity/strategy are large loops back to Define; root is
-# a large loop all the way back to Discover.
 _LAYER_LOOP = {
     schema.Layer.feature: ("small", "reframe"),
     schema.Layer.concept: ("small", "reframe"),
@@ -257,8 +242,44 @@ def _assumption_content_hash(assumption: schema.Assumption) -> str:
     return hashlib.sha256(canonical.encode()).hexdigest()
 
 
+def _load_baseline_snapshot(root: Path, label: str | None = None) -> tuple[dict | None, str | None]:
+    """Load a baseline snapshot from records/ directory.
+
+    If ``label`` is given, loads that specific baseline file. Otherwise loads
+    the latest (by filename sort order, which approximates creation order for
+    B-{gate}-baseline.yaml naming).
+
+    Returns (snapshot_dict, gate_label) or (None, None) if no baseline found.
+    """
+    rec_dir = paths.records_dir(root)
+    if not rec_dir.is_dir():
+        return None, None
+
+    pattern = re.compile(r"^B-(.+)-baseline\.yaml$")
+    candidates: list[tuple[str, Path]] = []
+    for p in sorted(rec_dir.iterdir()):
+        m = pattern.match(p.name)
+        if m:
+            candidates.append((m.group(1), p))
+
+    if not candidates:
+        return None, None
+
+    if label is not None:
+        for gate, p in candidates:
+            if gate == label:
+                data = yaml.safe_load(p.read_text()) or {}
+                return data.get("snapshot"), gate
+        return None, None
+
+    # Return the last one (latest by sort order)
+    gate, p = candidates[-1]
+    data = yaml.safe_load(p.read_text()) or {}
+    return data.get("snapshot"), gate
+
+
 def baseline(root: Path, label: str = "G2") -> dict:
-    """Snapshot current state into ``ledger.baseline`` and stamp ``label``.
+    """Snapshot current state and write to ``records/B-{label}-baseline.yaml``.
 
     The snapshot has two sections::
 
@@ -267,20 +288,20 @@ def baseline(root: Path, label: str = "G2") -> dict:
 
     Assumption content_hash is sha256 of the canonical JSON of
     ``Assumption.to_dict()``; artifact hash is the artifact's ``meta.hash``
-    (read via ``io.read_artifact`` across ``paths.artifacts_dir``). Persists via
-    ``io.save_ledger`` and returns the snapshot.
+    (read via ``io.read_artifact`` across ``paths.output_dir``). Persists to
+    ``records/`` and returns the snapshot.
     """
     ledger = io.load_ledger(root)
 
     assumptions = {
-        a.id: _assumption_content_hash(a) for a in ledger.assumptions if a.id
+        aid: _assumption_content_hash(a) for aid, a in ledger.assumptions.items() if aid
     }
 
     artifacts: dict[str, str] = {}
-    art_dir = paths.artifacts_dir(root)
-    if art_dir.is_dir():
+    out_dir = paths.output_dir(root)
+    if out_dir.is_dir():
         seen: set[Path] = set()
-        for p in sorted(art_dir.rglob("*.md")):
+        for p in sorted(out_dir.rglob("*.md")):
             rp = p.resolve()
             if rp in seen:
                 continue
@@ -293,9 +314,18 @@ def baseline(root: Path, label: str = "G2") -> dict:
                 artifacts[meta.artifact_id] = meta.hash
 
     snapshot = {"assumptions": assumptions, "artifacts": artifacts}
-    ledger.baseline = snapshot
-    ledger.last_baselined_at = label
-    io.save_ledger(root, ledger)
+
+    rec_dir = paths.records_dir(root)
+    rec_dir.mkdir(parents=True, exist_ok=True)
+    baseline_path = rec_dir / f"B-{label}-baseline.yaml"
+    baseline_path.write_text(
+        yaml.safe_dump(
+            {"gate": label, "snapshot": snapshot},
+            sort_keys=False,
+            allow_unicode=True,
+        )
+    )
+
     return snapshot
 
 
@@ -308,16 +338,15 @@ def backtrack(root: Path, falsified_id: str) -> BacktrackResult:
 
     ``affected_ids`` is the downstream lineage via :func:`trace`.
 
-    Baseline-boundary check: if ``ledger.baseline`` is set and either
-    ``falsified_id`` or any ``affected_ids`` is a key in the baseline snapshot
-    (assumption or artifact section), the loop upgrades to ``large`` and
-    ``must_repass_gate`` is set to ``ledger.last_baselined_at`` so the original
-    gate is re-passed.
+    Baseline-boundary check: scans ``records/`` for the latest baseline file.
+    If ``falsified_id`` or any ``affected_ids`` appears in that snapshot, the
+    loop upgrades to ``large`` and ``must_repass_gate`` is set to the baseline's
+    gate label so the original gate is re-passed.
 
     Raises ``KeyError`` if ``falsified_id`` is not in the ledger.
     """
     ledger = io.load_ledger(root)
-    by_id = {a.id: a for a in ledger.assumptions}
+    by_id = dict(ledger.assumptions)
     if falsified_id not in by_id:
         raise KeyError(falsified_id)
 
@@ -327,18 +356,18 @@ def backtrack(root: Path, falsified_id: str) -> BacktrackResult:
     affected_ids = trace(root, falsified_id, "downstream")
 
     must_repass_gate: str | None = None
-    baseline = ledger.baseline
-    if baseline:
+    baseline_snapshot, baseline_gate = _load_baseline_snapshot(root)
+    if baseline_snapshot:
         baseline_keys: set[str] = set()
         for section in ("assumptions", "artifacts"):
-            section_map = baseline.get(section) or {}
+            section_map = baseline_snapshot.get(section) or {}
             baseline_keys.update(section_map.keys())
         touched = falsified_id in baseline_keys or any(
             aid in baseline_keys for aid in affected_ids
         )
         if touched:
             loop_type = "large"
-            must_repass_gate = ledger.last_baselined_at
+            must_repass_gate = baseline_gate
 
     return BacktrackResult(
         loop_type=loop_type,

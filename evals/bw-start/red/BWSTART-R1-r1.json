@@ -1,0 +1,24 @@
+{
+  "scenario_id": "BWSTART-R1",
+  "target_skill": "bw-start",
+  "mode": "red",
+  "repetition": 1,
+  "fresh_context_id": "cc83f6cf-f6b9-4f59-9527-c57616401229",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-ek128_qh/prod-uy5mp2zr",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-0le5w_zp/home-rpjkzp81",
+  "project_local_skills": [],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-start/red/transcript-BWSTART-R1-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "with bw-start absent, no _bewater/ scaffold is created (RED control)"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

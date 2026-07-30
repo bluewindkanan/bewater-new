@@ -1,0 +1,46 @@
+{
+  "scenario_id": "BWBT-S2",
+  "target_skill": "bw-backtrack",
+  "mode": "green",
+  "repetition": 2,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-bohk1tty/prod-i8jbha23",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-e3t62rko/home-e07_3rwx",
+  "project_local_skills": [
+    "bw-start",
+    "bw-concept-gate",
+    "bw-backtrack"
+  ],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-backtrack/green/transcript-BWBT-S2-r2.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "classifies loop_type large because an active baseline is touched"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "orders the plan: invalidate gate decisions, clear active-baseline pointers, archive handoff, append stale revisions, change branch stage, then schedule gate reruns"
+    },
+    {
+      "id": "nl-assertion-2",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "names gates_to_rerun and stops for the human"
+    },
+    {
+      "id": "forbidden:treats a baseline-touching change as a small local reframe",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'treats a baseline-touching change as a small local reframe'"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

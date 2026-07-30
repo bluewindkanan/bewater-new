@@ -7,7 +7,7 @@
 - **Supersedes**: this document's v3
 - **Superseded implementation plan**: docs/superpowers/plans/2026-07-28-bw-runtime-phase1.md — retained only as a legacy behavioral oracle; do not execute it
 
-> **v5.1 changelog (2026-07-29, design finalization):** G1 — the `bwkit` helper ships with skills: source at `src/bwkit/`, deployed by the installer into `_bw-shared/bwkit/` (§2.1, §9, §12.2, §12.5). G2 — condition edits bump in-place `record_revision` under a stable ID (§5.6). G3 — `supersedes_ref` self-revision vs cross-entity replacement semantics disambiguated (§5.1). G4 — baselines and gate decisions clarified as cross-file versioned + in-file immutable (§5.1). G5 — Phase 0 authoritative schemas live under `_bw-shared/` (§10.2). G6 — `scripts/verify` is Python under the 80% floor (§11.3). H1 — bwkit is refactored to a standard-library-only, text-level revision CAS: it never parses YAML; the caller parses/mutates/serializes/bumps and bwkit enforces the CAS + backup + atomic write (§12.5). H1a — CLI aligned with the text-level CAS: `cas commit <path> --expected <rev>` reads new_text from stdin, replacing `cas bump --set key=val` (which required YAML parsing); `content_hash` is inlined rather than imported so bwkit stays stdlib-only (§12.5).
+> **v5.1 changelog (2026-07-29, design finalization):** G1 — the `bwkit` helper ships with skills: source at `src/bwkit/`, deployed by the installer into `<project>/_bewater/bwkit/` (§2.1, §9, §12.2, §12.5). G2 — condition edits bump in-place `record_revision` under a stable ID (§5.6). G3 — `supersedes_ref` self-revision vs cross-entity replacement semantics disambiguated (§5.1). G4 — baselines and gate decisions clarified as cross-file versioned + in-file immutable (§5.1). G5 — Phase 0 authoritative schemas live under `_bw-shared/` (§10.2). G6 — `scripts/verify` is Python under the 80% floor (§11.3). H1 — bwkit is refactored to a standard-library-only, text-level revision CAS: it never parses YAML; the caller parses/mutates/serializes/bumps and bwkit enforces the CAS + backup + atomic write (§12.5). H1a — CLI aligned with the text-level CAS: `cas commit <path> --expected <rev>` reads new_text from stdin, replacing `cas bump --set key=val` (which required YAML parsing); `content_hash` is inlined rather than imported so bwkit stays stdlib-only (§12.5).
 
 ## 0. Decision Summary
 
@@ -104,11 +104,14 @@ There is no catalog.yaml in the MVP. The catalog in §4 is the authoring taxonom
 ### 2.2 Product project
 
     <product-project>/
+    ├── .claude/
+    │   └── skills/                       # default installer target (§9)
     ├── _bewater/
     │   ├── config.yaml
     │   ├── ledger.yaml
     │   ├── conditions.yaml
     │   ├── .backup-ledger-r11.yaml
+    │   ├── bwkit/                        # deployed helper package (§12.2)
     │   └── records/
     │       ├── D-001-gate.md
     │       ├── B-001-baseline.yaml
@@ -120,7 +123,7 @@ There is no catalog.yaml in the MVP. The catalog in §4 is the authoring taxonom
         ├── E-001-r1-evidence.md
         └── execution-handoff.md
 
-The product project has only two top-level bewater directories and one shallow records directory. Artifact, experiment, evidence, and handoff files are flat; branch, kind, and lineage live in frontmatter rather than directory nesting. Control state is canonical under _bewater. Gate reports may be rendered for humans, but _bewater-output is never a second source of gate truth.
+The installer requires `--project-root <product-project>`. It installs skills by default into `<product-project>/.claude/skills/`; `--dest` may override only that skill-directory target. It always installs bwkit into `<product-project>/_bewater/bwkit/`. Artifact, experiment, evidence, and handoff files are flat; branch, kind, and lineage live in frontmatter rather than directory nesting. Control state is canonical under _bewater. Gate reports may be rendered for humans, but _bewater-output is never a second source of gate truth.
 
 ### 2.3 Installed skill
 
@@ -726,13 +729,15 @@ Skills recommend the route with evidence; the accountable human confirms it. A b
 install.sh is shipped code and follows these behaviors:
 
 - project-local experiments discover .claude/skills/bw-* from the repository and invoke them by skill name; no install step is required;
-- global installation reads only the self-contained directories under .claude/skills/;
+- `--project-root <product-project>` is required for every installation;
+- installation reads only the self-contained directories under .claude/skills/ and deploys them project-locally;
 - default release mode is --copy;
 - --link is available for repository development;
-- --dest overrides the default destination for tests and nonstandard setups;
-- the default destination is $HOME/.claude/skills;
+- the default skill destination is `<project>/.claude/skills`;
+- --dest overrides only the skill-directory destination for tests and nonstandard setups;
 - each already self-contained source skill is copied or linked as one unit;
-- shared references (§2.3) and the shared `bwkit/` helper package (§12.2) are deployed into `<dest>/_bw-shared/` together with every skill that depends on them, each tracked by contract_id/version (references) or package version (bwkit), under the same managed-marker and idempotent-update rules;
+- shared references (§2.3) are deployed into `<skills-destination>/_bw-shared/` together with every skill that depends on them, tracked by contract_id/version under the same managed-marker and idempotent-update rules;
+- the `bwkit/` helper package (§12.2) is deployed into `<project>/_bewater/bwkit/`, independently of any `--dest` override, with a managed marker and package version;
 - every target contains a managed marker identifying bewater and its source version;
 - repeated installs update only managed targets and are idempotent;
 - an unrelated existing file, directory, or symlink causes a fail-closed error;
@@ -740,7 +745,7 @@ install.sh is shipped code and follows these behaviors:
 - updates stage content before replacing a managed target;
 - --uninstall removes only targets with a valid bewater managed marker.
 
-In --link mode, the target directory contains managed links for SKILL.md, each reference, and the bwkit package rather than relying on source-relative paths. In --copy mode, the installed skill and its deployed bwkit remain usable after the source repository moves or is deleted.
+In --link mode, the target directories contain managed links for SKILL.md, each reference, and the bwkit package rather than relying on source-relative paths. In --copy mode, the installed skill and its deployed bwkit remain usable after the source repository moves or is deleted.
 
 The installer must not touch a real user skill directory during tests.
 
@@ -865,7 +870,7 @@ A RED control must fail at least one target behavior or the scenario is invalid.
 
 scripts/verify (implemented in Python, under the 80% coverage floor below) may orchestrate authoring-time checks without becoming a shipped methodology runtime. It verifies:
 
-- all 19 skills exist and have valid name/description-only frontmatter whose description starts with “Use when” and contains triggers rather than procedural steps;
+- all 20 skills exist and have valid name/description-only frontmatter whose description starts with “Use when” and contains triggers rather than procedural steps;
 - every skill-local reference exists in source and installed layouts, no reference escapes its skill directory, contract metadata is present, and duplicate contract ID/version copies are byte-identical;
 - no catalog or plugin manifest is required;
 - schemas and sample state parse;
@@ -898,7 +903,7 @@ Add a narrow helper when any of these holds:
 
 Every helper has a narrow contract, tests, and **no authority to choose or relax a gate outcome**. Gate exits remain human decisions. Helper state lives directly under `_bewater/` (for example `_bewater/.bw-lock`); `_bewater/` is the runtime state root, so no `runtime/` subdirectory is added. Action-plan progress is not a separate file: it is the `action_plan.action_status` and `ordered_steps[].status` already defined in §6.5 and §8.3.
 
-**Helper code location and distribution.** Helper source lives at `src/bwkit/` in the tool repository, where it is installed editable (`pip install -e`) for authoring and eval. Because bwkit is shared by every P0 gate and backtrack skill, it is distributed like a shared reference (§2.3): the installer (§9) deploys the `bwkit/` package into `<dest>/_bw-shared/bwkit/` alongside the shared references, with a bewater managed marker and package version. An installed skill locates bwkit relative to its own directory (`../_bw-shared/bwkit/`) and invokes it as `python <shared>/bwkit/__main__.py <args>` (equivalently `PYTHONPATH=<shared> python -m bwkit <args>`). bwkit is standard-library-only (§12.5), so no PyYAML and no product-project Python dependency is required — only a Python 3 interpreter.
+**Helper code location and distribution.** Helper source lives at `src/bwkit/` in the tool repository, where it is installed editable (`pip install -e`) for authoring and eval. The installer (§9) deploys the `bwkit/` package into `<project>/_bewater/bwkit/`, with a bewater managed marker and package version; this location is fixed even when `--dest` overrides the skill-directory target. An installed skill invokes it as `PYTHONPATH=<project>/_bewater python -m bwkit <args>`. bwkit is standard-library-only (§12.5), so no PyYAML and no product-project Python dependency is required — only a Python 3 interpreter.
 
 ### 12.3 Current helper set
 
@@ -945,7 +950,7 @@ bwkit never parses YAML. The caller — the skill, or the AI editing under the s
 
 **Errors**: `LockError` (contention / owner mismatch), `CasConflict` (current revision ≠ expected), `BadRevisionBump` (new_text top-level revision ≠ expected + 1).
 
-**CLI surface** (entry `bwkit/__main__.py`): `lock acquire --owner`, `lock release --owner`, `lock status`, `cas show <path>` (prints current revision + content hash), `cas commit <path> --expected <rev>` (reads the caller's new_text from stdin, verifies the revision bump, backs up, and atomic-writes — text-level, no YAML parse). In the tool repository it runs as `python -m bwkit <args>` under the editable install. In an installed product project, skills invoke the same surface through the deployed `_bw-shared/bwkit/` (§12.2): `python <shared>/bwkit/__main__.py <args>`.
+**CLI surface** (entry `bwkit/__main__.py`): `lock acquire --owner`, `lock release --owner`, `lock status`, `cas show <path>` (prints current revision + content hash), `cas commit <path> --expected <rev>` (reads the caller's new_text from stdin, verifies the revision bump, backs up, and atomic-writes — text-level, no YAML parse). In the tool repository it runs as `python -m bwkit <args>` under the editable install. In an installed product project, skills invoke the same surface through the deployed `<project>/_bewater/bwkit/` (§12.2): `PYTHONPATH=<project>/_bewater python -m bwkit <args>`.
 
 **Non-goals**: not cross-host / not a distributed lock; does not parse or mutate YAML, does not validate business schema, and does not preserve fields (all the caller's job); holds no gate authority (§12.2); action-plan progress lives in the decision record (§6.5), not here; depends only on the Python standard library.
 

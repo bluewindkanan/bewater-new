@@ -1,0 +1,33 @@
+{
+  "scenario_id": "BWDISC-S1",
+  "target_skill": "bw-discover",
+  "mode": "green",
+  "repetition": 3,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-v6r2l9_i/prod-27bsv6x_",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-xdn6zjvy/home-uwoqipvy",
+  "project_local_skills": [
+    "bw-start",
+    "bw-discover"
+  ],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-discover/green/transcript-BWDISC-S1-r3.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "reports 4C coverage and insight status"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "routes to bw-4c-research and/or bw-insight-craft, authors nothing inline"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

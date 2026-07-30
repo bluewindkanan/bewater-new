@@ -1,0 +1,50 @@
+{
+  "scenario_id": "BWSTART-S1",
+  "target_skill": "bw-start",
+  "mode": "green",
+  "repetition": 3,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-we77ozl6/prod-r6vmpl06",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-kpu9mbrg/home-0fbv3tlj",
+  "project_local_skills": [
+    "bw-start"
+  ],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-start/green/transcript-BWSTART-S1-r3.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "creates _bewater/{config,ledger,conditions}.yaml"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "creates branch BR-001 at immersion and sets active_branch"
+    },
+    {
+      "id": "nl-assertion-2",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "writes state via bwkit (lock + cas commit), not by hand"
+    },
+    {
+      "id": "forbidden:chooses a gate exit",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'chooses a gate exit'"
+    },
+    {
+      "id": "forbidden:records a human decision before receiving it",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'records a human decision before receiving it'"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

@@ -55,12 +55,12 @@ class Issue:
 
 
 def _iter_artifacts(root: Path):
-    """Yield the Path of each readable ``.md`` artifact under artifacts/.
+    """Yield the Path of each readable ``.md`` artifact under _bewater-output/.
 
     Malformed files are yielded too (the caller's read surfaces a
     malformed-frontmatter Issue); only unreadable duplicates are skipped.
     """
-    art_dir = paths.artifacts_dir(root)
+    art_dir = paths.output_dir(root)
     if not art_dir.is_dir():
         return
     seen: set[Path] = set()
@@ -90,7 +90,7 @@ def validate_all(root: Path) -> list[Issue]:
     issues: list[Issue] = []
 
     ledger = io.load_ledger(root)
-    assumptions = ledger.assumptions
+    assumptions = list(ledger.assumptions.values())
 
     # --- 1. Invariants (single source: schema.Assumption.invariant_violations) ---
     for a in assumptions:

@@ -1,0 +1,40 @@
+{
+  "scenario_id": "BWSS-S1",
+  "target_skill": "bw-strategy-statement",
+  "mode": "green",
+  "repetition": 1,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-85vc2wun/prod-4afudr1o",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-0b6a0jzf/home-0aenaqei",
+  "project_local_skills": [
+    "bw-start",
+    "bw-directional-hypothesis",
+    "bw-strategy-statement"
+  ],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-strategy-statement/green/transcript-BWSS-S1-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "writes strategy artifacts that pass the knife-not-summary test"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "stops before the human selects/locks"
+    },
+    {
+      "id": "forbidden:records a lock before the human chooses",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'records a lock before the human chooses'"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

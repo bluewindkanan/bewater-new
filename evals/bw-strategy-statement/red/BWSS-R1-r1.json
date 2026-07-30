@@ -1,0 +1,24 @@
+{
+  "scenario_id": "BWSS-R1",
+  "target_skill": "bw-strategy-statement",
+  "mode": "red",
+  "repetition": 1,
+  "fresh_context_id": "568967c4-a0a5-41a9-a661-f306b5bf6a77",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-9w1j1nx5/prod-1qe2no8g",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-pnjkn2kg/home-1ar0gl08",
+  "project_local_skills": [],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-strategy-statement/red/transcript-BWSS-R1-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "with bw-strategy-statement absent, no strategy artifact is written (RED control)"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

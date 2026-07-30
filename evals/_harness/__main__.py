@@ -13,7 +13,7 @@ def _parse_args():
 
     # Run command
     run_parser = subparsers.add_parser("run", help="Run eval scenarios")
-    run_parser.add_argument("--skill", required=True, help="Skill name to test")
+    run_parser.add_argument("--skill", help="Skill name to test")
     run_parser.add_argument("--mode", choices=["red", "green"], default="green",
                            help="Evaluation mode")
     run_parser.add_argument("--rep", type=int, default=None,
@@ -22,7 +22,10 @@ def _parse_args():
                            help="Run all skills (ignores --skill)")
     run_parser.add_argument("--model", default=None, help="Model name")
 
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.command == "run" and not args.all_skills and not args.skill:
+        run_parser.error("--skill is required unless --all is set")
+    return args
 
 
 def _print_summary(summary: dict) -> None:

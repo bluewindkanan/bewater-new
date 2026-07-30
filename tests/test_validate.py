@@ -27,19 +27,16 @@ def _write_artifact(root, artifact_id, kind, status="final", dual_sided=None,
     meta = schema.ArtifactMeta(
         artifact_id=artifact_id, kind=kind, stage="shape", status=status,
         hash="x", locked=False, validated_by="", validated_at="", signoffs=[],
-        dual_sided=dual_sided, derived_from=derived_from or [],
+        dual_sided=dual_sided or None, derived_from=derived_from or [],
         last_validated_against=[], created_at="d", updated_at="d")
-    p = paths.artifacts_dir(root) / "define" / path_name
+    p = paths.output_dir(root) / path_name
     p.parent.mkdir(parents=True, exist_ok=True)
     io.write_artifact(p, meta, "body")
     return p
 
 
-# --- clean ---
-
 def _add_raw(root, aid, **over):
-    """Write an assumption directly, bypassing add()'s id/invariant guards.
-    Lets cycle tests build lineage the production write path forbids."""
+    """Write an assumption directly, bypassing add()'s id/invariant guards."""
     fields = dict(statement="s", layer="concept", category="consumer", impact="low",
                   uncertainty="low", evidence_level="L1", validation_status="open",
                   status="active", evidence_ref="", derived_from=[], affects=[],
@@ -48,10 +45,12 @@ def _add_raw(root, aid, **over):
     fields["id"] = aid
     assumption = schema.Assumption.from_dict(fields)
     ledger = io.load_ledger(root)
-    ledger.assumptions.append(assumption)
+    ledger.assumptions[aid] = assumption
     io.save_ledger(root, ledger)
     return assumption
 
+
+# --- clean ---
 
 def test_validate_passes_clean(tmp_project):
     _add(tmp_project)
@@ -69,14 +68,13 @@ def test_validate_returns_list_of_issues(tmp_project):
 # --- invariant violations ---
 
 def test_validate_flags_invariant_violation(tmp_project):
-    # achilles + validated + L3 < L4, written directly to bypass add's guard.
     bad = schema.Assumption(
         id="A-001", statement="s", layer="concept", category="consumer",
         impact="high", uncertainty="high", evidence_level="L3",
         validation_status="validated", status="active", evidence_ref="",
     )
     ledger = io.load_ledger(tmp_project)
-    ledger.assumptions.append(bad)
+    ledger.assumptions[bad.id] = bad
     io.save_ledger(tmp_project, ledger)
 
     issues = validate.validate_all(tmp_project)
@@ -102,7 +100,6 @@ def test_validate_flags_dangling_ref_in_affects(tmp_project):
 
 
 def test_validate_ref_resolves_to_artifact_id(tmp_project):
-    # derived_from pointing at an existing artifact_id is NOT a dangling ref.
     _write_artifact(tmp_project, "ART-9", "solution")
     _add(tmp_project, derived_from=["ART-9"])
     issues = validate.validate_all(tmp_project)
@@ -120,7 +117,6 @@ def test_validate_flags_cycle(tmp_project):
 
 
 def test_validate_cycle_dedup(tmp_project):
-    # Two assumptions in the same cycle should yield ONE cycle issue, not N.
     _add_raw(tmp_project, "A-001", statement="a", derived_from=["A-002"])
     _add_raw(tmp_project, "A-002", statement="b", derived_from=["A-001"])
     cyc = [i for i in validate.validate_all(tmp_project) if i.kind == "cycle"]
@@ -128,8 +124,6 @@ def test_validate_cycle_dedup(tmp_project):
 
 
 def test_validate_flags_affects_only_cycle(tmp_project):
-    # I1: a cycle formed solely via `affects` edges (no derived_from back-edge)
-    # must still be flagged — lineage must be acyclic in both directions.
     _add_raw(tmp_project, "A-001", statement="a", affects=["A-002"])
     _add_raw(tmp_project, "A-002", statement="b", affects=["A-001"])
     issues = validate.validate_all(tmp_project)
@@ -142,7 +136,7 @@ def test_validate_flags_affects_only_cycle(tmp_project):
 @pytest.mark.parametrize("kind", ["charter", "directional-hypothesis", "concept", "solution"])
 def test_validate_flags_single_sided(tmp_project, kind):
     dual = _full_dual_sided()
-    dual["money"]["commercial_value_proposition"] = ""  # one empty
+    dual["money"]["commercial_value_proposition"] = ""
     _write_artifact(tmp_project, "ART-1", kind, dual_sided=dual)
     issues = validate.validate_all(tmp_project)
     assert any(i.kind == "single-sided" and i.scope == "ART-1" for i in issues)
@@ -165,7 +159,6 @@ def test_validate_full_dual_sided_is_clean(tmp_project):
 
 
 def test_validate_non_dual_sided_kind_not_checked(tmp_project):
-    # research/insights/etc don't need dual_sided; absent block is fine.
     _write_artifact(tmp_project, "ART-1", "research", dual_sided=None)
     issues = validate.validate_all(tmp_project)
     assert not any(i.kind == "single-sided" for i in issues)
@@ -174,7 +167,6 @@ def test_validate_non_dual_sided_kind_not_checked(tmp_project):
 # --- missing-final ---
 
 def test_validate_flags_missing_final_dependency(tmp_project):
-    # A-final depends on B-draft: B is referenced but not final.
     _write_artifact(tmp_project, "A", "solution", status="final",
                     derived_from=["B"], path_name="a.md")
     _write_artifact(tmp_project, "B", "solution", status="draft",
@@ -195,20 +187,18 @@ def test_validate_final_dependency_clean(tmp_project):
 # --- malformed frontmatter ---
 
 def test_validate_catches_malformed_frontmatter(tmp_project):
-    p = paths.artifacts_dir(tmp_project) / "define" / "broken.md"
+    p = paths.output_dir(tmp_project) / "broken.md"
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text("---\nartifact_id: ART-X\nkind: solution\nno closing fence\n")
     issues = validate.validate_all(tmp_project)
     assert any(i.kind == "malformed-frontmatter" for i in issues)
-    # crucially: it did not crash
 
 
 def test_validate_malformed_frontmatter_does_not_abort_rest(tmp_project):
-    # A malformed artifact should not stop validation of the ledger.
-    p = paths.artifacts_dir(tmp_project) / "define" / "broken.md"
+    p = paths.output_dir(tmp_project) / "broken.md"
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text("---\nartifact_id: ART-X\nkind: solution\nno closing fence\n")
-    _add(tmp_project, derived_from=["GONE"])  # separate dangling-ref issue
+    _add(tmp_project, derived_from=["GONE"])
     issues = validate.validate_all(tmp_project)
     kinds = {i.kind for i in issues}
     assert "malformed-frontmatter" in kinds

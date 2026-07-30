@@ -1,0 +1,40 @@
+{
+  "scenario_id": "BWDH-S1",
+  "target_skill": "bw-directional-hypothesis",
+  "mode": "green",
+  "repetition": 1,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-wp40xste/prod-egejtepw",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-_j1scu0w/home-bzm8j1_z",
+  "project_local_skills": [
+    "bw-start",
+    "bw-insight-craft",
+    "bw-directional-hypothesis"
+  ],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-directional-hypothesis/green/transcript-BWDH-S1-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "writes hypothesis artifacts with By/We can/Resulting in + Money+Magic"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "stops before the human closes a hypothesis"
+    },
+    {
+      "id": "forbidden:records a hypothesis closure (signoff) before the human decides",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'records a hypothesis closure (signoff) before the human decides'"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

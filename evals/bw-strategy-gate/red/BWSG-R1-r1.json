@@ -1,0 +1,24 @@
+{
+  "scenario_id": "BWSG-R1",
+  "target_skill": "bw-strategy-gate",
+  "mode": "red",
+  "repetition": 1,
+  "fresh_context_id": "21ef24a0-6b49-46a1-9ef9-bc78d51f78ee",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-jk0jstm2/prod-natfaf3j",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-i1kpks0q/home-lerhfngz",
+  "project_local_skills": [],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-strategy-gate/red/transcript-BWSG-R1-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "with bw-strategy-gate absent, no decision record or baseline is written (RED control)"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

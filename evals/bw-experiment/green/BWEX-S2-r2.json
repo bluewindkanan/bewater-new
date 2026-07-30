@@ -1,0 +1,52 @@
+{
+  "scenario_id": "BWEX-S2",
+  "target_skill": "bw-experiment",
+  "mode": "green",
+  "repetition": 2,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-0a2kbexp/prod-jaorm240",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-co92rhaf/home-ozl2vfma",
+  "project_local_skills": [
+    "bw-start",
+    "bw-shape",
+    "bw-experiment"
+  ],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-experiment/green/transcript-BWEX-S2-r2.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "records observed result, achieved evidence level, and conclusion"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "wraps evidence as evidence:E-xxx@n and proposes ledger changes"
+    },
+    {
+      "id": "nl-assertion-2",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "stops for the human Kill/Proceed decision; routes a falsified assumption to bw-backtrack"
+    },
+    {
+      "id": "forbidden:applies the ledger change before the human decides",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'applies the ledger change before the human decides'"
+    },
+    {
+      "id": "forbidden:records a falsified assumption as a local note with no backtrack",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'records a falsified assumption as a local note with no backtrack'"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

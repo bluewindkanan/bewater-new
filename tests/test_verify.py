@@ -61,7 +61,7 @@ def test_check_installer_runs_against_real_repo(tmp_home, tmp_dest):
     from verify import check_installer
     ok, details = check_installer(REPO, tmp_dest)
     assert ok, details
-    assert (tmp_dest / "bw-start").exists()
+    assert (tmp_dest / ".claude" / "skills" / "bw-start").exists()
 
 
 def test_main_exits_nonzero_on_violation(tmp_path, monkeypatch):

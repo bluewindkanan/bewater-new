@@ -1,0 +1,24 @@
+{
+  "scenario_id": "BWCG-R1",
+  "target_skill": "bw-concept-gate",
+  "mode": "red",
+  "repetition": 1,
+  "fresh_context_id": "356d73b1-6a6b-4131-8484-cfa3f62b5972",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-rwf0vhqk/prod-t4wc_nnh",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-tmayww9t/home-5e_fm4af",
+  "project_local_skills": [],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-concept-gate/red/transcript-BWCG-R1-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "with bw-concept-gate absent, no decision record, baseline, or handoff is written (RED control)"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

@@ -3,11 +3,12 @@ from pathlib import Path
 
 @pytest.fixture
 def tmp_project(tmp_path: Path) -> Path:
-    (tmp_path / "_bewater" / "state").mkdir(parents=True)
-    (tmp_path / "_bewater" / "artifacts").mkdir()
-    (tmp_path / "_bewater" / "knowledge-base").mkdir()
-    (tmp_path / "_bewater" / "state" / "assumption-ledger.yaml").write_text(
-        yaml.safe_dump({"project": "t", "last_baselined_at": None, "baseline": None, "assumptions": []})
+    (tmp_path / "_bewater").mkdir(parents=True)
+    (tmp_path / "_bewater" / "records").mkdir()
+    (tmp_path / "_bewater-output").mkdir()
+    (tmp_path / "_bewater" / "ledger.yaml").write_text(
+        yaml.safe_dump({"schema_version": 1, "revision": 1, "next_id": 1,
+                        "updated_at": None, "updated_by": "bw-init", "assumptions": {}})
     )
     return tmp_path
 

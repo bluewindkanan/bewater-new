@@ -11,11 +11,10 @@ _DS = {
 
 def _mk(root, rel, kind, stage, status="final", dual=None, locked=False, signoffs=None):
     rel_path = Path(rel)
-    # Tests pass rels like "artifacts/immersion/charter.md"; strip a leading
-    # "artifacts" so the file lands under _bewater/artifacts/.
+    # Strip a leading "artifacts" so the file lands under _bewater-output/.
     if rel_path.parts and rel_path.parts[0] == "artifacts":
         rel_path = Path(*rel_path.parts[1:])
-    p = paths.artifacts_dir(root) / rel_path
+    p = paths.output_dir(root) / rel_path
     p.parent.mkdir(parents=True, exist_ok=True)
     meta = schema.ArtifactMeta(
         artifact_id=rel_path.stem,
@@ -97,7 +96,6 @@ def test_g1_blocks_when_thin(tmp_project):
         c.name == "missing-artifact" and c.blocking and not c.passed
         for c in r.criteria
     )
-    # the four exits without go
     assert set(r.exit_allowed) == {"conditional-go", "recycle", "pivot", "kill"}
 
 
@@ -114,7 +112,6 @@ def test_g1_passes_when_complete(tmp_project):
         "pivot",
         "kill",
     }
-    # blade / non-overlap are non-blocking human-judgment notes
     notes = [(c.name, c.note) for c in r.criteria]
     assert any(n == "requires human judgment" for _, n in notes)
 
@@ -165,7 +162,6 @@ def test_too_many_hypotheses_blocks(tmp_project):
 
 
 def test_hypothesis_single_sided_blocks(tmp_project):
-    # two hyps but one is single-sided
     _mk(tmp_project, "artifacts/immersion/charter.md", "charter", "immersion", dual=_DS)
     _mk(
         tmp_project,
@@ -194,7 +190,6 @@ def test_hypothesis_single_sided_blocks(tmp_project):
 
 def test_insights_without_signoff_blocks(tmp_project):
     _complete(tmp_project, subject="sol-01")
-    # overwrite insights with no qualifying signoff
     _mk(tmp_project, "artifacts/discover/insights.md", "insights", "discover", signoffs=[])
     r = gate_scan.scan(tmp_project, "G1", subject="sol-01")
     ins = next(c for c in r.criteria if c.name == "insights")
@@ -202,7 +197,6 @@ def test_insights_without_signoff_blocks(tmp_project):
 
 
 def test_insights_mixed_signoff_blocks(tmp_project):
-    # One insights artifact signed, one not -> blocks (brief: "each").
     _complete(tmp_project, subject="sol-01")
     _mk(tmp_project, "artifacts/discover/insights2.md", "insights", "discover", signoffs=[])
     r = gate_scan.scan(tmp_project, "G1", subject="sol-01")
@@ -223,7 +217,7 @@ def test_strategy_not_locked_blocks(tmp_project):
 
 def test_strategy_missing_blocks(tmp_project):
     _complete(tmp_project, subject="sol-01")
-    (paths.artifacts_dir(tmp_project) / "define" / "strategy.md").unlink(missing_ok=False)
+    (paths.output_dir(tmp_project) / "define" / "strategy.md").unlink(missing_ok=False)
     r = gate_scan.scan(tmp_project, "G1", subject="sol-01")
     strat = next(c for c in r.criteria if c.name == "strategy")
     assert not strat.passed and strat.blocking
@@ -255,7 +249,6 @@ def test_no_achilles_on_subject_blocks(tmp_project):
 
 
 def test_achilles_scoped_to_subject_branch(tmp_project):
-    # achilles exists on sol-02, scan subject sol-01 -> blocked
     _mk(tmp_project, "artifacts/immersion/charter.md", "charter", "immersion", dual=_DS)
     _mk(tmp_project, "artifacts/discover/insights.md", "insights", "discover",
         signoffs=[{"who": "u", "role": "lead", "what": "F/P/E/T", "at": "d"}])
@@ -287,7 +280,6 @@ def test_excludes_killed_assumptions(tmp_project):
         evidence_ref="", derived_from=[], affects=[], branch="sol-01"))
     ledger_ops.update(tmp_project, a.id, {"status": "killed"})
     r = gate_scan.scan(tmp_project, "G1", subject="sol-01")
-    # killed achilles does not satisfy the quadrant
     aq = next(c for c in r.criteria if c.name == "achilles-quadrant")
     assert not aq.passed and aq.blocking
     assert not any("killed" in (c.note or "") for c in r.criteria)
@@ -305,7 +297,7 @@ def test_excludes_merged_assumptions(tmp_project):
 
 
 def test_subject_none_uses_all_active(tmp_project):
-    _complete(tmp_project, subject=None)  # achilles on sol-01, no subject
+    _complete(tmp_project, subject=None)
     r = gate_scan.scan(tmp_project, "G1", subject=None)
     aq = next(c for c in r.criteria if c.name == "achilles-quadrant")
     assert aq.passed

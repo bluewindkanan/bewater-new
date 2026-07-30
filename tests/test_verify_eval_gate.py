@@ -5,7 +5,10 @@ import json
 import verify
 
 
-def test_check_eval_results_skips_when_no_results():
+def test_check_eval_results_skips_when_no_results(tmp_path, monkeypatch):
+    # Point at an empty tmp_path so the gate sees zero results → deferred skip.
+    # Must use monkeypatch because the real repo may contain pilot results.
+    monkeypatch.setattr(verify, "EVALS", tmp_path / "evals")
     ok, detail = verify.check_eval_results()
     # no results stored yet anywhere -> skip, not fail
     assert ok is True

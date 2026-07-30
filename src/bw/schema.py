@@ -241,26 +241,38 @@ class Assumption:
 
 @dataclass
 class Ledger:
-    project: str
-    last_baselined_at: str | None = None
-    baseline: Any = None
-    assumptions: list[Assumption] = field(default_factory=list)
+    schema_version: int = 1
+    revision: int = 1
+    next_id: int = 1
+    updated_at: str | None = None
+    updated_by: str = "bw-init"
+    assumptions: dict[str, Assumption] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "project": self.project,
-            "last_baselined_at": self.last_baselined_at,
-            "baseline": self.baseline,
-            "assumptions": [a.to_dict() for a in self.assumptions],
+            "schema_version": self.schema_version,
+            "revision": self.revision,
+            "next_id": self.next_id,
+            "updated_at": self.updated_at,
+            "updated_by": self.updated_by,
+            "assumptions": {k: v.to_dict() for k, v in self.assumptions.items()},
         }
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> Ledger:
+        assumptions_raw = d.get("assumptions", {})
+        if isinstance(assumptions_raw, list):
+            # v4 compat: list -> dict keyed by id
+            assumptions = {a["id"]: Assumption.from_dict(a) for a in assumptions_raw}
+        else:
+            assumptions = {k: Assumption.from_dict(v) for k, v in assumptions_raw.items()}
         return cls(
-            project=d["project"],
-            last_baselined_at=d.get("last_baselined_at"),
-            baseline=d.get("baseline"),
-            assumptions=[Assumption.from_dict(a) for a in d.get("assumptions", [])],
+            schema_version=d.get("schema_version", 1),
+            revision=d.get("revision", 1),
+            next_id=d.get("next_id", 1),
+            updated_at=d.get("updated_at"),
+            updated_by=d.get("updated_by", "bw-init"),
+            assumptions=assumptions,
         )
 
 

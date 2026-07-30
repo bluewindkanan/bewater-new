@@ -9,4 +9,13 @@ required_assertions:
 forbidden_behaviors:
   - "writes an artifact"
   - "chooses a gate exit"
+checks:
+  - id: routes_to_capability
+    type: transcript_regex_present
+    params:
+      pattern: "bw-(solution-shape|experiment|investment-narrative|concept-gate|start)"
+  - id: no_side_effect_writes
+    type: fs_no_new_files
+    params:
+      paths: ["_bewater-output", "_bewater/records"]
 repetition_count: 3

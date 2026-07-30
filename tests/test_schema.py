@@ -19,7 +19,7 @@ def test_invariant_achilles_validated_needs_L4():
                           validation_status="validated", status="active", evidence_ref="kb/x",
                           derived_from=[], affects=[], branch="sol-01")
     with pytest.raises(ValidationError):
-        a.check_invariants()   # achilles validated but L3 < L4
+        a.check_invariants()
 
 
 def test_assumption_round_trip():
@@ -61,7 +61,7 @@ def test_achilles_validated_at_L4_ok():
                           impact="high", uncertainty="high", evidence_level="L4",
                           validation_status="validated", status="active", evidence_ref="kb/x",
                           derived_from=[], affects=[], branch="sol-01")
-    a.check_invariants()  # no raise
+    a.check_invariants()
 
 
 def test_achilles_validated_at_L5_ok():
@@ -69,7 +69,7 @@ def test_achilles_validated_at_L5_ok():
                           impact="high", uncertainty="high", evidence_level="L5",
                           validation_status="validated", status="active", evidence_ref="kb/x",
                           derived_from=[], affects=[], branch="sol-01")
-    a.check_invariants()  # no raise
+    a.check_invariants()
 
 
 def test_not_achilles_validated_low_evidence_ok():
@@ -77,7 +77,7 @@ def test_not_achilles_validated_low_evidence_ok():
                           impact="low", uncertainty="high", evidence_level="L1",
                           validation_status="validated", status="active", evidence_ref="kb/x",
                           derived_from=[], affects=[], branch="sol-01")
-    a.check_invariants()  # not achilles -> L4 rule does not apply
+    a.check_invariants()
 
 
 def test_is_achilles_heel_false_when_low_impact():
@@ -121,18 +121,34 @@ def test_ledger_round_trip():
                            impact="high", uncertainty="high", evidence_level="L4",
                            validation_status="validated", status="active", evidence_ref="kb/y",
                            derived_from=["A-1"], affects=[], branch="sol-02")
-    led = schema.Ledger(project="demo", last_baselined_at=None, baseline=None,
-                        assumptions=[a1, a2])
+    led = schema.Ledger(schema_version=1, revision=3, next_id=5,
+                        updated_at="2026-01-01", updated_by="test",
+                        assumptions={"A-1": a1, "A-2": a2})
     led2 = schema.Ledger.from_dict(led.to_dict())
     assert led2 == led
-    assert led2.assumptions[1].is_achilles_heel is True
+    assert led2.assumptions["A-2"].is_achilles_heel is True
 
 
 def test_ledger_defaults():
-    led = schema.Ledger(project="demo")
-    assert led.last_baselined_at is None
-    assert led.baseline is None
-    assert led.assumptions == []
+    led = schema.Ledger()
+    assert led.schema_version == 1
+    assert led.revision == 1
+    assert led.next_id == 1
+    assert led.updated_at is None
+    assert led.updated_by == "bw-init"
+    assert led.assumptions == {}
+
+
+def test_ledger_from_dict_v4_list_compat():
+    """v4 list-based assumptions are converted to dict on load."""
+    a1_dict = {"id": "A-1", "statement": "x", "layer": "root", "category": "consumer",
+               "impact": "low", "uncertainty": "medium", "evidence_level": "L1",
+               "validation_status": "open", "status": "active", "evidence_ref": "",
+               "derived_from": [], "affects": [], "branch": "sol-01"}
+    led = schema.Ledger.from_dict({"assumptions": [a1_dict]})
+    assert isinstance(led.assumptions, dict)
+    assert "A-1" in led.assumptions
+    assert led.assumptions["A-1"].id == "A-1"
 
 
 # --- ArtifactMeta ---

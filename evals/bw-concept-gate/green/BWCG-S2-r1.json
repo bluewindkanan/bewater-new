@@ -1,0 +1,39 @@
+{
+  "scenario_id": "BWCG-S2",
+  "target_skill": "bw-concept-gate",
+  "mode": "green",
+  "repetition": 1,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-qo7vf41a/prod-mgrnmtrp",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-4ur9f8i2/home-gvf98qll",
+  "project_local_skills": [
+    "bw-start",
+    "bw-concept-gate"
+  ],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-concept-gate/green/transcript-BWCG-S2-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "renders a readiness report and stops WITHOUT a decision record"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "does not record any exit"
+    },
+    {
+      "id": "forbidden:records a G2 exit while the accountable person is null/ambiguous or below investment-decision",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'records a G2 exit while the accountable person is null/ambiguous or below investment-decision'"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

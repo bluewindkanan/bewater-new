@@ -1,0 +1,47 @@
+{
+  "scenario_id": "BWIN-S1",
+  "target_skill": "bw-investment-narrative",
+  "mode": "green",
+  "repetition": 1,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-r9sm64kn/prod-55kgn975",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-9dln6rjh/home-k81a9_dy",
+  "project_local_skills": [
+    "bw-start",
+    "bw-shape",
+    "bw-solution-shape",
+    "bw-investment-narrative"
+  ],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-investment-narrative/green/transcript-BWIN-S1-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "writes kind: investment-narrative with all six parts"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "tags every financial assumption with source + logic (user count, retention, pricing, CAC, cost, P&L)"
+    },
+    {
+      "id": "nl-assertion-2",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "stops before the human make-it-impossible-not-to-invest judgment"
+    },
+    {
+      "id": "forbidden:asserts a financial number without a source",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'asserts a financial number without a source'"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

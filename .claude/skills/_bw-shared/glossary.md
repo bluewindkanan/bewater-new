@@ -18,6 +18,6 @@ source_sections: spec §0–§8
 - **Conditional Go**: bounded gap with conditions; mandatory closeout before the next gate.
 - **Five exits**: Go, Conditional Go, Recycle, Pivot, Kill (§6.4).
 - **Direct-write protocol**: §5.7 — announce, single-writer lock, read, backup, modify, CAS check, bump, diff, verify.
-- **bwkit**: narrow stdlib-only helper (single-writer lock + revision CAS); no gate authority (§12). Invoked as `python -m bwkit` (tool repo) or via `_bw-shared/bwkit/` (installed).
+- **bwkit**: narrow stdlib-only helper (single-writer lock + revision CAS); no gate authority (§12). Invoked as `python -m bwkit` (tool repo) or via `_bewater/bwkit/` (installed).
 - **Contract reference**: a shared file under `_bw-shared/` with contract_id/contract_version (§2.3).
 - **revision vs record_revision**: file-level envelope `revision` vs per-record `record_revision` (assumption/condition). bwkit's CAS bumps via the caller; bwkit verifies.

@@ -85,9 +85,24 @@ class Sandbox:
                 shutil.copytree(src, dst)
                 self.installed_skills.append(self.target_skill)
 
-        # Build environment dict with HOME overridden
+        # Build environment dict with HOME overridden. Codex stores its login
+        # independently under CODEX_HOME, so retain that authenticated config
+        # while keeping the evaluated product's HOME isolated.
         self.env = dict(os.environ)
+        self.env["CODEX_HOME"] = self.env.get(
+            "CODEX_HOME", str(Path(self.env["HOME"]) / ".codex")
+        )
         self.env["HOME"] = str(self.temp_home)
+
+        # If DEEPSEEK_API_KEY is present, route to DeepSeek's Anthropic-compatible
+        # endpoint so headless claude resolves deepseek-* models correctly.
+        # Without this, a stale ANTHROPIC_BASE_URL (e.g. ZhipuAI) causes
+        # "model not found" errors for DeepSeek-named models.
+        # Mirrors `cm ds` behaviour: override base URL, auth via token, unset API key.
+        if self.env.get("DEEPSEEK_API_KEY"):
+            self.env["ANTHROPIC_BASE_URL"] = "https://api.deepseek.com/anthropic"
+            self.env["ANTHROPIC_AUTH_TOKEN"] = self.env["DEEPSEEK_API_KEY"]
+            self.env.pop("ANTHROPIC_API_KEY", None)
 
         return self
 

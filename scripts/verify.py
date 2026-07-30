@@ -60,24 +60,29 @@ def check_local_discovery(skills_root=None):
     return (not missing, missing)
 
 
-def _installer_ok(repo, dest):
-    """Run install.sh --copy into dest; assert managed markers + deployed bwkit runs."""
+def _installer_ok(repo, project_root):
+    """Install into project_root; assert managed skills and bwkit run in place."""
     install = Path(repo) / "install.sh"
     if not install.exists():
         return (False, [f"missing {install}"])
+    project_root = Path(project_root)
+    skills_dest = project_root / ".claude" / "skills"
+    bwkit = project_root / "_bewater" / "bwkit"
     r = subprocess.run(
-        ["bash", str(install), "--dest", str(dest), "--src", str(repo), "--copy"],
+        ["bash", str(install), "--project-root", str(project_root), "--src", str(repo), "--copy"],
         capture_output=True, text=True)
     if r.returncode != 0:
         return (False, [f"installer failed: {r.stderr.strip()}"])
     for name in list_skills(Path(repo) / ".claude" / "skills"):
-        if not (dest / name / ".bewater-managed").exists():
+        if not (skills_dest / name / ".bewater-managed").exists():
             return (False, [f"{name} missing managed marker"])
-    if not (dest / "_bw-shared" / ".bewater-managed").exists():
+    if not (skills_dest / "_bw-shared" / ".bewater-managed").exists():
         return (False, ["_bw-shared missing managed marker"])
-    if not (dest / "_bw-shared" / "bwkit" / "__init__.py").exists():
+    if not (bwkit / ".bewater-managed").exists():
+        return (False, ["bwkit missing managed marker"])
+    if not (bwkit / "__init__.py").exists():
         return (False, ["deployed bwkit missing __init__.py"])
-    env = {**os.environ, "PYTHONPATH": str(dest / "_bw-shared")}
+    env = {**os.environ, "PYTHONPATH": str(project_root / "_bewater")}
     rr = subprocess.run([sys.executable, "-m", "bwkit", "--help"],
                         capture_output=True, text=True, env=env)
     if rr.returncode != 0:
@@ -103,12 +108,12 @@ def check_integrity():
     return (True, [])
 
 
-def check_installer(repo=None, dest=None):
-    """Run install.sh --copy into an isolated dest; assert managed markers + bwkit runs.
-    Self-created temp dirs are cleaned up; a caller-supplied dest is left intact."""
+def check_installer(repo=None, project_root=None):
+    """Run install.sh --copy into an isolated project root; assert deployed state.
+    Self-created temporary roots are cleaned up; a caller-supplied root is left intact."""
     repo = _REPO if repo is None else Path(repo)
-    if dest is not None:
-        return _installer_ok(repo, Path(dest))
+    if project_root is not None:
+        return _installer_ok(repo, Path(project_root))
     with tempfile.TemporaryDirectory(prefix="bwverify-") as d:
         return _installer_ok(repo, Path(d))
 

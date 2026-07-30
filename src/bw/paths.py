@@ -4,6 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 
 STATE_DIR = "_bewater"
+OUTPUT_DIR = "_bewater-output"
 
 
 def find_project_root(start: Path) -> Path:
@@ -16,12 +17,12 @@ def find_project_root(start: Path) -> Path:
 
 
 def ledger_path(root: Path) -> Path:
-    return root / STATE_DIR / "state" / "assumption-ledger.yaml"
+    return root / STATE_DIR / "ledger.yaml"
 
 
-def artifacts_dir(root: Path) -> Path:
-    return root / STATE_DIR / "artifacts"
+def records_dir(root: Path) -> Path:
+    return root / STATE_DIR / "records"
 
 
-def gates_dir(root: Path) -> Path:
-    return root / STATE_DIR / "state" / "gates"
+def output_dir(root: Path) -> Path:
+    return root / OUTPUT_DIR

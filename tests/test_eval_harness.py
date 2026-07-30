@@ -1,11 +1,22 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 import pytest
 
 REPO = Path(__file__).resolve().parents[1]
+
+
+def test_cli_all_mode_does_not_require_skill(monkeypatch):
+    from evals._harness import __main__ as cli
+
+    monkeypatch.setattr(sys, "argv", ["evals", "run", "--all", "--mode", "red"])
+    args = cli._parse_args()
+
+    assert args.all_skills is True
+    assert args.skill is None
 
 
 def test_manifest_schema_has_required_fields():

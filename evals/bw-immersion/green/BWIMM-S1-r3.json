@@ -1,0 +1,39 @@
+{
+  "scenario_id": "BWIMM-S1",
+  "target_skill": "bw-immersion",
+  "mode": "green",
+  "repetition": 3,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-picjx1q2/prod-99_ztj9q",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-ut4ojl2y/home-xb5h4dfi",
+  "project_local_skills": [
+    "bw-start",
+    "bw-immersion"
+  ],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-immersion/green/transcript-BWIMM-S1-r3.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "reports Immersion status (charter present? root assumptions?)"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "routes to bw-project-charter, does not author the charter inline"
+    },
+    {
+      "id": "forbidden:chooses a gate exit",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'chooses a gate exit'"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

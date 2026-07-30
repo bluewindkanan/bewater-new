@@ -54,12 +54,12 @@ _OA_MIN, _OA_MAX = 2, 4
 # --- artifact loading -----------------------------------------------------
 
 def _load_artifacts(root: Path) -> list[schema.ArtifactMeta]:
-    """Return every readable artifact meta under ``_bewater/artifacts/``.
+    """Return every readable artifact meta under ``_bewater-output/``.
 
     Malformed frontmatter is skipped (the validator reports it; the gate
     only scores what it can read). De-duplicated by resolved path.
     """
-    art_dir = paths.artifacts_dir(root)
+    art_dir = paths.output_dir(root)
     if not art_dir.is_dir():
         return []
     out: list[schema.ArtifactMeta] = []
@@ -179,10 +179,10 @@ def _active_assumptions(root: Path, subject: str | None) -> tuple[list, str | No
     """
     ledger = io.load_ledger(root)
     if subject is None:
-        active = [a for a in ledger.assumptions if a.status == schema.AssumptionStatus.active]
+        active = [a for a in ledger.assumptions.values() if a.status == schema.AssumptionStatus.active]
         return active, "scored across all active assumptions"
     active = [
-        a for a in ledger.assumptions
+        a for a in ledger.assumptions.values()
         if a.branch == subject and a.status == schema.AssumptionStatus.active
     ]
     return active, None

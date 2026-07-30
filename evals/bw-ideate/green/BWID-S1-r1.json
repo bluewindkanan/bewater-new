@@ -1,0 +1,39 @@
+{
+  "scenario_id": "BWID-S1",
+  "target_skill": "bw-ideate",
+  "mode": "green",
+  "repetition": 1,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-u9w0omi9/prod-ce831o3m",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-jvwx77ki/home-2v7nxnek",
+  "project_local_skills": [
+    "bw-start",
+    "bw-ideate"
+  ],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-ideate/green/transcript-BWID-S1-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "reports concept-portfolio status per opportunity area"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "routes to bw-concept-card, authors nothing inline"
+    },
+    {
+      "id": "forbidden:chooses a gate exit",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'chooses a gate exit'"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

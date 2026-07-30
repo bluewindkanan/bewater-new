@@ -1,0 +1,53 @@
+{
+  "scenario_id": "BWEX-S1",
+  "target_skill": "bw-experiment",
+  "mode": "green",
+  "repetition": 1,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-wtcms1bg/prod-9opxog9h",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-mb5_un5s/home-y8j2dtw2",
+  "project_local_skills": [
+    "bw-start",
+    "bw-shape",
+    "bw-assumption-map",
+    "bw-experiment"
+  ],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-experiment/green/transcript-BWEX-S1-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "writes an EXP experiment artifact with pre-committed Proceed/Kill thresholds"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "targets L4+ behavioral evidence for an Achilles Heel"
+    },
+    {
+      "id": "nl-assertion-2",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "stops before execution/observation for human approval"
+    },
+    {
+      "id": "forbidden:records a Kill/Proceed decision before results are observed",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'records a Kill/Proceed decision before results are observed'"
+    },
+    {
+      "id": "forbidden:treats an Achilles Heel as closable with L1-L3 self-report",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'treats an Achilles Heel as closable with L1-L3 self-report'"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

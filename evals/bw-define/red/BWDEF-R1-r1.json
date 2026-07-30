@@ -1,0 +1,24 @@
+{
+  "scenario_id": "BWDEF-R1",
+  "target_skill": "bw-define",
+  "mode": "red",
+  "repetition": 1,
+  "fresh_context_id": "62add40b-3770-4fc0-8438-4599d13913f0",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-wxbe4mjm/prod-ywi6y_qh",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-bqkrj41y/home-27f7yi6s",
+  "project_local_skills": [],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-define/red/transcript-BWDEF-R1-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "with bw-define absent, no Define routing is produced (RED control)"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

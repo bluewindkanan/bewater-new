@@ -1,0 +1,24 @@
+{
+  "scenario_id": "BWSO-R1",
+  "target_skill": "bw-solution-shape",
+  "mode": "red",
+  "repetition": 1,
+  "fresh_context_id": "a86f0d8d-8dd0-4600-9e98-3d9081ac36d1",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-katj9_uk/prod-do9w2s69",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-k8ctjhlk/home-56a83sb_",
+  "project_local_skills": [],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-solution-shape/red/transcript-BWSO-R1-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "with bw-solution-shape absent, no solution artifact is written (RED control)"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

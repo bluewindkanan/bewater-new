@@ -11,7 +11,7 @@ class _FakeSandbox:
         self.env = {"HOME": str(self.temp_home), "ANTHROPIC_API_KEY": "k", "PATH": "/usr/bin"}
 
 
-def test_run_once_invokes_headless_claude_with_cwd_and_env(tmp_path, monkeypatch):
+def test_run_once_invokes_codex_with_isolation_and_parses_thread_id(tmp_path, monkeypatch):
     captured = {}
     def fake_popen(cmd, **kw):
         captured["cmd"] = cmd
@@ -19,17 +19,19 @@ def test_run_once_invokes_headless_claude_with_cwd_and_env(tmp_path, monkeypatch
         captured["env"] = kw.get("env")
         class R:
             returncode = 0
-            def communicate(self): return (b'{"result":"hi","session_id":"s1"}', b"")
+            def communicate(self): return (b'{"type":"thread.started","thread_id":"t1"}\n', b"")
         return R()
     monkeypatch.setattr(runner, "_popen", fake_popen)
     sb = _FakeSandbox(tmp_path)
-    out = runner.run_once("Status please", sb, model="claude-test")
-    assert "claude" in captured["cmd"][0] or captured["cmd"][0].endswith("claude")
-    assert "-p" in captured["cmd"]
+    out = runner.run_once("Status please", sb, model="gpt-test")
+    assert "codex" in captured["cmd"][0] or captured["cmd"][0].endswith("codex")
+    assert captured["cmd"][1:5] == ["--ask-for-approval", "never", "exec", "--json"]
+    assert "--ephemeral" in captured["cmd"]
+    assert "--model" in captured["cmd"] and "gpt-test" in captured["cmd"]
     assert captured["cwd"] == sb.product_cwd
     assert captured["env"]["HOME"] == sb.env["HOME"]
     assert out["returncode"] == 0
-    assert out["fresh_context_id"] == "s1"
+    assert out["fresh_context_id"] == "t1"
 
 
 def test_run_once_records_nonzero_exit(tmp_path, monkeypatch):

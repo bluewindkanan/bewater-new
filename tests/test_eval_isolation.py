@@ -51,3 +51,13 @@ def test_product_cwd_is_outside_repo(tmp_path):
                            home_root=tmp_path / "home", target_skill="bw-start",
                            dependency_skills=[], mode="green") as sb:
         assert REPO not in sb.product_cwd.parents
+
+
+def test_sandbox_preserves_codex_home_while_isolating_home(tmp_path, monkeypatch):
+    monkeypatch.setenv("HOME", "/auth-home")
+
+    with isolation.Sandbox(repo=REPO, product_root=tmp_path / "prod",
+                           home_root=tmp_path / "home", target_skill="bw-start",
+                           dependency_skills=[], mode="red") as sb:
+        assert sb.env["HOME"] == str(sb.temp_home)
+        assert sb.env["CODEX_HOME"] == "/auth-home/.codex"

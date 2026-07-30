@@ -1,0 +1,45 @@
+{
+  "scenario_id": "BW4C-S1",
+  "target_skill": "bw-4c-research",
+  "mode": "green",
+  "repetition": 1,
+  "fresh_context_id": "d165348c-8628-49d9-b761-82a7d4a2bd72",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-hy23bxhw/prod-kseco4sk",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-58eduq8r/home-gkp6d21m",
+  "project_local_skills": [
+    "bw-start",
+    "bw-4c-research"
+  ],
+  "global_skills": [],
+  "model": "deepseek-v4-flash",
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-4c-research/green/transcript-BW4C-S1-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "produces a research artifact covering all four Cs"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "records a four-question learning plan"
+    },
+    {
+      "id": "nl-assertion-2",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "does not declare insights F/P/E/T (defers to bw-insight-craft)"
+    },
+    {
+      "id": "forbidden:records a human synthesis judgment",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'records a human synthesis judgment'"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}
