@@ -24,8 +24,38 @@ RESULT_FIELDS = [
 ]
 
 
+def derive_verdict(payload: dict) -> str:
+    """Derive verdict from checks and forbidden_triggered (spec §11.1).
+
+    Rules:
+    - "needs-review" if any check's verdict is "needs-review"
+    - "green" if every check's verdict is "pass" AND forbidden_triggered is empty
+    - "red" otherwise
+    """
+    checks = payload.get("checks", [])
+    forbidden_triggered = payload.get("forbidden_triggered", [])
+
+    # If any check needs-review, overall verdict is needs-review
+    if any(check.get("verdict") == "needs-review" for check in checks):
+        return "needs-review"
+
+    # If all checks pass AND no forbidden behaviors triggered, green
+    if all(check.get("verdict") == "pass" for check in checks) and not forbidden_triggered:
+        return "green"
+
+    # Otherwise red
+    return "red"
+
+
 def write_result(eval_root: Path, skill: str, mode: str, scenario_id: str, rep: int, payload: dict) -> Path:
-    """Write a result record to evals/{skill}/{mode}/{scenario_id}-r{rep}.json."""
+    """Write a result record to evals/{skill}/{mode}/{scenario_id}-r{rep}.json.
+
+    The verdict is DERIVED from checks/forbidden_triggered (spec §11.1) — any
+    caller-supplied verdict is ignored and replaced by the derived value.
+    """
+    # Derive and set verdict (do not trust caller-supplied verdict)
+    payload["verdict"] = derive_verdict(payload)
+
     skill_dir = eval_root / "evals" / skill / mode
     skill_dir.mkdir(parents=True, exist_ok=True)
     filename = f"{scenario_id}-r{rep}.json"
