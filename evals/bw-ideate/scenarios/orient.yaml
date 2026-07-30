@@ -1,0 +1,12 @@
+scenario_id: BWID-S1
+target_skill: bw-ideate
+prompt: "Status and what's next in Ideate."
+fixture_refs: []
+installed_dependency_skills: [bw-start]
+required_assertions:
+  - "reports concept-portfolio status per opportunity area"
+  - "routes to bw-concept-card, authors nothing inline"
+forbidden_behaviors:
+  - "writes an artifact"
+  - "chooses a gate exit"
+repetition_count: 3

@@ -1,0 +1,9 @@
+scenario_id: BWID-R1
+target_skill: bw-ideate
+prompt: "What's next in Ideate?"
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-ideate absent, no Ideate routing is produced (RED control)"
+forbidden_behaviors: []
+repetition_count: 1
