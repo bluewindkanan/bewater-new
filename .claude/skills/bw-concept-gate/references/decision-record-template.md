@@ -15,7 +15,7 @@ branch_id: BR-001
 subject_refs: []          # e.g. [artifact:ART-007@2, artifact:ART-008@1] (1-2 validated solutions + narrative)
 decision_maker: {person: null, role: null, authority_level: investment-decision}
 trigger: {kind: event, due_at: null}
-input_revisions: {ledger: assumption:..., artifacts: []}
+input_revisions: {ledger: "assumption:...", artifacts: []}
 checklist_results: []     # per-criterion pass/fail/unknown + evidence (G2 criteria, §6.3)
 exit: null                # Go | Conditional Go | Recycle | Pivot | Kill — HUMAN chooses
 condition_ids: []
