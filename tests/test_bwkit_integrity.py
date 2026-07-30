@@ -116,3 +116,36 @@ def test_cli_integrity_returns_nonzero_for_duplicates(capsys):
 
     assert cli.main(["check", "integrity"], _stdin=io.StringIO(json.dumps(payload))) == 1
     assert json.loads(capsys.readouterr().out)["ok"] is False
+
+
+def test_non_dict_supersedes_returns_clean_error_without_raising():
+    # Caller passed the raw §5.4 type-reference string instead of a parsed dict.
+    result = integrity.check_artifacts([
+        record("ART-1-r1.md", "ART-1", 1),
+        record("ART-1-r2.md", "ART-1", 2, "artifact:ART-1@1"),
+    ])
+
+    assert result["ok"] is False
+    assert result["errors"]  # some clean error is reported
+    assert result["heads"] == {}
+
+
+def test_corrupted_chain_reports_no_head():
+    result = integrity.check_artifacts([
+        record("ART-1-r1.md", "ART-1", 1),
+        record("ART-1-r5.md", "ART-1", 5, ref("ART-1", 4)),
+    ])
+
+    assert result["ok"] is False
+    assert result["heads"] == {}
+
+
+def test_supersedes_missing_revision_emits_no_rNone():
+    result = integrity.check_artifacts([
+        record("ART-1-r1.md", "ART-1", 1),
+        record("ART-1-r2.md", "ART-1", 2, {"id": "ART-1"}),
+    ])
+
+    assert result["ok"] is False
+    assert result["errors"]
+    assert all("rNone" not in error for error in result["errors"])

@@ -27,9 +27,14 @@ def check_artifacts(records: list[dict]) -> dict:
         superseded: set[int] = set()
         for revision, record in revisions.items():
             target = record.get("supersedes")
-            if not target or target.get("id") != artifact_id:
+            if not isinstance(target, dict) or target.get("id") != artifact_id:
                 continue
             predecessor = target.get("revision")
+            if predecessor is None:
+                errors.append(
+                    f"malformed supersedes: {artifact_id} r{revision} missing revision"
+                )
+                continue
             if predecessor not in revisions:
                 errors.append(
                     f"missing predecessor: {artifact_id} r{revision} -> r{predecessor}"
@@ -47,6 +52,8 @@ def check_artifacts(records: list[dict]) -> dict:
         else:
             heads[artifact_id] = artifact_heads.pop()
 
+    if errors:
+        heads = {}
     return {"ok": not errors, "errors": errors, "heads": heads}
 
 
