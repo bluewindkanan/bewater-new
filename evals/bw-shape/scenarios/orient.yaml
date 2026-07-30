@@ -1,0 +1,12 @@
+scenario_id: BWSH-S1
+target_skill: bw-shape
+prompt: "Status and what's next in Shape."
+fixture_refs: []
+installed_dependency_skills: [bw-start, bw-ideate]
+required_assertions:
+  - "reports shaping/experiment/validation status per concept"
+  - "routes to bw-solution-shape / bw-experiment / bw-investment-narrative, authors nothing inline"
+forbidden_behaviors:
+  - "writes an artifact"
+  - "chooses a gate exit"
+repetition_count: 3
