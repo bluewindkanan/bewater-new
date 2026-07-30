@@ -3,20 +3,12 @@ from __future__ import annotations
 
 import os
 import shutil
-from contextlib import contextmanager
+import tempfile
 from pathlib import Path
 from typing import Literal
 
 
-@contextmanager
-def Sandbox(
-    repo: Path,
-    product_root: Path,
-    home_root: Path,
-    target_skill: str,
-    dependency_skills: list[str],
-    mode: Literal["green", "red"],
-):
+class Sandbox:
     """Context manager that creates an isolated evaluation environment.
 
     Creates a repo-external temp product cwd + temp HOME, installs the fixed
@@ -31,60 +23,77 @@ def Sandbox(
         dependency_skills: List of skills that must always be present
         mode: "green" = include target skill, "red" = exclude target skill
 
-    Yields:
-        Sandbox object with attributes:
-            product_cwd: Path to temp product working directory
-            temp_home: Path to temp HOME directory
-            env: dict with HOME overridden, ANTHROPIC_API_KEY passed through, etc.
-            installed_skills: list of skill names that were copied
+    Attributes:
+        product_cwd: Path to temp product working directory (mkdtemp subdir)
+        temp_home: Path to temp HOME directory (mkdtemp subdir)
+        env: dict with HOME overridden, ANTHROPIC_API_KEY passed through, etc.
+        installed_skills: list of skill names that were copied
     """
-    # Use the caller-supplied directories directly
-    product_cwd = product_root
-    temp_home = home_root
 
-    product_cwd.mkdir(parents=True, exist_ok=True)
-    temp_home.mkdir(parents=True, exist_ok=True)
+    def __init__(
+        self,
+        repo: Path,
+        product_root: Path,
+        home_root: Path,
+        target_skill: str,
+        dependency_skills: list[str],
+        mode: Literal["green", "red"],
+    ):
+        self.repo = repo
+        self.product_root = product_root
+        self.home_root = home_root
+        self.target_skill = target_skill
+        self.dependency_skills = dependency_skills
+        self.mode = mode
 
-    # Create .claude/skills directory in product cwd
-    skills_dir = product_cwd / ".claude" / "skills"
-    skills_dir.mkdir(parents=True, exist_ok=True)
+        # Will be set in __enter__
+        self.product_cwd: Path | None = None
+        self.temp_home: Path | None = None
+        self.env: dict[str, str] | None = None
+        self.installed_skills: list[str] | None = None
 
-    # Copy skills from repo
-    repo_skills = repo / ".claude" / "skills"
-    installed_skills = []
+    def __enter__(self) -> "Sandbox":
+        # Create parent dirs if they don't exist
+        self.product_root.mkdir(parents=True, exist_ok=True)
+        self.home_root.mkdir(parents=True, exist_ok=True)
 
-    # Always copy dependency skills
-    for skill in dependency_skills:
-        src = repo_skills / skill
-        if src.exists():
-            dst = skills_dir / skill
-            shutil.copytree(src, dst)
-            installed_skills.append(skill)
+        # Create fresh mkdtemp subdirs under caller-supplied roots
+        self.product_cwd = Path(tempfile.mkdtemp(prefix="prod-", dir=str(self.product_root)))
+        self.temp_home = Path(tempfile.mkdtemp(prefix="home-", dir=str(self.home_root)))
 
-    # For GREEN mode, also copy the target skill
-    if mode == "green":
-        src = repo_skills / target_skill
-        if src.exists():
-            dst = skills_dir / target_skill
-            shutil.copytree(src, dst)
-            installed_skills.append(target_skill)
+        # Create .claude/skills directory in product cwd
+        skills_dir = self.product_cwd / ".claude" / "skills"
+        skills_dir.mkdir(parents=True, exist_ok=True)
 
-    # Build environment dict with HOME overridden
-    env = dict(os.environ)
-    env["HOME"] = str(temp_home)
+        # Copy skills from repo
+        repo_skills = self.repo / ".claude" / "skills"
+        self.installed_skills = []
 
-    class SandboxResult:
-        def __init__(self):
-            self.product_cwd = product_cwd
-            self.temp_home = temp_home
-            self.env = env
-            self.installed_skills = installed_skills
+        # Always copy dependency skills
+        for skill in self.dependency_skills:
+            src = repo_skills / skill
+            if src.exists():
+                dst = skills_dir / skill
+                shutil.copytree(src, dst)
+                self.installed_skills.append(skill)
 
-    try:
-        yield SandboxResult()
-    finally:
-        # Cleanup: remove product_cwd and temp_home
-        if product_cwd.exists():
-            shutil.rmtree(product_cwd)
-        if temp_home.exists():
-            shutil.rmtree(temp_home)
+        # For GREEN mode, also copy the target skill
+        if self.mode == "green":
+            src = repo_skills / self.target_skill
+            if src.exists():
+                dst = skills_dir / self.target_skill
+                shutil.copytree(src, dst)
+                self.installed_skills.append(self.target_skill)
+
+        # Build environment dict with HOME overridden
+        self.env = dict(os.environ)
+        self.env["HOME"] = str(self.temp_home)
+
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        # Cleanup: remove mkdtemp subdirs (not the parent roots)
+        if self.product_cwd and self.product_cwd.exists():
+            shutil.rmtree(self.product_cwd)
+        if self.temp_home and self.temp_home.exists():
+            shutil.rmtree(self.temp_home)
