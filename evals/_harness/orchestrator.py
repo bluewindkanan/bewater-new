@@ -41,10 +41,6 @@ def run_scenario(
     results = []
 
     for rep in range(1, reps + 1):
-        # Create per-rep temp roots
-        rep_root = eval_root / f"rep-{rep}"
-        rep_root.mkdir(parents=True, exist_ok=True)
-
         with tempfile.TemporaryDirectory(prefix="sandbox-product-") as product_temp:
             with tempfile.TemporaryDirectory(prefix="sandbox-home-") as home_temp:
                 # Build sandbox
@@ -101,6 +97,7 @@ def run_skill(
     skill_name: str,
     mode: str = "green",
     model: str | None = None,
+    reps: int | None = None,
     run_once: Callable[[str, Any, str | None], dict] = runner.run_once,
 ) -> dict:
     """Run all scenarios for a given skill.
@@ -111,6 +108,7 @@ def run_skill(
         skill_name: Name of the skill to test
         mode: "green" or "red"
         model: Optional model name
+        reps: Optional repetition count (overrides manifest defaults)
         run_once: Injectable runner function
 
     Returns:
@@ -131,7 +129,7 @@ def run_skill(
     for manifest_file in sorted(scenarios_dir.glob("*.yaml")):
         manifest = loader.load_manifest(manifest_file)
         scenario_results = run_scenario(
-            eval_root, repo, manifest, mode, model=model, run_once=run_once
+            eval_root, repo, manifest, mode, reps=reps, model=model, run_once=run_once
         )
         all_results.extend(scenario_results)
 
@@ -149,6 +147,7 @@ def run_all(
     repo: Path,
     mode: str = "green",
     model: str | None = None,
+    reps: int | None = None,
     run_once: Callable[[str, Any, str | None], dict] = runner.run_once,
 ) -> dict:
     """Run all scenario manifests across all skills.
@@ -158,6 +157,7 @@ def run_all(
         repo: Source repository path
         mode: "green" or "red"
         model: Optional model name
+        reps: Optional repetition count (overrides manifest defaults)
         run_once: Injectable runner function
 
     Returns:
@@ -182,7 +182,7 @@ def run_all(
             continue
         skill_name = skills_dir.name
         skill_summary = run_skill(
-            eval_root, repo, skill_name, mode=mode, model=model, run_once=run_once
+            eval_root, repo, skill_name, mode=mode, reps=reps, model=model, run_once=run_once
         )
         if skill_summary["total_scenarios"] > 0:
             skill_count += 1

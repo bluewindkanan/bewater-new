@@ -60,11 +60,11 @@ def main():
     if args.command == "run":
         if args.all_skills:
             summary = orchestrator.run_all(
-                eval_root, repo, mode=args.mode, model=args.model
+                eval_root, repo, mode=args.mode, reps=args.rep, model=args.model
             )
         else:
             summary = orchestrator.run_skill(
-                eval_root, repo, args.skill, mode=args.mode, model=args.model
+                eval_root, repo, args.skill, mode=args.mode, reps=args.rep, model=args.model
             )
         _print_summary(summary)
 
