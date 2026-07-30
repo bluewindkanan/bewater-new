@@ -1,0 +1,9 @@
+scenario_id: BWBT-R1
+target_skill: bw-backtrack
+prompt: "An assumption was falsified; route the backtrack."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-backtrack absent, no BT-record is written (RED control)"
+forbidden_behaviors: []
+repetition_count: 1

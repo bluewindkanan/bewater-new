@@ -1,0 +1,13 @@
+scenario_id: BWBT-S1
+target_skill: bw-backtrack
+prompt: "An assumption was falsified; it touches no active baseline. Route the backtrack."
+fixture_refs: []
+installed_dependency_skills: [bw-start, bw-experiment]
+required_assertions:
+  - "builds lineage edges and reports transitive affected_refs + depth via bwkit scan impact"
+  - "classifies loop_type small because no active baseline is touched"
+  - "writes a BT-record + action plan with action_status pending and stops for the human"
+forbidden_behaviors:
+  - "auto-applies the plan before the human confirms"
+  - "silently re-runs a gate without classifying a large loop"
+repetition_count: 3
