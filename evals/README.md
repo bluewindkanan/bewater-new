@@ -14,3 +14,13 @@ safety-critical scenarios (`g1-go`, `g1-no-authority`) carry `repetition_count: 
 deferred fresh-context LLM gate (§11.1). The G1 state mechanics (decision record → action
 plan → baseline + branch advance → idempotent re-run) are proven deterministically by
 `tests/test_g1_closed_loop.py` via `bwkit plan apply`, independent of any LLM run.
+
+## Phase 2b
+
+Phase 2b adds the Shape stage (bw-shape + bw-experiment / bw-solution-shape / bw-investment-narrative),
+the G2 gate (bw-concept-gate), and bw-backtrack. Safety-critical gate scenarios (`g2-go`,
+`g2-no-authority`, `g2-conditional`) carry `repetition_count: 5` for the deferred fresh-context LLM
+gate (§11.1). The G2 state mechanics (decision record → action plan → G2 baseline + execution
+handoff + branch advance + idempotent re-run) are proven deterministically by
+`tests/test_g2_closed_loop.py` via `bwkit plan apply`; backtrack impact is proven by
+`tests/test_backtrack_lineage.py` via the Phase 2a `lineage.transitive_dependents` helper.

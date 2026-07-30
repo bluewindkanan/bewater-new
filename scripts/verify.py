@@ -18,6 +18,7 @@ from skill_helpers import (  # noqa: E402
     validate_skill,
     validate_skill_evals,
 )
+from bwkit import integrity  # noqa: E402
 
 SKILLS = _REPO / ".claude" / "skills"
 EVALS = _REPO / "evals"
@@ -82,6 +83,24 @@ def _installer_ok(repo, dest):
     return (True, [])
 
 
+def check_integrity():
+    """Authoring-time smoke that the Phase 2a integrity helper accepts a clean chain and
+    rejects a corrupt one (spec §5.4, §11.3, §12.3)."""
+    clean = [
+        {"id": "ART-1", "revision": 1, "supersedes": None},
+        {"id": "ART-1", "revision": 2, "supersedes": {"id": "ART-1", "revision": 1}},
+    ]
+    corrupt = [
+        {"id": "ART-1", "revision": 1, "supersedes": None},
+        {"id": "ART-1", "revision": 1, "supersedes": None},  # duplicate revision
+    ]
+    if not integrity.check_artifacts(clean)["ok"]:
+        return (False, ["clean chain rejected"])
+    if integrity.check_artifacts(corrupt)["ok"]:
+        return (False, ["corrupt chain accepted"])
+    return (True, [])
+
+
 def check_installer(repo=None, dest=None):
     """Run install.sh --copy into an isolated dest; assert managed markers + bwkit runs.
     Self-created temp dirs are cleaned up; a caller-supplied dest is left intact."""
@@ -104,6 +123,7 @@ def main() -> None:
     for label, result in [
         ("placeholders", check_placeholders()),
         ("local-discovery", check_local_discovery()),
+        ("integrity", check_integrity()),
         ("installer", check_installer()),
     ]:
         ok, details = result
