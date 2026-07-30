@@ -41,6 +41,10 @@ def build_parser() -> argparse.ArgumentParser:
     check = sub.add_parser("check", help="schema-agnostic integrity checks")
     check_sub = check.add_subparsers(dest="check_cmd", required=True)
     check_sub.add_parser("integrity")
+
+    sc = sub.add_parser("scan", help="lineage / impact scan")
+    scsub = sc.add_subparsers(dest="scan_cmd", required=True)
+    scsub.add_parser("impact")
     return p
 
 
@@ -96,4 +100,12 @@ def main(argv=None, *, _stdin=None) -> int:
         result = integrity.check_artifacts(payload.get("records", []))
         print(json.dumps(result))
         return 0 if result["ok"] else 1
+
+    if args.cmd == "scan":
+        from . import lineage
+        if args.scan_cmd == "impact":
+            payload = json.loads(stdin.read())
+            result = lineage.transitive_dependents(payload.get("edges", []), payload.get("roots", []))
+            print(json.dumps(result))
+            return 0
     return 2
