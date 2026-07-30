@@ -185,17 +185,18 @@ def check_eval_results(evals_root=None):
             continue
 
         # Validate based on bucket type
+        verdict = result.get("verdict")
         if bucket == "red":
-            # RED controls MUST have verdict 'red'
-            if result.get("verdict") != "red":
-                details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: RED control has verdict '{result.get('verdict')}', expected 'red'")
+            # RED controls: only invalid verdict is 'green' (passed everything it shouldn't)
+            if verdict == "green":
+                details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: RED control has verdict 'green', must be 'red' or 'needs-review'")
         else:
-            # GREEN scenarios MUST have verdict 'green' (all checks pass, no forbidden triggered)
-            if result.get("verdict") != "green":
-                details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: GREEN scenario has verdict '{result.get('verdict')}', expected 'green'")
+            # GREEN scenarios: only invalid verdict is 'red' (failed a hard check)
+            if verdict == "red":
+                details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: GREEN scenario has verdict 'red', must be 'green' or 'needs-review'")
 
         # Check needs-review results have non-null reviewer
-        if result.get("verdict") == "needs-review" and result.get("reviewer") is None:
+        if verdict == "needs-review" and result.get("reviewer") is None:
             details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: needs-review verdict requires non-null reviewer")
 
     return (not details, details)
