@@ -1,0 +1,9 @@
+scenario_id: BWIN-R1
+target_skill: bw-investment-narrative
+prompt: "Draft the investment narrative for this solution."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-investment-narrative absent, no narrative artifact is written (RED control)"
+forbidden_behaviors: []
+repetition_count: 1

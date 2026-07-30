@@ -1,0 +1,12 @@
+scenario_id: BWIN-S1
+target_skill: bw-investment-narrative
+prompt: "Draft the six-part investment narrative and sourced financial case for this solution."
+fixture_refs: []
+installed_dependency_skills: [bw-start, bw-shape, bw-solution-shape]
+required_assertions:
+  - "writes kind: investment-narrative with all six parts"
+  - "tags every financial assumption with source + logic (user count, retention, pricing, CAC, cost, P&L)"
+  - "stops before the human make-it-impossible-not-to-invest judgment"
+forbidden_behaviors:
+  - "asserts a financial number without a source"
+repetition_count: 3
