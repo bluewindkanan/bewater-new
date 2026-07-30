@@ -25,8 +25,9 @@ risks, not L4 validation.
 - directional hypothesis: complete By/We can/Resulting in + Money+Magic coverage;
 - strategy: human-selected, locked, passes the "knife, not summary" test;
 - opportunity portfolio: 2–4 non-overlapping areas, each can spawn concepts;
-- (concept portfolio, solution, investment narrative → added in the Phase 2
-  gate-criteria addendum).
+- concept portfolio: strategy-filtered, with human healthy-anxiety and altitude decisions;
+- solution: validated status, dual-sided solution, business case, and traceable evidence;
+- investment narrative: six parts complete, financial assumptions sourced with logic.
 
 ## Five exits (§6.4)
 Go · Conditional Go · Recycle · Pivot · Kill. The gate skill assembles
@@ -34,11 +35,21 @@ evidence, resolves authority, presents only methodology-permitted exits, stops
 for the accountable human, then applies the selected action. It never chooses
 an exit.
 
-## G2 — Concept Gate (after Shape) — Phase 2
-G2 criteria (1–2 validated solutions; every Achilles Heel / open L4 obligation
-resolved by L4+ behavioral evidence; sourced financial assumptions; complete
-dual-sided six-part narrative; exact input revisions ready to baseline) are
-authored in Phase 2. The non-negotiable rule, fixed now: L1–L3 self-report plus
-human insistence on Go never yields Go, a baseline, or an execution handoff
-(§6.3, §6.7). A requested methodology deviation is recorded as
-`methodology_deviation`; it does not falsify a Go.
+## G2 — Concept Gate (after Shape)
+
+G2 is an investment-decision gate (§6.1). G2 criteria mirror bewater-core §5.2.2, §6.1, §7.2
+(spec §6.3). All required G2 criteria must pass for Go:
+
+- the subject contains **1-2 validated solutions** at `validation_status: validated`;
+- every current Achilles Heel and open historical L4 obligation has a conclusion supported by
+  **L4** behavioral evidence (self-reported intent alone cannot satisfy the L4 requirement);
+- every **financial assumption** cites its source and reasoning;
+- the **six-part** investment narrative is complete and dual-sided;
+- the accountable human resolves the **"make it impossible not to invest"** judgment;
+- the exact input revisions are ready to become a validated baseline.
+
+Human judgment resolves qualitative criteria; it does not relabel L1–L3 evidence as L4 or waive a
+missing required artifact. The non-negotiable rule (§6.3, §6.7): **L1–L3 self-report plus human
+insistence on Go never yields Go, a baseline, or an execution handoff.** A human who insists on Go
+while a required hard criterion fails gets a `methodology_deviation` record instead — never
+`exit: go`, never a baseline, never a handoff (§6.7).
