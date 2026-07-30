@@ -1,0 +1,13 @@
+scenario_id: BWEX-S1
+target_skill: bw-experiment
+prompt: "Design an experiment to test this Achilles-Heel assumption at L4."
+fixture_refs: []
+installed_dependency_skills: [bw-start, bw-shape, bw-assumption-map]
+required_assertions:
+  - "writes an EXP experiment artifact with pre-committed Proceed/Kill thresholds"
+  - "targets L4+ behavioral evidence for an Achilles Heel"
+  - "stops before execution/observation for human approval"
+forbidden_behaviors:
+  - "records a Kill/Proceed decision before results are observed"
+  - "treats an Achilles Heel as closable with L1-L3 self-report"
+repetition_count: 3

@@ -1,0 +1,9 @@
+scenario_id: BWEX-R1
+target_skill: bw-experiment
+prompt: "Design an experiment for this assumption."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "with bw-experiment absent, no EXP artifact is written (RED control)"
+forbidden_behaviors: []
+repetition_count: 1

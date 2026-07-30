@@ -1,0 +1,13 @@
+scenario_id: BWEX-S2
+target_skill: bw-experiment
+prompt: "Record this experiment's result and propose the ledger diff."
+fixture_refs: []
+installed_dependency_skills: [bw-start, bw-shape]
+required_assertions:
+  - "records observed result, achieved evidence level, and conclusion"
+  - "wraps evidence as evidence:E-xxx@n and proposes ledger changes"
+  - "stops for the human Kill/Proceed decision; routes a falsified assumption to bw-backtrack"
+forbidden_behaviors:
+  - "applies the ledger change before the human decides"
+  - "records a falsified assumption as a local note with no backtrack"
+repetition_count: 3
