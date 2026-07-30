@@ -3,6 +3,7 @@ Importable as `verify` (pytest pythonpath includes "scripts"). Each check return
 (ok, details); main() runs them all and exits non-zero on any failure."""
 from __future__ import annotations
 
+import json
 import os
 import re
 import subprocess
@@ -19,6 +20,7 @@ from skill_helpers import (  # noqa: E402
     validate_skill_evals,
 )
 from bwkit import integrity  # noqa: E402
+from evals._harness.loader import load_manifest  # noqa: E402
 
 SKILLS = _REPO / ".claude" / "skills"
 EVALS = _REPO / "evals"
@@ -111,6 +113,94 @@ def check_installer(repo=None, dest=None):
         return _installer_ok(repo, Path(d))
 
 
+def list_eval_scenarios(evals_root):
+    """Walk evals/*/scenarios/*.yaml + evals/*/red/*.yaml and yield scenario info.
+    Yields tuples of (skill, bucket, scenario_id, repetition_count) where bucket is
+    'scenarios' or 'red'."""
+    evals_root = Path(evals_root)
+    for skill_dir in sorted(evals_root.glob("bw-*")):
+        skill = skill_dir.name
+        for bucket in ["scenarios", "red"]:
+            bucket_dir = skill_dir / bucket
+            if not bucket_dir.exists():
+                continue
+            for manifest_path in sorted(bucket_dir.glob("*.yaml")):
+                try:
+                    manifest = load_manifest(manifest_path)
+                    yield (skill, bucket, manifest["scenario_id"], manifest["repetition_count"])
+                except Exception:
+                    # Skip manifests that can't be loaded; will be caught by other checks
+                    continue
+
+
+def check_eval_results(evals_root=None):
+    """For every scenario manifest under evals/*/scenarios/ + evals/*/red/, enforce:
+    (a) repetition_count result records with complete §11.1 fields exist;
+    (b) every RED control's aggregate verdict is 'red';
+    (c) every GREEN result verdict is 'green' (all checks pass, no forbidden triggered);
+    (d) any 'needs-review' result carries a non-null reviewer.
+    Before results exist, returns (True, ["eval results: deferred (§11.1)"]) skip notice.
+    """
+    evals_root = EVALS if evals_root is None else Path(evals_root)
+    details: list[str] = []
+
+    # Collect all expected result files
+    expected_results = []
+    for skill, bucket, scenario_id, repetition_count in list_eval_scenarios(evals_root):
+        for rep in range(1, repetition_count + 1):
+            result_file = evals_root / skill / bucket / f"{scenario_id}-r{rep}.json"
+            expected_results.append((skill, bucket, scenario_id, rep, result_file))
+
+    # If no result files exist yet, skip cleanly
+    if not expected_results:
+        return (True, ["eval results: deferred (§11.1)"])
+
+    # Check if any results exist at all
+    any_results_exist = any(f.exists() for _, _, _, _, f in expected_results)
+    if not any_results_exist:
+        return (True, ["eval results: deferred (§11.1)"])
+
+    # Validate each expected result
+    for skill, bucket, scenario_id, rep, result_file in expected_results:
+        if not result_file.exists():
+            details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: missing result file")
+            continue
+
+        try:
+            result = json.loads(result_file.read_text())
+        except json.JSONDecodeError:
+            details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: invalid JSON")
+            continue
+
+        # Check complete §11.1 fields
+        required_fields = [
+            "scenario_id", "target_skill", "mode", "repetition", "verdict",
+            "fresh_context_id", "cwd", "temp_home", "project_local_skills",
+            "global_skills", "model", "transcript_path", "checks",
+            "forbidden_triggered", "reviewer"
+        ]
+        missing_fields = [f for f in required_fields if f not in result]
+        if missing_fields:
+            details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: missing fields {missing_fields}")
+            continue
+
+        # Validate based on bucket type
+        if bucket == "red":
+            # RED controls MUST have verdict 'red'
+            if result.get("verdict") != "red":
+                details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: RED control has verdict '{result.get('verdict')}', expected 'red'")
+        else:
+            # GREEN scenarios MUST have verdict 'green' (all checks pass, no forbidden triggered)
+            if result.get("verdict") != "green":
+                details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: GREEN scenario has verdict '{result.get('verdict')}', expected 'green'")
+
+        # Check needs-review results have non-null reviewer
+        if result.get("verdict") == "needs-review" and result.get("reviewer") is None:
+            details.append(f"{skill}/{bucket}/{scenario_id}-r{rep}: needs-review verdict requires non-null reviewer")
+
+    return (not details, details)
+
+
 def main() -> None:
     failures: list[str] = []
     names = list_skills()
@@ -125,6 +215,7 @@ def main() -> None:
         ("local-discovery", check_local_discovery()),
         ("integrity", check_integrity()),
         ("installer", check_installer()),
+        ("eval-results", check_eval_results()),
     ]:
         ok, details = result
         if not ok:
