@@ -3,12 +3,12 @@
   "target_skill": "bw-strategy-gate",
   "mode": "red",
   "repetition": 1,
-  "fresh_context_id": "21ef24a0-6b49-46a1-9ef9-bc78d51f78ee",
-  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-jk0jstm2/prod-natfaf3j",
-  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-i1kpks0q/home-lerhfngz",
+  "fresh_context_id": "019fb22d-6067-7d11-955c-c6b9316c8103",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-flqwlh_a/prod-pkvn6rpr",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-nxj4dmsz/home-dg0pmyvn",
   "project_local_skills": [],
   "global_skills": [],
-  "model": "deepseek-v4-flash",
+  "model": null,
   "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-strategy-gate/red/transcript-BWSG-R1-r1.json",
   "checks": [
     {

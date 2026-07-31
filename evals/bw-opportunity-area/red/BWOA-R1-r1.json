@@ -3,12 +3,12 @@
   "target_skill": "bw-opportunity-area",
   "mode": "red",
   "repetition": 1,
-  "fresh_context_id": "aeaa8e09-2c6c-4264-b65e-d8725d0006d8",
-  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-eszqhdd_/prod-kkzeakke",
-  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-05kg_j7b/home-ob9zyztr",
+  "fresh_context_id": "019fb22b-8379-7190-abec-73b27e416c84",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-2uigjnpj/prod-rz6xjwbh",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-8taazchq/home-iam0hnyg",
   "project_local_skills": [],
   "global_skills": [],
-  "model": "deepseek-v4-flash",
+  "model": null,
   "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-opportunity-area/red/transcript-BWOA-R1-r1.json",
   "checks": [
     {

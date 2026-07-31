@@ -3,12 +3,12 @@
   "target_skill": "bw-backtrack",
   "mode": "red",
   "repetition": 1,
-  "fresh_context_id": "e4154b50-d1cb-4126-bbd6-95369ca5d202",
-  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-4v_5xml2/prod-jrez0e25",
-  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-btyj9a58/home-ily1v1uq",
+  "fresh_context_id": "019fb225-6aed-7783-9f20-7322452e0961",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-lls6kfuc/prod-o2955otb",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-revnd0bi/home-yysnypma",
   "project_local_skills": [],
   "global_skills": [],
-  "model": "deepseek-v4-flash",
+  "model": null,
   "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-backtrack/red/transcript-BWBT-R1-r1.json",
   "checks": [
     {

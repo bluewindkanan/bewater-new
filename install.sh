@@ -44,7 +44,7 @@ done
 PROJECT_ROOT="$(cd "$PROJECT_ROOT" && pwd)"  # resolve to absolute
 
 [[ -z "${SRC:-}" ]] && SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SKILLS_SRC="$SRC/.claude/skills"
+SKILLS_SRC="$SRC/src/skills"
 BWKIT_SRC="$SRC/src/bwkit"
 [[ -d "$SKILLS_SRC" ]] || die "no .claude/skills under --src: $SRC"
 [[ -d "$BWKIT_SRC" ]]  || die "no src/bwkit under --src: $SRC"

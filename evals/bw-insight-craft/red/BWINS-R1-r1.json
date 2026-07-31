@@ -3,12 +3,12 @@
   "target_skill": "bw-insight-craft",
   "mode": "red",
   "repetition": 1,
-  "fresh_context_id": "a5351a76-0678-444d-aea2-35b1e6bd81ac",
-  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-dozvslas/prod-ol_7cr9f",
-  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-0zgclmzn/home-mxmk9czj",
+  "fresh_context_id": "019fb22a-2ead-72e0-8932-69913161b2f1",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-c0rv36tr/prod-1sig488a",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-_bf2mck9/home-wnj7kwrm",
   "project_local_skills": [],
   "global_skills": [],
-  "model": "deepseek-v4-flash",
+  "model": null,
   "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-insight-craft/red/transcript-BWINS-R1-r1.json",
   "checks": [
     {

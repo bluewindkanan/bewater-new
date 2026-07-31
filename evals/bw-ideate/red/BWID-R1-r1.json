@@ -3,12 +3,12 @@
   "target_skill": "bw-ideate",
   "mode": "red",
   "repetition": 1,
-  "fresh_context_id": "482889a1-8215-4e63-b29a-4cb70e0a1e3c",
-  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-ltyjpo5w/prod-d1suz0_q",
-  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-2ll2oy7v/home-sxgoa_nj",
+  "fresh_context_id": "019fb229-7c05-7c63-b257-6ae95683558a",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-n052t4a7/prod-j9bl2shw",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-n3t0au13/home-ri22s0xw",
   "project_local_skills": [],
   "global_skills": [],
-  "model": "deepseek-v4-flash",
+  "model": null,
   "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-ideate/red/transcript-BWID-R1-r1.json",
   "checks": [
     {

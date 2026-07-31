@@ -3,12 +3,12 @@
   "target_skill": "bw-project-charter",
   "mode": "red",
   "repetition": 1,
-  "fresh_context_id": "04502666-0dc4-4c8c-adcd-44c184e793b2",
-  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-gco_7p44/prod-8ycwfutq",
-  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-psu576aj/home-ltij1odc",
+  "fresh_context_id": "019fb22b-854f-71e3-b18f-ab64a7cf150d",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-qvgg6t5u/prod-3ybawsy1",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-7qew5vmc/home-kl9zt386",
   "project_local_skills": [],
   "global_skills": [],
-  "model": "deepseek-v4-flash",
+  "model": null,
   "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-project-charter/red/transcript-BWCHA-R1-r1.json",
   "checks": [
     {

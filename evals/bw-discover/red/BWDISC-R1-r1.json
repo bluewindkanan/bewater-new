@@ -3,12 +3,12 @@
   "target_skill": "bw-discover",
   "mode": "red",
   "repetition": 1,
-  "fresh_context_id": "e65afab9-da56-4b87-8c3b-882de3b57780",
-  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-ztc9adka/prod-l6cdg1hu",
-  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-doezjvtp/home-0nnu_qmq",
+  "fresh_context_id": "019fb227-a3f1-7441-af1f-8be653fec56e",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-b5zyh7fs/prod-a5ay4pgp",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-4ostxi0l/home-g9x548gd",
   "project_local_skills": [],
   "global_skills": [],
-  "model": "deepseek-v4-flash",
+  "model": null,
   "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-discover/red/transcript-BWDISC-R1-r1.json",
   "checks": [
     {

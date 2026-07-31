@@ -3,12 +3,12 @@
   "target_skill": "bw-concept-card",
   "mode": "red",
   "repetition": 1,
-  "fresh_context_id": "9f1593c3-c056-443f-9b78-92d7149ccfd6",
-  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-sf124ke3/prod-q80qsx2f",
-  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-1tif_in4/home-2upg17bq",
+  "fresh_context_id": "019fb225-6ae3-7102-88e2-3cf8ef292bf4",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-wndtpsoe/prod-qyou1m3i",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-ot1bbmij/home-tgfuy6va",
   "project_local_skills": [],
   "global_skills": [],
-  "model": "deepseek-v4-flash",
+  "model": null,
   "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-concept-card/red/transcript-BWCC-R1-r1.json",
   "checks": [
     {

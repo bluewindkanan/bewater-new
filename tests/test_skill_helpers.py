@@ -65,7 +65,7 @@ def test_validate_skill_rejects_escaping_reference(tmp_path: Path):
 def test_validate_skill_allows_shared_reference_citation(tmp_path: Path):
     repo = tmp_path / "repo"
     sd = skill_dir(repo, "bw-x")
-    _write(sd / "SKILL.md", GOOD_FM + "cite ../_bw-shared/glossary.md\n")
+    _write(sd / "SKILL.md", GOOD_FM + "cite ../_bw-shared/ledger-schema.md\n")
     validate_skill(sd)  # no raise: sanctioned shared citation
 
 

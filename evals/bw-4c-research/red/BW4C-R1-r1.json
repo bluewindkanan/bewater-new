@@ -3,12 +3,12 @@
   "target_skill": "bw-4c-research",
   "mode": "red",
   "repetition": 1,
-  "fresh_context_id": "ccf28fc9-dee8-4e07-bddd-3a6edb5aa001",
-  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-7zpvoovk/prod-su86pk0z",
-  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-z9libxbm/home-m0fhz2tp",
+  "fresh_context_id": "019fb225-6ae3-7580-a74b-8a882ed48e99",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-88wgw5br/prod-ietblex1",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-tq2a2won/home-bvdeols8",
   "project_local_skills": [],
   "global_skills": [],
-  "model": "deepseek-v4-flash",
+  "model": null,
   "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-4c-research/red/transcript-BW4C-R1-r1.json",
   "checks": [
     {

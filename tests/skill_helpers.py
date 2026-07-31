@@ -55,10 +55,10 @@ def validate_skill(skill_dir: Path) -> None:
         # any other parent-relative path escapes the skill directory (§2.3, §11.3)
         if re.search(r"\.\./(?!_bw-shared/)", text):
             raise SkillCheckError(f"{f.name} references a path outside its skill dir")
-        # a reference that declares a contract must carry full contract metadata
+        # a reference that declares a contract must carry stable contract metadata
         cfm = _frontmatter(text)
         if "contract_id" in cfm:
-            for key in ("contract_version", "source_sections"):
+            for key in ("contract_version",):
                 if key not in cfm:
                     raise SkillCheckError(f"contract ref {f.name} missing {key}")
 

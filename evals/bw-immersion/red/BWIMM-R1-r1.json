@@ -3,12 +3,12 @@
   "target_skill": "bw-immersion",
   "mode": "red",
   "repetition": 1,
-  "fresh_context_id": "a3d92608-a3f9-49d2-9599-471c41b740cd",
-  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-lawws0_e/prod-lvwe_ynn",
-  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-a2tobds2/home-h67lmd9k",
+  "fresh_context_id": "019fb229-7fca-74e0-8a21-d40307222d8e",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-5gbh1ttb/prod-npru32_m",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-0mzy7k_n/home-mgum7w8q",
   "project_local_skills": [],
   "global_skills": [],
-  "model": "deepseek-v4-flash",
+  "model": null,
   "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-immersion/red/transcript-BWIMM-R1-r1.json",
   "checks": [
     {

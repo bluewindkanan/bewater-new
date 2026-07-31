@@ -22,5 +22,6 @@ dist/
 .coverage
 .coverage.*
 
-# claude local overrides (skills themselves ARE committed)
+# claude deployment target (source of truth is src/skills/)
+.claude/skills/
 .claude/settings.local.json

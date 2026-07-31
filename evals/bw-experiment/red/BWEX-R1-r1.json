@@ -3,12 +3,12 @@
   "target_skill": "bw-experiment",
   "mode": "red",
   "repetition": 1,
-  "fresh_context_id": "56ca7b01-4e9f-4184-8abc-e8474745b17d",
-  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-p1rj986h/prod-igoukbj_",
-  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-gl_twjfe/home-r7szxay2",
+  "fresh_context_id": "019fb229-6e3e-7c91-9860-ebb4c4f00c3f",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-wzwwjttm/prod-hlcbs932",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-yp4f4gd5/home-lhgsys6_",
   "project_local_skills": [],
   "global_skills": [],
-  "model": "deepseek-v4-flash",
+  "model": null,
   "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-experiment/red/transcript-BWEX-R1-r1.json",
   "checks": [
     {

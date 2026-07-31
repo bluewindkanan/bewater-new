@@ -3,12 +3,12 @@
   "target_skill": "bw-investment-narrative",
   "mode": "red",
   "repetition": 1,
-  "fresh_context_id": "27f3344c-5d72-424a-87d5-a22dc2dfa7be",
-  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-kekkaim0/prod-_j06xhsy",
-  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-k77676q1/home-v5h5qlgc",
+  "fresh_context_id": "019fb22b-5d95-7df3-8b84-110f6a5586a8",
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-rjrb6wiy/prod-6g314ik5",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-v6cwme2b/home-c_6hx17m",
   "project_local_skills": [],
   "global_skills": [],
-  "model": "deepseek-v4-flash",
+  "model": null,
   "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-investment-narrative/red/transcript-BWIN-R1-r1.json",
   "checks": [
     {
