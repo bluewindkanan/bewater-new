@@ -168,4 +168,3 @@ Implement test-first and maintain at least 80% coverage for changed executable b
 - Charter and Assessment structural tests and behavioral scenario manifests.
 - Installed/deployed skill copies only through the repository's existing installation workflow; no
   manual edits to generated project state.
-
