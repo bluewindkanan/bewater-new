@@ -1,0 +1,203 @@
+schema_version: 1
+revision: 1
+branch_id: BR-001
+next_evidence_id: 19
+evidence:
+  - id: E-001
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: vendor-pricing
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://developers.openai.com/api/docs/pricing"
+    related_assumptions: ["A-002"]
+    validity: active
+    correction_reason: null
+    summary: "OpenAI GPT-4o $2.50/$10 per 1M input/output；gpt-4o-mini $0.15/$0.60；web-search tool billed as 8K input block；multimodal native。"
+  - id: E-002
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: vendor-pricing
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://platform.claude.com/docs/en/about-claude/pricing"
+    related_assumptions: ["A-002"]
+    validity: active
+    correction_reason: null
+    summary: "Claude Sonnet intro $2/$10 through Aug 2026，then $3/$15；Haiku 4.5 $1/$5；caching 节省最多 90%。"
+  - id: E-003
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: vendor-pricing
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://ai.google.dev/gemini-api/docs/pricing"
+    related_assumptions: ["A-002"]
+    validity: active
+    correction_reason: null
+    summary: "Gemini 2.5 Flash-Lite $0.10/$0.40；2.5 Pro $1.25/$10；image $30/1M tokens；audio 32 tok/sec；video 5,792 tok/sec。"
+  - id: E-004
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: vendor-pricing
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://bigmodel.cn/pricing"
+    related_assumptions: ["A-002"]
+    validity: active
+    correction_reason: null
+    summary: "智谱 GLM-4 unified 5元/1M；GLM-4-Plus 由 50元 降 ~90% 至 ~5元；GLM-4-Flash 0.1元；GLM-4V-Plus ~4元；2025 部分回调将 GLM output 提至 ~64元/1M。"
+  - id: E-005
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: vendor-blog
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://openai.com/api-scale-tier/"
+    related_assumptions: ["A-002"]
+    validity: active
+    correction_reason: null
+    summary: "OpenAI Scale Tier 承诺 99.9% uptime SLA + 可预期延迟 + 优先算力（仅限付费 Scale Tier，非默认）。"
+  - id: E-006
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: analyst-report
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://counterpointresearch.com/en/insights/post-insight-research-briefs-blogs-global-smart-glasses-shipments-soared-110-yoy-in-h1-2025-with-meta-capturing-over-70-share"
+    related_assumptions: ["A-004"]
+    validity: active
+    correction_reason: null
+    summary: "Counterpoint：H1 2025 全球智能眼镜出货同比 +110%；AI 眼镜占比由 H1'24 46% → H2'24 66% → H1'25 78%；Meta 通过 EssilorLuxottica 合作占 >70% 份额。"
+  - id: E-007
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: analyst-report
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://www.idc.com/promo/arvr/"
+    related_assumptions: ["A-004"]
+    validity: active
+    correction_reason: null
+    summary: "IDC：H1 2025 全球智能眼镜 ~4.065M 台；Q1 2026 同比 +167% 至 2.25M；无显示品类预测 2026 13.6M → 2030 27.3M；2029 = 4× 2024 baseline。"
+  - id: E-008
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: vendor-blog
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://www.aboutamazon.com/news/devices/amazon-new-echo-devices-alexa-plus"
+    related_assumptions: ["A-004"]
+    validity: active
+    correction_reason: null
+    summary: "Amazon Alexa+ 升级 Echo 全系——智能音箱邻近品类向生成式 AI 转型的类比锚点；未披露单品调用量。"
+  - id: E-009
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: news
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://www.uploadvr.com/meta-muse-spark-ai-model-replaces-llama-on-smart-glasses/"
+    related_assumptions: ["A-001"]
+    validity: active
+    correction_reason: null
+    summary: "Ray-Ban Meta 当前用 Meta 自建 Llama 3.1 70B 经云 API；Meta 正过渡到自研 Muse Spark 模型用于 Ray-Ban & Oakley 眼镜。"
+  - id: E-010
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: vendor-blog
+    evidence_origin: secondary
+    evidence_form: document
+    source_url: "https://machinelearning.apple.com/research/introducing-apple-foundation-models"
+    related_assumptions: ["A-001"]
+    validity: active
+    correction_reason: null
+    summary: "Apple Vision Pro 使用 Apple 自建端侧 ~3B 模型 + 服务端模型经 Private Cloud Compute；全栈自建。"
+  - id: E-011
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: news
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://www.cls.cn/detail/1911739"
+    related_assumptions: ["A-001"]
+    validity: active
+    correction_reason: null
+    summary: "雷鸟 V3 深度独家绑定阿里通义，业内首个面向眼镜形态定制的 AI 大模型；响应 1.3 秒、准确率 98%。"
+  - id: E-012
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: news
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://cn.wicinternet.org/2025-01/08/content_37786295.htm"
+    related_assumptions: ["A-001"]
+    validity: active
+    correction_reason: null
+    summary: "Rokid Glasses 搭载通义千问；百度小度 AI 眼镜基于文心大模型；行业普遍选择与大模型厂商合作而非自建。"
+  - id: E-013
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: vendor-blog
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://www.fibocom.com/newscenter/info_itemid_9843.html"
+    related_assumptions: ["A-001"]
+    validity: active
+    correction_reason: null
+    summary: "XREAL Project Aura 联合 Google 发布，搭载 Android XR + Gemini AI；国内市场引入通义大模型；自研 X1 芯片。"
+  - id: E-014
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: vendor-blog
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://home.baidu.com/home/index/news_detail/id/18008"
+    related_assumptions: ["A-001"]
+    validity: active
+    correction_reason: null
+    summary: "小度 AI 眼镜基于百度文心大模型重构 DuerOS，端云协同推理；PRO 版 2299 元，2025 上半年上市。"
+  - id: E-015
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: news
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://www.youtube.com/watch?v=NhjTBcLEYtk"
+    related_assumptions: ["A-001"]
+    validity: active
+    correction_reason: null
+    summary: "INMO AIR3 融合中国移动九天大模型；INMO GO3 由智谱 GLM 全面赋能；双线并行策略。"
+  - id: E-016
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: vendor-pricing
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://ai.baidu.com/ai-doc/WENXINWORKSHOP/Hm88dcygk"
+    related_assumptions: ["A-003"]
+    validity: active
+    correction_reason: null
+    summary: "ERNIE-4.0/4.0 Turbo 自 2025-03-16 起降价，降幅 85%；4.0 Turbo 输入 0.03 元/千 tokens（30元/1M）、输出 0.06 元/千 tokens（60元/1M）。"
+  - id: E-017
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: vendor-pricing
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://ai.baidu.com/ai-doc/WENXINWORKSHOP/wlwg8f1i3"
+    related_assumptions: ["A-003"]
+    validity: active
+    correction_reason: null
+    summary: "ERNIE Speed/Lite 自 2024-05-21 起 Tokens 后付费全面免费（原 Speed 1元/1M、Lite 3元/6元）；OEM 原型/Pass-through 空间显著。"
+  - id: E-018
+    record_revision: 1
+    captured_at: "2026-08-05"
+    source_type: news
+    evidence_origin: secondary
+    evidence_form: market-data
+    source_url: "https://finance.sina.cn/stock/jdts/2025-08-23/detail-infmyqsz5786492.d.html"
+    related_assumptions: ["A-003"]
+    validity: active
+    correction_reason: null
+    summary: "2024 H2 - 2025 国内大模型价格曲线：大幅降价后超 7 成厂商回调涨价；百度一度以\"AI 价格屠夫\"主导降价周期，后续亦有回升。"

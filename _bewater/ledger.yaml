@@ -1,0 +1,82 @@
+schema_version: 1
+revision: 2
+next_id: 5
+updated_at: "2026-08-05T14:47:11Z"
+updated_by: bw-project-charter
+assumptions:
+  A-001:
+    record_revision: 1
+    statement: "AI 眼镜/可穿戴 OEM 普遍需要外采（而非自建）大模型推理——这是 B2B 卖 token 命题成立的前提。"
+    branch_id: BR-001
+    layer: root
+    category: consumer
+    side: magic
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+      - artifact:ART-001@1
+    supersedes_ref: null
+    risk_history: []
+    l4_obligation_status: open
+    history: []
+  A-002:
+    record_revision: 1
+    statement: "百度云的单位推理成本/基础设施优势，在 AI 眼镜/可穿戴场景下能构成 OEM 可感知、且影响采购决策的差异化（而非商品化同质供给）。"
+    branch_id: BR-001
+    layer: root
+    category: commercial
+    side: money
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+      - artifact:ART-001@1
+    supersedes_ref: null
+    risk_history: []
+    l4_obligation_status: open
+    history: []
+  A-003:
+    record_revision: 1
+    statement: "存在一个 OEM 可接受、且百度仍能形成可持续毛利的 token 报价区间——价格-成本结构对双方可持续。"
+    branch_id: BR-001
+    layer: root
+    category: commercial
+    side: money
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+      - artifact:ART-001@1
+    supersedes_ref: null
+    risk_history: []
+    l4_obligation_status: open
+    history: []
+  A-004:
+    record_revision: 1
+    statement: "AI 眼镜/可穿戴品类在 2026+ 的出货量与单品 AI 调用量，足以摊薄基础设施投入并支撑一个独立的 token 业务（赛道上限成立）。"
+    branch_id: BR-001
+    layer: root
+    category: commercial
+    side: money
+    impact: high
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+      - artifact:ART-001@1
+    supersedes_ref: null
+    risk_history: []
+    l4_obligation_status: open
+    history: []

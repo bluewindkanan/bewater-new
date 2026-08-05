@@ -2,8 +2,7 @@
 /resources/
 
 # per-project runtime (created by `bw init` in a product project)
-/_bewater/
-/_bewater-output/
+# NOTE: _bewater/ and _bewater-output/ are tracked in this repo on purpose.
 
 # misc / unrelated
 /Frog:f212\ General/
