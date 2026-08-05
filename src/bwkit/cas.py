@@ -123,6 +123,21 @@ def commit(path, new_text: str, expected_revision: int, *, keep_backups: int = 5
     return {"revision": expected_revision + 1, "hash": content_hash(new_text)}
 
 
+def _backup_sort_key(path: Path) -> tuple[int, int]:
+    """Numeric sort key ``(revision, timestamp)`` for backup filenames.
+
+    Backups are ``.backup-{stem}-{old_rev}-{time_ns}``; sorting the filename
+    lexicographically mis-orders revisions past 9 (``'10' < '5'``). Sort by the
+    trailing numeric revision and timestamp so the most recent backups survive
+    rotation.
+    """
+    try:
+        *_, rev, stamp = path.name.split("-")
+        return (int(rev) if rev != "x" else -1, int(stamp))
+    except (ValueError, TypeError):
+        return (-1, 0)
+
+
 def _rotate_backup(path: Path, keep_backups: int) -> None:
     parent = path.parent
     old_text = path.read_text()
@@ -130,6 +145,7 @@ def _rotate_backup(path: Path, keep_backups: int) -> None:
     old_rev = old_rev_m.group(1) if old_rev_m else "x"
     backup = parent / f"{BACKUP_PREFIX}{path.stem}-{old_rev}-{time.time_ns()}"
     backup.write_text(old_text)
-    backups = sorted(parent.glob(f"{BACKUP_PREFIX}{path.stem}-*"))
+    backups = sorted(parent.glob(f"{BACKUP_PREFIX}{path.stem}-*"),
+                     key=_backup_sort_key)
     for extra in backups[:-keep_backups]:
         extra.unlink()

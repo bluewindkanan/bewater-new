@@ -1,6 +1,6 @@
 ---
 contract_id: bw-ledger-schema
-contract_version: 1
+contract_version: 2
 ---
 
 # BeWater State Schema (authoritative)
@@ -28,8 +28,9 @@ Go replaces.
 
 ## Versioning models
 In-place bump (one file): assumptions (`record_revision`), conditions
-(`record_revision`), config/ledger/conditions envelopes (`revision`).
-Append-only (new file per revision): artifacts (`ART-001-r3-…`), evidence.
+(`record_revision`), evidence (`record_revision`), config/ledger/conditions/evidence
+envelopes (`revision`).
+Append-only (new file per revision): artifacts (`ART-001-r3-…`).
 Cross-file versioned, in-file immutable: baselines (`B-002` supersedes
 `B-001`), gate decisions (new attempt → new `D-…`).
 
@@ -77,9 +78,26 @@ readiness. Artifact files are append-only revisions in the flat output dir:
 requires exactly one head per revision chain; a duplicate, missing
 predecessor, cycle, or two heads is corruption.
 
-## evidence wrapper
-evidence_id, revision, supersedes_ref, effect_on_prior{supplements,supersedes,
-invalidates}, validity{active,invalidated}, correction_reason, source_type,
-captured_at, content_sha256, source_path_or_user_provided_url. Corrections
-create the next immutable revision and trigger dependent stale/invalidation.
-A user-provided URL is preserved exactly; skills never invent or repair URLs.
+## evidence.yaml (evidence record)
+Evidence is a structured state record — a one-line provenance entry plus a summary — in the same
+family as `ledger.yaml` and `conditions.yaml`, not an artifact. It accumulates in-place in one
+per-branch file `_bewater/evidence.yaml`; never one append-only file per record.
+
+Envelope fields: `schema_version`, `revision` (envelope in-place bump), `branch_id`,
+`next_evidence_id` (canonical source for E-NNN), `evidence[]`. Entry fields: `id` (`E-001`),
+`record_revision` (in-place bump under the stable E-NNN ID; the `@n` in `evidence:E-001@n` pins
+this), `captured_at`, `source_type`, `evidence_origin{primary,secondary}`,
+`evidence_form{behavior,self-report,expert-judgment,market-data,document}`, `source_url`,
+`related_assumptions[]`, `validity{active,invalidated}`, `correction_reason`, `summary`.
+
+`evidence_origin` and `evidence_form` are optional for pre-v2 records and required for new Discover
+research evidence. `related_assumptions` lists short IDs (`A-001`); it is a human reverse-lookup
+convenience, NOT a lineage edge — backtrack consumes only the forward edges `derived_from`/
+`evidence_refs`/branch/baseline, so this field never pins an assumption revision. A correction edits
+the entry in place: bump `record_revision`, set `validity: invalidated`, record `correction_reason`.
+A dependent that pins `evidence:E-001@1` is stale when the entry head `record_revision` exceeds the
+pinned `@n` — this in-place comparison replaces the append-only `supersedes_ref` chain. The file
+carries no `content_sha256`; evidence integrity is carried by `source_url` plus the summary. A skill
+creates `_bewater/evidence.yaml` on first write (initializing the envelope) rather than at project
+init, because evidence is not required for every project. A user-provided URL is preserved exactly in
+`source_url`; skills never invent or repair URLs.

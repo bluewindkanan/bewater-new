@@ -2,7 +2,7 @@ scenario_id: BWSS-S1
 target_skill: bw-strategy-statement
 prompt: "Draft a choice-cutting strategy statement from these hypotheses."
 fixture_refs: []
-installed_dependency_skills: [bw-start, bw-directional-hypothesis]
+installed_dependency_skills: [bw-directional-hypothesis]
 required_assertions:
   - "writes strategy artifacts that pass the knife-not-summary test"
   - "stops before the human selects/locks"

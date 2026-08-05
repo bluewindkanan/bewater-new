@@ -49,7 +49,8 @@ def test_enum_values():
     assert [m.value for m in schema.AssumptionStatus] == ["active", "killed", "merged"]
     assert {m.value for m in schema.ArtifactKind} == {"charter", "directional-hypothesis", "strategy",
                                                       "opportunity-area", "concept", "solution",
-                                                      "investment-narrative", "research", "insights"}
+                                                      "investment-narrative", "research", "insights",
+                                                      "initial-assessment"}
     assert [m.value for m in schema.ArtifactStatus] == ["draft", "final", "superseded"]
     assert [m.value for m in schema.GateExit] == ["go", "conditional-go", "recycle", "pivot", "kill"]
 

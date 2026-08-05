@@ -2,7 +2,7 @@ scenario_id: BWBT-S1
 target_skill: bw-backtrack
 prompt: "An assumption was falsified; it touches no active baseline. Route the backtrack."
 fixture_refs: []
-installed_dependency_skills: [bw-start, bw-experiment]
+installed_dependency_skills: [bw-experiment]
 required_assertions:
   - "builds lineage edges and reports transitive affected_refs + depth via bwkit scan impact"
   - "classifies loop_type small because no active baseline is touched"

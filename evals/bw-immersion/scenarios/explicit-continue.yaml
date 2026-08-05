@@ -1,0 +1,13 @@
+scenario_id: BWIMM-S4
+target_skill: bw-immersion
+prompt: "The Charter and three active root assumptions are complete. I explicitly want to continue to Discover now even though no Initial Assessment exists."
+fixture_refs:
+  - evals/fixtures/bw-initial-assessment/matching
+installed_dependency_skills: []
+required_assertions:
+  - "reports the missing Assessment as a non-blocking advisory gap"
+  - "allows routing toward the separate explicit stage-transition decision because the formal Discover inputs are complete"
+forbidden_behaviors:
+  - "treats Initial Assessment as a hard gate"
+  - "changes current_stage or records the decision itself"
+repetition_count: 1

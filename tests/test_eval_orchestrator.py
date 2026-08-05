@@ -1,7 +1,10 @@
 """TDD for the orchestrator. run_once is faked; no real LLM call."""
 from __future__ import annotations
+
 from pathlib import Path
+
 import yaml
+
 from evals._harness import orchestrator
 
 REPO = Path(__file__).resolve().parents[1]
@@ -127,15 +130,15 @@ def test_run_skill_installs_dependency_skills_in_sandbox(tmp_path):
     # installed into the sandbox (read from the manifest key, not the old
     # `dependency_skills` key). GREEN also installs the target skill.
     repo = tmp_path / "repo"
-    # Provide fake skill sources under repo/.claude/skills so isolation can copy them.
-    skills_src = repo / ".claude" / "skills"
-    for name in ("bw-shape", "bw-start", "bw-ideate"):
+    # Provide fake source skills so isolation can deploy them.
+    skills_src = repo / "src" / "skills"
+    for name in ("bw-shape", "bw-resume", "bw-ideate"):
         d = skills_src / name; d.mkdir(parents=True)
         (d / "SKILL.md").write_text(f"# {name}\n")
 
     m = {"scenario_id": "BWSH-DEP", "target_skill": "bw-shape", "prompt": "p",
          "required_assertions": [], "forbidden_behaviors": [],
-         "installed_dependency_skills": ["bw-start", "bw-ideate"],
+         "installed_dependency_skills": ["bw-resume", "bw-ideate"],
          "repetition_count": 1,
          "checks": []}
     (repo / "evals" / "bw-shape" / "scenarios").mkdir(parents=True)
@@ -152,7 +155,7 @@ def test_run_skill_installs_dependency_skills_in_sandbox(tmp_path):
     orchestrator.run_skill(eval_root, repo, "bw-shape", mode="green", run_once=capturing_runner)
 
     # Both declared deps + the target skill (GREEN) must be installed.
-    assert "bw-start" in installed["skills"]
+    assert "bw-resume" in installed["skills"]
     assert "bw-ideate" in installed["skills"]
     assert "bw-shape" in installed["skills"]
 
@@ -162,14 +165,14 @@ def test_run_skill_dependency_key_legacy_is_ignored(tmp_path):
     # skills (only `installed_dependency_skills` counts). No skills should be
     # copied beyond the target itself in GREEN.
     repo = tmp_path / "repo"
-    skills_src = repo / ".claude" / "skills"
-    for name in ("bw-shape", "bw-start"):
+    skills_src = repo / "src" / "skills"
+    for name in ("bw-shape", "bw-resume"):
         d = skills_src / name; d.mkdir(parents=True)
         (d / "SKILL.md").write_text(f"# {name}\n")
 
     m = {"scenario_id": "BWSH-LEG", "target_skill": "bw-shape", "prompt": "p",
          "required_assertions": [], "forbidden_behaviors": [],
-         "dependency_skills": ["bw-start"],  # legacy key — must be ignored
+         "dependency_skills": ["bw-resume"],  # legacy key — must be ignored
          "repetition_count": 1,
          "checks": []}
     (repo / "evals" / "bw-shape" / "scenarios").mkdir(parents=True)
@@ -185,8 +188,52 @@ def test_run_skill_dependency_key_legacy_is_ignored(tmp_path):
     eval_root = tmp_path / "results"
     orchestrator.run_skill(eval_root, repo, "bw-shape", mode="green", run_once=capturing_runner)
 
-    assert "bw-start" not in installed["skills"]
+    assert "bw-resume" not in installed["skills"]
     assert installed["skills"] == ["bw-shape"]
+
+
+def test_active_eval_manifests_do_not_reference_bw_start():
+    manifests = [
+        *REPO.glob("evals/*/scenarios/*.yaml"),
+        *REPO.glob("evals/*/red/*.yaml"),
+    ]
+
+    references = [path for path in manifests if "bw-start" in path.read_text()]
+
+    assert references == []
+
+
+def test_run_scenario_applies_declared_fixture_overlay(tmp_path):
+    repo = tmp_path / "repo"
+    skill = repo / "src" / "skills" / "bw-resume"
+    skill.mkdir(parents=True)
+    (skill / "SKILL.md").write_text("# resume\n")
+    fixture = repo / "evals" / "fixtures" / "pending-g1"
+    record = fixture / "_bewater" / "records" / "D-001-g1.yaml"
+    record.parent.mkdir(parents=True)
+    record.write_text("gate: G1\naction_plan:\n  action_status: pending\n")
+    manifest = {
+        "scenario_id": "BWRESUME-FIXTURE",
+        "target_skill": "bw-resume",
+        "prompt": "resume",
+        "fixture_refs": ["evals/fixtures/pending-g1"],
+        "required_assertions": [],
+        "forbidden_behaviors": [],
+        "repetition_count": 1,
+        "checks": [],
+    }
+
+    def assert_fixture(_prompt, sandbox, _model=None):
+        deployed = sandbox.product_cwd / "_bewater" / "records" / record.name
+        assert deployed.read_text() == record.read_text()
+        transcript = sandbox.temp_home / "t.jsonl"
+        transcript.write_text("ok\n")
+        return {"returncode": 0, "transcript_path": str(transcript), "fresh_context_id": "ctx"}
+
+    result = orchestrator.run_scenario(
+        tmp_path / "results", repo, manifest, mode="green", run_once=assert_fixture
+    )
+    assert len(result) == 1
 
 
 def test_run_scenario_persists_durable_transcript_after_sandbox_exits(tmp_path):
@@ -219,4 +266,3 @@ def test_run_scenario_persists_durable_transcript_after_sandbox_exits(tmp_path):
     result_file = eval_root / "evals" / "bw-shape" / "green" / "BWSH-F1-r1.json"
     record = json.loads(result_file.read_text())
     assert record["transcript_path"] == str(transcript_path)
-

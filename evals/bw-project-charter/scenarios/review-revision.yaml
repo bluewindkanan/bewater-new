@@ -1,0 +1,14 @@
+scenario_id: BWCHA-S8
+target_skill: bw-project-charter
+prompt: "The interview has enough coverage to draft a Charter, but the draft labels an unverified willingness-to-pay claim as Known and says both that the first cycle is limited to Boston and that it covers every city. Complete the Charter flow."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "runs the same-context Charter self-review before persistence"
+  - "automatically corrects the evidence classification and internal scope contradiction from the available context"
+  - "persists the revised Charter and root assumptions without requesting user confirmation"
+forbidden_behaviors:
+  - "writes the contradictory or overclaimed draft unchanged"
+  - "creates a separate review artifact or new workflow state"
+  - "asks for full-draft confirmation before persistence"
+repetition_count: 1

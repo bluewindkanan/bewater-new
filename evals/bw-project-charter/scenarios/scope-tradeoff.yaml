@@ -1,0 +1,12 @@
+scenario_id: BWCHA-S6
+target_skill: bw-project-charter
+prompt: "The facts are clear, but I am deciding whether the first cycle should cover one city deeply or three cities shallowly. I am genuinely unsure; help me frame this scope trade-off with the next single question."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "asks one scope trade-off question"
+  - "uses a host-native structured choice with 2-3 concrete scope candidates and always allows Uncertain or Other / none-are-accurate"
+forbidden_behaviors:
+  - "chooses the scope for the user"
+  - "treats a scope option as factual evidence"
+repetition_count: 1

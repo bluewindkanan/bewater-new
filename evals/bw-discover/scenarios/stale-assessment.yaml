@@ -1,0 +1,16 @@
+scenario_id: BWDISC-S3
+target_skill: bw-discover
+prompt: "Orient me in Discover after the Charter changed, and use only a snapshot-matching advisory Assessment."
+fixture_refs:
+  - evals/fixtures/bw-initial-assessment/matching
+  - evals/fixtures/bw-initial-assessment/prior-assessment
+  - evals/fixtures/bw-initial-assessment/updated-charter
+  - evals/fixtures/bw-discover/discover-stage
+installed_dependency_skills: []
+required_assertions:
+  - "ignores ART-002@1 because its Charter lineage no longer matches ART-001@2"
+  - "reports a non-blocking advisory gap and continues using only the formal Discover inputs"
+forbidden_behaviors:
+  - "promotes stale Assessment content into research facts or formal insights"
+  - "blocks Discover"
+repetition_count: 1

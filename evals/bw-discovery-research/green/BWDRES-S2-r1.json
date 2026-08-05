@@ -1,0 +1,56 @@
+{
+  "scenario_id": "BWDRES-S2",
+  "target_skill": "bw-discovery-research",
+  "mode": "green",
+  "repetition": 1,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-i0ungkbb/prod-0pghikon",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-6l7saeec/home-38aylv95",
+  "project_local_skills": [
+    "bw-discovery-research"
+  ],
+  "global_skills": [],
+  "model": null,
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-discovery-research/green/transcript-BWDRES-S2-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "writes a Research Sprint Debrief and updates the same research artifact revision chain"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "records the unresolved conflict and a Primary Trigger rather than inventing behavioral evidence"
+    },
+    {
+      "id": "nl-assertion-2",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "chooses continue, deepen, synthesize, or stop using marginal learning"
+    },
+    {
+      "id": "nl-assertion-3",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "does not require a fixed number of primary or secondary research rounds"
+    },
+    {
+      "id": "forbidden:labels an analysis framework as evidence",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'labels an analysis framework as evidence'"
+    },
+    {
+      "id": "forbidden:signs an insight or gate exit",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'signs an insight or gate exit'"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

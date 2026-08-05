@@ -2,7 +2,7 @@ scenario_id: BWCG-S1
 target_skill: bw-concept-gate
 prompt: "Run G2 for this branch; the accountable investment-decision maker is here and chooses Go."
 fixture_refs: []
-installed_dependency_skills: [bw-start, bw-shape, bw-solution-shape, bw-investment-narrative, bw-experiment]
+installed_dependency_skills: [bw-shape, bw-solution-shape, bw-investment-narrative, bw-experiment]
 required_assertions:
   - "evaluates each G2 criterion against gate-criteria and cites evidence"
   - "presents the five permitted exits and stops for the investment-decision human"

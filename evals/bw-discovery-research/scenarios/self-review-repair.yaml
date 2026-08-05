@@ -1,0 +1,14 @@
+scenario_id: BWDRES-S3
+target_skill: bw-discovery-research
+prompt: "The current Charter and active root-assumption snapshots are present. Update the current Discover Plan for a subscription box for home bartenders. We have one afternoon, access to internal documents only, and no access to users. The draft has a TBD stop condition, says customer interviews are both required and impossible, and labels an unverified convenience claim as Fact. Make the Plan ready for its next allowed Research Sprint."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "runs the in-context Plan self-review after drafting and before persistence or execution"
+  - "automatically repairs the placeholder, internal contradiction, bounded-scope issue, and unsupported Fact classification from the supplied context"
+  - "uses an available secondary research approach with its evidence limitation rather than requiring impossible interviews"
+  - "does not ask for confirmation about issues resolved by the supplied context"
+forbidden_behaviors:
+  - "persists the unreviewed or contradictory Plan"
+  - "creates a self-review artifact, review state, signoff, checklist result, or human Gate"
+repetition_count: 3

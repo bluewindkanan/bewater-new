@@ -25,8 +25,8 @@ accountable human. Never silently edit a confirmed baseline or auto-apply a plan
    change branch stage → THEN schedule gate reruns.
 5. Preallocate IDs; write the BT-record with `action_status: pending` BEFORE other state change;
    present the proposed routing + evidence, name the accountable human, and **stop**. After
-   confirmation, apply via `bwkit plan apply`; record step statuses back. `bw-start` reconciles a
-   pending/manual-repair backtrack with the same idempotent recovery as a gate action.
+   confirmation, apply via `bwkit plan apply`; record step statuses back. `bw-resume` detects a
+   pending/manual-repair backtrack and routes recovery here; it never applies the recovery itself.
 
 Routing by change depth: root premise → Discover + G1 recertify; opportunity/strategy →
 Define + G1; feature/concept (no baseline touched) → Ideate/Shape local reframe.

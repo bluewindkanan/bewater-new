@@ -21,6 +21,12 @@ Then shell out (the helper is stdlib-only, schema-agnostic; the CALLER builds ed
 `dependents` list is the BT-record's `affected_refs`; the `depth` map drives the proposed backtrack
 depth. Roots are never listed as their own dependents.
 
+Evidence lives in-place in `_bewater/evidence.yaml`; its `@n` pins the entry's `record_revision`. A
+dependent that pins `evidence:E-xxx@n` is stale when the entry head `record_revision` is greater
+than the pinned `@n` — this in-place comparison replaces the old append-only `supersedes_ref` chain
+for evidence. (Artifacts stay append-only, so an artifact dependent is still marked stale by a newer
+revision in its own chain.)
+
 ## Five-step impact flow
 
 1. find all transitive dependents; 2. append new invalidated/stale artifact revisions for affected

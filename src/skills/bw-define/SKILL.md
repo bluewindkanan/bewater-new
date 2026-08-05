@@ -14,8 +14,9 @@ artifacts. Define turns insights into an innovation strategy and opportunity are
 - Report Define status: directional hypotheses closed? strategy selected/locked? opportunity
   portfolio (2–4)? assumption initial inventory + Achilles-Heel quadrant? Money+Magic
   initial judgment?
-- Route to the Define capabilities (see `references/stage.md`); when the subject is
-  G1-ready or a deadline has fallen, route to **bw-strategy-gate**. Present the choice and
-  stop when ambiguous.
+- If no current directional hypothesis is closed, route first to **bw-directional-hypothesis**.
+  Otherwise route to the remaining Define capabilities (see `references/stage.md`); when the
+  subject is G1-ready or a deadline has fallen, route to **bw-strategy-gate**. Present the choice
+  and stop when ambiguous.
 
 Define completes at the G1 gate decision. Use `../_bw-shared/gate-criteria.md`.

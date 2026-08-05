@@ -18,7 +18,7 @@ An Achilles-Heel experiment MUST target L4+ behavioral evidence.
 ## Record result
 
 - observed result and metric values;
-- raw evidence references (wrap each as `evidence:E-xxx@n`);
+- raw evidence references (each is an `evidence:E-xxx@n` entry in `_bewater/evidence.yaml`);
 - achieved evidence level and why;
 - conclusion: supported | falsified | inconclusive;
 - proposed ledger changes;

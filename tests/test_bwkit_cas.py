@@ -87,6 +87,21 @@ def test_commit_keeps_only_n_backups(v5_root):
     assert len(list((v5_root / "_bewater").glob(".backup-ledger-*"))) == 5
 
 
+def test_commit_keeps_most_recent_backups_when_revision_has_two_digits(v5_root):
+    """Rotation must keep the 5 most recent backups by numeric revision, not by
+    lexicographic filename order (where '10' < '5')."""
+    p = _ledger(v5_root)
+    rev = 3
+    for _ in range(12):  # commit 3 -> 15, backups for old revs 3..14
+        cas.commit(p, _bump(p.read_text(), rev + 1), expected_revision=rev)
+        rev += 1
+    kept = sorted(
+        int(b.name.split("-")[-2])
+        for b in (v5_root / "_bewater").glob(".backup-ledger-*")
+    )
+    assert kept == [10, 11, 12, 13, 14]
+
+
 def test_commit_writes_new_text_verbatim(v5_root):
     p = _ledger(v5_root)
     marker = "# VERBATIM-MARKER keep-me\n"

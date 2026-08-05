@@ -99,6 +99,7 @@ class ArtifactKind(str, Enum):
     investment_narrative = "investment-narrative"
     research = "research"
     insights = "insights"
+    initial_assessment = "initial-assessment"
 
 
 class ArtifactStatus(str, Enum):

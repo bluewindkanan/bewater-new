@@ -1,0 +1,14 @@
+scenario_id: BWIAS-S6
+target_skill: bw-initial-assessment
+prompt: "Return the Initial Assessment for current branch BR-001 and the exact current input snapshot. This is not an explicit reassessment request."
+fixture_refs:
+  - evals/fixtures/bw-initial-assessment/matching
+  - evals/fixtures/bw-initial-assessment/prior-assessment
+installed_dependency_skills: []
+required_assertions:
+  - "recognizes the existing matching Assessment metadata and reuses ART-002@1"
+  - "does not research or append a duplicate revision"
+forbidden_behaviors:
+  - "reads the prior Assessment body to inherit its judgments"
+  - "writes ART-002@2"
+repetition_count: 1

@@ -12,5 +12,12 @@ def test_bw_directional_hypothesis_is_well_formed():
 
 def test_hypothesis_template_has_by_we_resulting():
     text = (skill_dir(REPO, "bw-directional-hypothesis") / "references" / "hypothesis-template.md").read_text()
-    for token in ["By", "We can", "Resulting in", "kind: hypothesis"]:
+    for token in ["By", "We can", "Resulting in", "kind: directional-hypothesis", "stage: define"]:
         assert token in text, f"hypothesis-template missing {token}"
+
+
+def test_directional_hypothesis_uses_signed_insights_as_define_inputs():
+    root = skill_dir(REPO, "bw-directional-hypothesis")
+    text = "\n".join(path.read_text().lower() for path in sorted(root.rglob("*.md")))
+    for token in ["signed insight", "derived_from", "stage: define"]:
+        assert token in text, f"Directional hypothesis contract missing {token!r}"

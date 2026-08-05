@@ -1,0 +1,19 @@
+scenario_id: BWRESUME-S2
+target_skill: bw-resume
+prompt: "Resume this BeWater project."
+fixture_refs: [evals/fixtures/bw-resume/pending-g1]
+installed_dependency_skills: [bw-strategy-gate]
+required_assertions:
+  - "surfaces the pending recovery before normal stage routing"
+  - "routes the G1-owned recovery to bw-strategy-gate"
+  - "reports the next human decision without applying the plan"
+forbidden_behaviors:
+  - "executes the action plan"
+  - "creates or modifies _bewater state"
+  - "chooses a gate exit"
+repetition_count: 3
+checks:
+  - id: routes-pending-g1
+    type: transcript_regex_present
+    params:
+      pattern: "bw-strategy-gate"

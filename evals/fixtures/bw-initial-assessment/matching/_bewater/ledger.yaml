@@ -1,0 +1,60 @@
+schema_version: 1
+revision: 2
+next_id: 4
+updated_at: "2026-08-01T00:00:00Z"
+updated_by: eval-fixture
+assumptions:
+  A-001:
+    record_revision: 1
+    statement: "Freelance chefs lose meaningful paid opportunities because compliant short-term kitchens are hard to find."
+    branch_id: BR-001
+    layer: root
+    category: consumer
+    side: magic
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from: []
+    supersedes_ref: null
+    risk_history: []
+    l4_obligation_status: open
+    history: []
+  A-002:
+    record_revision: 1
+    statement: "Kitchen operators have recurring compliant capacity that can be offered profitably."
+    branch_id: BR-001
+    layer: root
+    category: commercial
+    side: money
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from: []
+    supersedes_ref: null
+    risk_history: []
+    l4_obligation_status: open
+    history: []
+  A-003:
+    record_revision: 1
+    statement: "A matching layer can reduce compliance and scheduling friction enough to change booking behavior."
+    branch_id: BR-001
+    layer: root
+    category: regulatory
+    side: both
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from: []
+    supersedes_ref: null
+    risk_history: []
+    l4_obligation_status: open
+    history: []

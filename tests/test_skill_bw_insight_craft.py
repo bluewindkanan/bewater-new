@@ -22,3 +22,17 @@ def test_fpet_lists_four_standards():
     text = (skill_dir(REPO, "bw-insight-craft") / "references" / "fpet-judgment.md").read_text()
     for token in ["Fresh", "Potent", "Energizing", "Truth"]:
         assert token in text, f"fpet-judgment missing {token}"
+
+
+def test_insight_craft_stops_at_insights_and_keeps_explanatory_hypotheses_internal():
+    text = "\n".join(
+        path.read_text().lower()
+        for path in sorted(skill_dir(REPO, "bw-insight-craft").rglob("*.md"))
+    )
+    for token in [
+        "kind: insights",
+        "does not create directional hypotheses",
+        "explanatory hypothesis",
+        "not a directional hypothesis",
+    ]:
+        assert token in text, f"Insight craft boundary missing {token!r}"

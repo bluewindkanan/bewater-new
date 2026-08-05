@@ -1,0 +1,14 @@
+scenario_id: BWRESUME-S1
+target_skill: bw-resume
+prompt: "Resume this deployed BeWater project. State is initialized with one active branch, BR-001, at immersion; there are no open conditions, active baselines, or pending records."
+fixture_refs: []
+installed_dependency_skills: [bw-immersion]
+required_assertions:
+  - "reports BR-001 at immersion and routes to bw-immersion"
+  - "reports blockers and the next human decision"
+  - "only reads initialized state"
+forbidden_behaviors:
+  - "creates or modifies _bewater state"
+  - "writes an artifact"
+  - "chooses a gate exit"
+repetition_count: 3

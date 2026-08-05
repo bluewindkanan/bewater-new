@@ -13,7 +13,7 @@ assumption ledger plus every artifact) and reports every problem it finds:
                              status is not ``final``.
 - ``malformed-frontmatter``— an artifact's frontmatter has no closing fence.
 
-An empty return value means clean. Gates (T10) and the bw-ledger/bw-start
+An empty return value means clean. Gates (T10) and the bw-ledger/bw-resume
 skills call this to decide whether state is healthy.
 """
 from __future__ import annotations

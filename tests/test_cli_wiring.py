@@ -10,18 +10,17 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-import yaml
 
 from bw import cli, ledger_ops
-from bw import init as init_mod
 
 
 def _add(root: Path, statement="s", branch="sol-01", status="active") -> str:
-    a = ledger_ops.add(root, dict(
-        statement=statement, layer="concept", category="consumer",
-        impact="high", uncertainty="high", evidence_level="L1",
-        validation_status="open", status=status, evidence_ref="",
-        derived_from=[], affects=[], branch=branch))
+    a = ledger_ops.add(root, {
+        "statement": statement, "layer": "concept", "category": "consumer",
+        "impact": "high", "uncertainty": "high", "evidence_level": "L1",
+        "validation_status": "open", "status": status, "evidence_ref": "",
+        "derived_from": [], "affects": [], "branch": branch,
+    })
     return a.id
 
 
@@ -70,11 +69,12 @@ def test_ledger_validate_unknown_id(tmp_project, capsys):
 
 def test_ledger_trace_upstream_and_downstream(tmp_project, capsys):
     a1 = _add(tmp_project, statement="root", branch="sol-01")
-    a2 = ledger_ops.add(tmp_project, dict(
-        statement="child", layer="feature", category="consumer",
-        impact="low", uncertainty="low", evidence_level="L1",
-        validation_status="open", status="active", evidence_ref="",
-        derived_from=[a1], affects=[], branch="sol-01")).id
+    a2 = ledger_ops.add(tmp_project, {
+        "statement": "child", "layer": "feature", "category": "consumer",
+        "impact": "low", "uncertainty": "low", "evidence_level": "L1",
+        "validation_status": "open", "status": "active", "evidence_ref": "",
+        "derived_from": [a1], "affects": [], "branch": "sol-01",
+    }).id
 
     assert cli.main(["ledger", "trace", str(tmp_project), a2, "--direction", "upstream"]) == 0
     assert a1 in capsys.readouterr().out
@@ -209,23 +209,3 @@ def test_hash_stale_and_refresh_deps_mutually_exclusive(tmp_project):
     with pytest.raises(SystemExit) as exc:
         cli.main(["hash", str(art), "--stale", "--refresh-deps"])
     assert exc.value.code == 2
-
-
-# --- init ---
-
-def test_init_creates_tree(tmp_path, capsys):
-    proj = tmp_path / "proj"
-    assert cli.main(["init", str(proj)]) == 0
-    assert (proj / "_bewater" / "ledger.yaml").exists()
-    assert "_bewater/" in capsys.readouterr().out
-
-
-def test_init_force_overwrites(tmp_path):
-    proj = tmp_path / "proj"
-    init_mod.scaffold(proj)
-    lp = proj / "_bewater" / "ledger.yaml"
-    lp.write_text(yaml.safe_dump({"schema_version": 1, "revision": 1, "next_id": 1,
-                                  "updated_at": None, "updated_by": "bw-init", "assumptions": {"junk": {"id": "junk"}}}))
-    cli.main(["init", str(proj), "--force"])
-    data = yaml.safe_load(lp.read_text())
-    assert data["assumptions"] == {}

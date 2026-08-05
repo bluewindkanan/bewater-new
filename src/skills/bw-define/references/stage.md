@@ -1,8 +1,8 @@
 # Define stage
 
-Define (Strategy module) = refine insights into an innovation strategy + strategy statement
-+ 2–4 opportunity areas; initial assumption inventory; Money+Magic initial judgment. This is
-the G1 gate's input stage.
+Define (Strategy module) begins with human-signed insights, then refines them into directional
+hypotheses, an innovation strategy + strategy statement, 2–4 opportunity areas, an initial
+assumption inventory, and a Money+Magic initial judgment. This is the G1 gate's input stage.
 
 ## Capabilities to route to (Phase 1b)
 

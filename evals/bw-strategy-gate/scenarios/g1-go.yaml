@@ -2,7 +2,7 @@ scenario_id: BWSG-S1
 target_skill: bw-strategy-gate
 prompt: "Run G1 for this branch; the accountable product owner is here and chooses Go."
 fixture_refs: []
-installed_dependency_skills: [bw-start, bw-strategy-statement, bw-opportunity-area, bw-assumption-map]
+installed_dependency_skills: [bw-strategy-statement, bw-opportunity-area, bw-assumption-map]
 required_assertions:
   - "evaluates each G1 criterion and cites evidence"
   - "presents the five permitted exits and stops for the human"

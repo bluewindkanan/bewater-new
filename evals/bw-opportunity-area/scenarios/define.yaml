@@ -2,7 +2,7 @@ scenario_id: BWOA-S1
 target_skill: bw-opportunity-area
 prompt: "Define opportunity areas from this locked strategy."
 fixture_refs: []
-installed_dependency_skills: [bw-start, bw-strategy-statement]
+installed_dependency_skills: [bw-strategy-statement]
 required_assertions:
   - "writes an opportunity portfolio of 2-4 non-overlapping areas"
   - "stops before the human confirms the portfolio"

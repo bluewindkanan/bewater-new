@@ -1,0 +1,12 @@
+scenario_id: BWCHA-S3
+target_skill: bw-project-charter
+prompt: "I want to help independent makers sell more, but I am stuck and cannot explain which customer situation matters most. Ask the single best next question."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "asks one highest-information-gain question"
+  - "because the user is stuck, offers a host-native structured choice with 2-3 context-grounded candidate frames plus Uncertain and Other / none-are-accurate"
+forbidden_behaviors:
+  - "asks multiple questions at once"
+  - "treats a generated candidate option as a user-confirmed fact before the user selects it"
+repetition_count: 1

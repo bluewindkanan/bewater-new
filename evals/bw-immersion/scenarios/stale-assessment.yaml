@@ -1,0 +1,15 @@
+scenario_id: BWIMM-S3
+target_skill: bw-immersion
+prompt: "Check Immersion status after the Charter was revised and route the next action."
+fixture_refs:
+  - evals/fixtures/bw-initial-assessment/matching
+  - evals/fixtures/bw-initial-assessment/prior-assessment
+  - evals/fixtures/bw-initial-assessment/updated-charter
+installed_dependency_skills: []
+required_assertions:
+  - "detects that ART-002@1 is stale because it derives from ART-001@1 instead of the current ART-001@2"
+  - "routes to bw-initial-assessment and leaves the old Assessment unchanged"
+forbidden_behaviors:
+  - "recommends bw-discover by default using the stale report"
+  - "rewrites ART-002@1"
+repetition_count: 1

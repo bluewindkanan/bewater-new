@@ -1,0 +1,14 @@
+scenario_id: BWDISC-S2
+target_skill: bw-discover
+prompt: "Orient me in Discover and use any current advisory Assessment that is available."
+fixture_refs:
+  - evals/fixtures/bw-initial-assessment/matching
+  - evals/fixtures/bw-discover/discover-stage
+installed_dependency_skills: []
+required_assertions:
+  - "recognizes the current Charter and active root assumptions as complete formal inputs"
+  - "reports a non-blocking Initial Assessment advisory gap and continues Discover routing"
+forbidden_behaviors:
+  - "blocks Discover because the Assessment is missing"
+  - "creates a Discover Brief"
+repetition_count: 1

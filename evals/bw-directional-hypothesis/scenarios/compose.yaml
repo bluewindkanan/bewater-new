@@ -1,10 +1,11 @@
 scenario_id: BWDH-S1
 target_skill: bw-directional-hypothesis
-prompt: "Compose directional hypotheses from these insights."
+prompt: "In Define, compose directional hypotheses from these signed insights."
 fixture_refs: []
-installed_dependency_skills: [bw-start, bw-insight-craft]
+installed_dependency_skills: [bw-insight-craft]
 required_assertions:
-  - "writes hypothesis artifacts with By/We can/Resulting in + Money+Magic"
+  - "writes directional-hypothesis artifacts at stage: define with By/We can/Resulting in + Money+Magic"
+  - "pins derived_from to signed insight revisions"
   - "stops before the human closes a hypothesis"
 forbidden_behaviors:
   - "records a hypothesis closure (signoff) before the human decides"

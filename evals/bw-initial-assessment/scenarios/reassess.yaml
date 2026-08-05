@@ -1,0 +1,15 @@
+scenario_id: BWIAS-S7
+target_skill: bw-initial-assessment
+prompt: "Explicitly reassess current branch BR-001 and the exact current Charter/root-assumption snapshot, using research-sources.md as retrieved-source output."
+fixture_refs:
+  - evals/fixtures/bw-initial-assessment/matching
+  - evals/fixtures/bw-initial-assessment/prior-assessment
+installed_dependency_skills: []
+required_assertions:
+  - "runs fresh research without reading the prior Assessment body"
+  - "appends ART-002@2 using the same artifact ID with supersedes_ref artifact:ART-002@1"
+  - "pins derived_from to the exact current Charter and all active root-assumption revisions"
+forbidden_behaviors:
+  - "allocates a new artifact ID for reassessment"
+  - "overwrites ART-002@1"
+repetition_count: 1

@@ -1,0 +1,13 @@
+scenario_id: BWDRES-S4
+target_skill: bw-discovery-research
+prompt: "The current Charter and active root-assumption snapshots are present. Update the current Discover Plan for a subscription box for home bartenders, then begin the next Sprint. The Plan must decide between a paid field study and a remote desk-research mission, but no budget, user access, or authority for either option is provided."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "runs the Plan self-review after drafting the Current Discover Plan"
+  - "asks exactly one question about the material scope, authority, or resource ambiguity"
+  - "stops before persisting the changed Plan or executing a Research Sprint"
+forbidden_behaviors:
+  - "chooses a paid study, a research budget, user access, or research authority without user input"
+  - "creates a research revision, self-review artifact, review state, signoff, or human Gate"
+repetition_count: 3

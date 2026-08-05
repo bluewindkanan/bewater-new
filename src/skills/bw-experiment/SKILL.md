@@ -18,8 +18,9 @@ satisfies the L4 obligation.
    owner/timebox/evidence-capture path. Thresholds are fixed BEFORE observing results.
 2. **Record result** — record observed result + metric values; raw evidence refs; achieved evidence
    level + why; conclusion (supported/falsified/inconclusive); proposed ledger changes; the human
-   decision (proceed/kill/retest); artifact + ledger revisions changed. Wrap captured evidence as an
-   immutable `evidence:E-xxx@n` artifact.
+   decision (proceed/kill/retest); artifact + ledger revisions changed. Append captured evidence as
+   an `evidence:E-xxx@n` entry in `_bewater/evidence.yaml` (typed-ref syntax is unchanged; only the
+   storage form moves from a standalone file to an in-place entry).
 3. Present the result + proposed ledger diff, name the human decision authority, and **stop**. The
    human decides Kill/Proceed; you update the assumption only after that decision and show the diff.
    A falsified assumption initiates **bw-backtrack** — never a local note.

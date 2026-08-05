@@ -45,6 +45,10 @@ def build_parser() -> argparse.ArgumentParser:
     sc = sub.add_parser("scan", help="lineage / impact scan")
     scsub = sc.add_subparsers(dest="scan_cmd", required=True)
     scsub.add_parser("impact")
+
+    init = sub.add_parser("init", help="initialize canonical BeWater project state")
+    init.add_argument("root")
+    init.add_argument("--check", action="store_true", help="inspect state without writing")
     return p
 
 
@@ -108,4 +112,27 @@ def main(argv=None, *, _stdin=None) -> int:
             result = lineage.transitive_dependents(payload.get("edges", []), payload.get("roots", []))
             print(json.dumps(result))
             return 0
+
+    if args.cmd == "init":
+        from . import init as project_init
+
+        root = Path(args.root)
+        try:
+            state = project_init.inspect_state(root)
+        except (project_init.ProjectInitError, OSError) as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        if args.check:
+            if state == "invalid":
+                print(f"invalid BeWater project state at {root}", file=sys.stderr)
+                return 1
+            print(state)
+            return 0
+        try:
+            result = project_init.initialize_project(root)
+        except (project_init.ProjectInitError, OSError) as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        print("already initialized" if result == "already-initialized" else result)
+        return 0
     return 2

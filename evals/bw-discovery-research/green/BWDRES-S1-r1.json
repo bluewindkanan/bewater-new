@@ -1,0 +1,86 @@
+{
+  "scenario_id": "BWDRES-S1",
+  "target_skill": "bw-discovery-research",
+  "mode": "green",
+  "repetition": 1,
+  "fresh_context_id": null,
+  "cwd": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-product-i01x90ln/prod-_m7bsor5",
+  "temp_home": "/var/folders/m_/dhw9yym94gzbq07l4q2k6wnm0000gn/T/sandbox-home-65v1vg_x/home-f8u17cq2",
+  "project_local_skills": [
+    "bw-discovery-research"
+  ],
+  "global_skills": [],
+  "model": null,
+  "transcript_path": "/Users/sam/Desktop/bewater-new/evals/bw-discovery-research/green/transcript-BWDRES-S1-r1.json",
+  "checks": [
+    {
+      "id": "nl-assertion-0",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "reads the current charter revision and active root assumptions as the formal inputs"
+    },
+    {
+      "id": "nl-assertion-1",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "routes back to bw-project-charter when either formal input is missing"
+    },
+    {
+      "id": "nl-assertion-2",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "initializes a research artifact containing a Discover Plan and 4C coverage map"
+    },
+    {
+      "id": "nl-assertion-3",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "uses secondary_only or secondary_first without requiring primary research"
+    },
+    {
+      "id": "nl-assertion-4",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "records evidence limitations, provenance, and Primary Triggers"
+    },
+    {
+      "id": "nl-assertion-5",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "sets research artifact derived_from to the exact Charter and active-assumption revisions"
+    },
+    {
+      "id": "nl-assertion-6",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "uses the toolkit as a seed library and explains a selected method's limitation"
+    },
+    {
+      "id": "nl-assertion-7",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "keeps initial-assessment findings as candidate beliefs or hypotheses, not Facts"
+    },
+    {
+      "id": "nl-assertion-8",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "does not create an independent Discover Brief artifact"
+    },
+    {
+      "id": "nl-assertion-9",
+      "type": "manual",
+      "verdict": "needs-review",
+      "detail": "does not declare insights F/P/E/T or compose directional hypotheses"
+    },
+    {
+      "id": "forbidden:records a human synthesis judgment",
+      "type": "nl_forbidden_behavior",
+      "verdict": "needs-review",
+      "detail": "no structured check maps to forbidden behavior 'records a human synthesis judgment'"
+    }
+  ],
+  "forbidden_triggered": [],
+  "verdict": "needs-review",
+  "reviewer": null
+}

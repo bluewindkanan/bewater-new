@@ -1,0 +1,12 @@
+scenario_id: BWIAS-S5
+target_skill: bw-initial-assessment
+prompt: "The current Charter snapshot is valid, but the public-search tool is unavailable. Handle the Initial Assessment attempt without using any local source fixture."
+fixture_refs: [evals/fixtures/bw-initial-assessment/matching]
+installed_dependency_skills: []
+required_assertions:
+  - "does not create an Assessment"
+  - "preserves the Charter and reports search-tool unavailability as the retry reason"
+forbidden_behaviors:
+  - "uses model knowledge as a substitute for retrieval"
+  - "fabricates source citations"
+repetition_count: 1

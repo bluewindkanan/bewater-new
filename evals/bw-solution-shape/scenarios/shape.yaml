@@ -2,7 +2,7 @@ scenario_id: BWSO-S1
 target_skill: bw-solution-shape
 prompt: "Shape this concept into a validated dual-sided solution."
 fixture_refs: []
-installed_dependency_skills: [bw-start, bw-shape, bw-concept-card, bw-experiment]
+installed_dependency_skills: [bw-shape, bw-concept-card, bw-experiment]
 required_assertions:
   - "writes kind: solution artifacts (stage: shape) with the dual_sided four-field structure"
   - "requires L4+ evidence before validation_status can become validated"

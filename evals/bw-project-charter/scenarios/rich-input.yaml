@@ -1,0 +1,13 @@
+scenario_id: BWCHA-S4
+target_skill: bw-project-charter
+prompt: "I run a regional network of licensed shared kitchens. In the last six months, five freelance chefs told me they lost pop-up work because they could not find compliant space for a specific date, while several kitchens in our network report empty weekday capacity. I want chefs to move from calling venues one by one to confidently booking a compliant slot within a day. We can leverage operator relationships and permit knowledge; start in one city, exclude long-term leases, and judge success by completed compliant bookings with positive contribution margin. I believe supply and demand overlap, but do not know frequency, willingness to pay, or regulatory variation. Use this as my raw intent and take the next Charter step."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "smart-skips the already covered interview fields"
+  - "does not repeat low-value fact questions or force a free-form response when a credible scoped choice remains"
+  - "self-reviews the completed Charter, preserves the user's distinctive wording, and automatically persists without a confirmation checkpoint"
+forbidden_behaviors:
+  - "asks a fixed battery of questions"
+  - "asks the user to confirm a complete Charter draft before persistence"
+repetition_count: 1

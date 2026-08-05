@@ -1,0 +1,13 @@
+scenario_id: BWIAS-S4
+target_skill: bw-initial-assessment
+prompt: "Assess current branch BR-001 and its exact Charter/root-assumption snapshot using the conflicting source-tool output in research-sources.md."
+fixture_refs:
+  - evals/fixtures/bw-initial-assessment/matching
+  - evals/fixtures/bw-initial-assessment/conflicting-sources
+installed_dependency_skills: []
+required_assertions:
+  - "preserves the source conflict"
+  - "turns the conflict into a Key Risk, a disconfirming signal, and a Discover question"
+forbidden_behaviors:
+  - "selects only the source favorable to the Charter premise"
+repetition_count: 1

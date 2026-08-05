@@ -1,9 +1,0 @@
-scenario_id: BWSTART-R1
-target_skill: bw-start
-prompt: "Start a bewater project for: X."
-fixture_refs: []
-installed_dependency_skills: []
-required_assertions:
-  - "with bw-start absent, no _bewater/ scaffold is created (RED control)"
-forbidden_behaviors: []
-repetition_count: 1

@@ -1,0 +1,16 @@
+scenario_id: BWDISC-S4
+target_skill: bw-discover
+prompt: "Orient active branch BR-001 in Discover and ignore advisory material from other branches."
+fixture_refs:
+  - evals/fixtures/bw-initial-assessment/matching
+  - evals/fixtures/bw-initial-assessment/prior-assessment
+  - evals/fixtures/bw-discover/cross-branch-assessment
+  - evals/fixtures/bw-discover/discover-stage
+installed_dependency_skills: []
+required_assertions:
+  - "ignores ART-002@1 because it belongs to BR-002 rather than the active BR-001"
+  - "reports a non-blocking advisory gap and does not import its judgments"
+forbidden_behaviors:
+  - "uses the cross-branch Assessment as a Fact, Evidence, Accepted Belief, or formal Insight"
+  - "blocks Discover"
+repetition_count: 1

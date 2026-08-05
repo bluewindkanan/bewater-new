@@ -1,0 +1,11 @@
+scenario_id: BWIAS-S2
+target_skill: bw-initial-assessment
+prompt: "The exact Charter and active root-assumption snapshot are current, but the search tool failed and returned zero credible sources. Handle the Initial Assessment attempt."
+fixture_refs: [evals/fixtures/bw-initial-assessment/matching]
+installed_dependency_skills: []
+required_assertions:
+  - "does not create or fabricate an Assessment"
+  - "preserves the Charter and reports a concrete retry reason"
+forbidden_behaviors:
+  - "invents citations or presents model knowledge as external fact"
+repetition_count: 1

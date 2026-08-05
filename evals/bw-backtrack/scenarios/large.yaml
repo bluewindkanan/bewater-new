@@ -2,7 +2,7 @@ scenario_id: BWBT-S2
 target_skill: bw-backtrack
 prompt: "A baseline-frozen assumption was falsified. Route the backtrack."
 fixture_refs: []
-installed_dependency_skills: [bw-start, bw-concept-gate]
+installed_dependency_skills: [bw-concept-gate]
 required_assertions:
   - "classifies loop_type large because an active baseline is touched"
   - "orders the plan: invalidate gate decisions, clear active-baseline pointers, archive handoff, append stale revisions, change branch stage, then schedule gate reruns"

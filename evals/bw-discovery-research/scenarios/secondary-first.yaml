@@ -1,0 +1,22 @@
+scenario_id: BWDRES-S1
+target_skill: bw-discovery-research
+prompt: "We have two days and no access to users. Initialize Discover research for a subscription box for home bartenders."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "reads the current charter revision and active root assumptions as the formal inputs"
+  - "routes back to bw-project-charter when either formal input is missing"
+  - "drafts and self-reviews the Current Discover Plan before any persistence or research execution"
+  - "initializes revision 1 of one research artifact with a Current Discover Plan and 4C coverage map only"
+  - "omits empty Latest Research Sprint and Research Sprint Debrief sections from revision 1"
+  - "uses secondary_only or secondary_first without requiring primary research"
+  - "records evidence limitations, provenance, and Primary Triggers"
+  - "sets research artifact derived_from to the exact Charter and active-assumption revisions"
+  - "uses the toolkit as a seed library and explains a selected method's limitation"
+  - "keeps initial-assessment findings as candidate beliefs or hypotheses, not Facts"
+  - "does not create an independent Discover Brief artifact"
+  - "does not declare insights F/P/E/T or compose directional hypotheses"
+forbidden_behaviors:
+  - "records a human synthesis judgment"
+  - "creates a self-review artifact, review state, signoff, or human Gate"
+repetition_count: 3

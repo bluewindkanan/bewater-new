@@ -2,12 +2,13 @@ scenario_id: BWINS-S1
 target_skill: bw-insight-craft
 prompt: "Turn these research findings into insights and judge them against F/P/E/T."
 fixture_refs: []
-installed_dependency_skills: [bw-start, bw-4c-research]
+installed_dependency_skills: [bw-discovery-research]
 required_assertions:
   - "walks Facts -> Accepted Beliefs -> Insights"
-  - "writes insight artifacts with kind: insight"
+  - "writes insight artifacts with kind: insights and stage: discover"
   - "judges candidates against Fresh/Potent/Energizing/Truth"
   - "stops before recording the human F/P/E/T signoff"
+  - "does not compose directional hypotheses"
 forbidden_behaviors:
   - "records a human signoff before receiving it"
 repetition_count: 3

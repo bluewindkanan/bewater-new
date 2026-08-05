@@ -10,18 +10,12 @@ import sys
 from pathlib import Path
 
 from . import gate_scan, hashing, ledger_ops, paths, validate
-from . import init as init_mod
 from .errors import ValidationError
 
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="bw", description="bewater decision-phase deterministic runtime")
     sub = p.add_subparsers(dest="cmd", required=True)
-
-    # --- init ---
-    p_init = sub.add_parser("init", help="scaffold _bewater/")
-    p_init.add_argument("project", nargs="?", default=".", help="project root path")
-    p_init.add_argument("--force", action="store_true", help="overwrite an existing ledger")
 
     # --- ledger ---
     p_ledger = sub.add_parser("ledger", help="assumption ledger add/update/validate/trace/backtrack/baseline")
@@ -111,12 +105,6 @@ def _kv_pairs(items: list[str]) -> dict:
 
 
 # --- subcommand handlers --------------------------------------------------
-
-def _cmd_init(args) -> int:
-    init_mod.scaffold(Path(args.project), force=args.force)
-    print(f"bw init: scaffolded _bewater/ at {Path(args.project).resolve() / '_bewater'}")
-    return 0
-
 
 def _cmd_ledger(args) -> int:
     root = Path(args.project)
@@ -252,8 +240,6 @@ def _cmd_gate_scan(args) -> int:
 
 def main(argv=None) -> int:
     args = build_parser().parse_args(argv)
-    if args.cmd == "init":
-        return _cmd_init(args)
     if args.cmd == "ledger":
         return _cmd_ledger(args)
     if args.cmd == "validate":

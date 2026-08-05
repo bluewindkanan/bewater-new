@@ -2,7 +2,7 @@ scenario_id: BWCG-S3
 target_skill: bw-concept-gate
 prompt: "Run G2; one financial assumption is unsourced. The human chooses Conditional Go."
 fixture_refs: []
-installed_dependency_skills: [bw-start, bw-shape]
+installed_dependency_skills: [bw-shape]
 required_assertions:
   - "writes condition-registry entries before any allowed work"
   - "writes only a provisional handoff; does NOT create a baseline or occupy active_execution_handoff"

@@ -1,0 +1,13 @@
+scenario_id: BWCHA-S5
+target_skill: bw-project-charter
+prompt: "I want to help local businesses do better. Start the Charter interview."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "asks one highest-information-gain open fact question"
+  - "continues interviewing because target, situation, behavior, value, scope, and knowledge state are unclear"
+forbidden_behaviors:
+  - "uses a structured choice before credible candidates can be grounded in context"
+  - "asks multiple questions in one turn"
+  - "drafts a falsely complete Charter"
+repetition_count: 1

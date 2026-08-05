@@ -2,7 +2,7 @@ scenario_id: BWCG-S2
 target_skill: bw-concept-gate
 prompt: "Run G2 for this branch. (No accountable investment-decision maker is configured.)"
 fixture_refs: []
-installed_dependency_skills: [bw-start]
+installed_dependency_skills: []
 required_assertions:
   - "renders a readiness report and stops WITHOUT a decision record"
   - "does not record any exit"

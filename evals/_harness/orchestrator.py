@@ -3,8 +3,9 @@ from __future__ import annotations
 
 import shutil
 import tempfile
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from evals._harness import isolation, judge, loader, result, runner
 
@@ -65,7 +66,7 @@ def run_scenario(
     results = []
 
     for rep in range(1, reps + 1):
-        with tempfile.TemporaryDirectory(prefix="sandbox-product-") as product_temp:
+        with tempfile.TemporaryDirectory(prefix="sandbox-product-") as product_temp:  # noqa: SIM117
             with tempfile.TemporaryDirectory(prefix="sandbox-home-") as home_temp:
                 # Build sandbox
                 sandbox = isolation.Sandbox(
@@ -75,6 +76,7 @@ def run_scenario(
                     target_skill=target_skill,
                     dependency_skills=dependency_skills,
                     mode=mode,
+                    fixture_refs=manifest.get("fixture_refs", []),
                 )
                 with sandbox:
                     # Run the prompt

@@ -19,7 +19,7 @@ usage() {
 usage: install.sh [--copy|--link] --project-root DIR [--src DIR] [--dest DIR] [--uninstall]
 
   --project-root DIR  (required) project root; skills → DIR/.claude/skills, bwkit → DIR/_bewater/bwkit
-  --src DIR           repository root with .claude/skills and src/bwkit (default: this script's dir)
+  --src DIR           repository root with src/skills and src/bwkit (default: this script's dir)
   --dest DIR          skills output dir (default: PROJECT_ROOT/.claude/skills)
   --copy              copy files (default)
   --link              symlink instead of copy (repo development)
@@ -46,11 +46,12 @@ PROJECT_ROOT="$(cd "$PROJECT_ROOT" && pwd)"  # resolve to absolute
 [[ -z "${SRC:-}" ]] && SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILLS_SRC="$SRC/src/skills"
 BWKIT_SRC="$SRC/src/bwkit"
-[[ -d "$SKILLS_SRC" ]] || die "no .claude/skills under --src: $SRC"
-[[ -d "$BWKIT_SRC" ]]  || die "no src/bwkit under --src: $SRC"
+if (( ! UNINSTALL )); then
+  [[ -d "$SKILLS_SRC" ]] || die "no src/skills under --src: $SRC"
+  [[ -d "$BWKIT_SRC" ]]  || die "no src/bwkit under --src: $SRC"
+fi
 
 [[ -z "${DEST:-}" ]] && DEST="$PROJECT_ROOT/.claude/skills"
-mkdir -p "$DEST"
 
 SKILLS_TARGET="$DEST"
 BWKIT_TARGET="$PROJECT_ROOT/_bewater/bwkit"
@@ -107,6 +108,43 @@ deploy_units() {
   [[ "$count" -gt 0 ]] || die "no bw-* skills found under $SKILLS_SRC"
 }
 
+# Reject collisions before replacing any managed payload. Stale managed skills
+# are removed separately; stale unmanaged skills remain untouched, except the
+# retired bw-start name, which must fail closed rather than silently shadowing
+# the installed router set.
+preflight_skill_targets() {
+  local d name target
+  for d in "$SKILLS_SRC"/bw-*/; do
+    [[ -d "$d" ]] || continue
+    name="$(basename "$d")"
+    target="$SKILLS_TARGET/$name"
+    if [[ -e "$target" || -L "$target" ]]; then
+      has_marker "$target" || die "target exists and is not bewater-managed: $target"
+    fi
+  done
+
+  for target in "$SKILLS_TARGET"/bw-*; do
+    [[ -e "$target" || -L "$target" ]] || continue
+    name="$(basename "$target")"
+    [[ -d "$SKILLS_SRC/$name" ]] && continue
+    if [[ "$name" == "bw-start" ]] && ! has_marker "$target"; then
+      die "target exists and is not bewater-managed: $target"
+    fi
+  done
+}
+
+prune_obsolete_skills() {
+  local target name
+  for target in "$SKILLS_TARGET"/bw-*; do
+    [[ -e "$target" || -L "$target" ]] || continue
+    name="$(basename "$target")"
+    [[ -d "$SKILLS_SRC/$name" ]] && continue
+    if has_marker "$target"; then
+      rm -rf "$target"
+    fi
+  done
+}
+
 # ---------------------------------------------------------------------------
 # deploy _bw-shared (docs) + bwkit (tool)
 # ---------------------------------------------------------------------------
@@ -152,6 +190,18 @@ do_uninstall() {
   echo "uninstalled bewater-managed targets from $PROJECT_ROOT"
 }
 
+# The author-side module is the source of truth for a read-only state check.
+# This runs before any skill or bwkit target is created, replaced, or pruned.
+precheck_project_state() {
+  PYTHONPATH="$SRC/src" python3 -m bwkit init "$PROJECT_ROOT" --check >/dev/null ||
+    die "BeWater project state preflight failed: $PROJECT_ROOT"
+}
+
+initialize_project_state() {
+  PYTHONPATH="$PROJECT_ROOT/_bewater" python3 -m bwkit init "$PROJECT_ROOT" >/dev/null ||
+    die "BeWater project initialization failed: $PROJECT_ROOT"
+}
+
 # ---------------------------------------------------------------------------
 # main
 # ---------------------------------------------------------------------------
@@ -161,8 +211,13 @@ main() {
     return 0
   fi
 
+  precheck_project_state
+  mkdir -p "$SKILLS_TARGET"
+  preflight_skill_targets
+  prune_obsolete_skills
   deploy_units
   deploy_shared
+  initialize_project_state
 
   local count=0 d
   for d in "$SKILLS_TARGET"/bw-*/; do [[ -d "$d" ]] || continue; ((count++)); done

@@ -17,5 +17,5 @@ investment narratives, and plans L4+ behavioral experiments for each Achilles He
 - Route to the matching capability — see `references/stage.md`. Present the choice and stop when
   ambiguous. When G2 readiness is met, point to **bw-concept-gate**.
 
-bw-start and this router scan open conditions and active-baseline validity before recommending
-downstream work.
+bw-resume owns global and cross-stage scans. This router also scans open conditions and
+active-baseline validity for the selected Shape branch before recommending downstream work.
