@@ -138,25 +138,28 @@ def test_discovery_research_separates_plan_from_latest_sprint_and_debrief_in_one
         assert token in text, f"Discovery research artifact-layout contract missing {token!r}"
 
 
-def test_discovery_research_allows_secondary_only_and_keeps_evidence_provenance():
+def test_discovery_research_is_ai_executed_with_optional_user_context():
     text = _skill_text()
     for token in [
-        "secondary_only",
-        "secondary_first",
-        "mixed",
-        "primary trigger",
-        "evidence limitations",
-        "evidence_origin",
-        "primary | secondary",
-        "evidence_form",
-        "behavior",
-        "self-report",
-        "expert-judgment",
-        "market-data",
-        "document",
+        "ai-executed research",
+        "user-provided",
+        "optional context",
+        "never wait",
+        "source reference",
+        "evidence form",
+        "limitation",
     ]:
         assert token in text, f"Discovery evidence strategy missing {token!r}"
-    assert "primary_required" not in text
+
+    for forbidden in [
+        "research_mode",
+        "secondary_only",
+        "secondary_first",
+        "primary trigger",
+        "evidence_origin",
+        "primary | secondary",
+    ]:
+        assert forbidden not in text, f"Discovery research retains an obsolete mode: {forbidden!r}"
 
 
 def test_discovery_research_does_not_require_a_three_facts_per_4c_quota():
@@ -211,3 +214,99 @@ def test_research_toolkit_covers_collection_and_analysis_without_hardcoding_conn
         assert token in corpus, f"Toolkit is missing planned coverage for {token!r}"
     for forbidden in ["browser", "spreadsheet", "web search"]:
         assert forbidden not in corpus, f"Toolkit hardcodes an execution connector: {forbidden!r}"
+
+
+def test_discovery_research_defines_mission_orchestration_and_automatic_execution_selection():
+    text = _skill_text()
+    for token in [
+        "mission objective",
+        "decision relevance",
+        "source scope",
+        "exclusions",
+        "dependencies",
+        "parallelizable",
+        "2-4 workers",
+        "automatic and internal",
+        "query-level parallelism",
+        "mission-level parallelism",
+        "dependency-ordered waves",
+        "sequential fallback",
+        "never implies four workers",
+    ]:
+        assert token in text, f"Mission orchestration contract missing {token!r}"
+
+
+def test_discovery_research_defines_packets_and_single_writer_fan_in():
+    text = _skill_text()
+    for token in [
+        "research packet",
+        "transient",
+        "uncommitted",
+        "atomic claim",
+        "source reference",
+        "source title",
+        "source date",
+        "source location",
+        "source family",
+        "independence key",
+        "evidence form",
+        "support",
+        "limitation",
+        "contradictions",
+        "unanswered questions",
+        "queries attempted",
+        "stop reason",
+        "underlying origin",
+        "claim-to-source",
+        "never write project state",
+        "never allocate",
+        "single writer",
+        "one coordinator commit",
+    ]:
+        assert token in text, f"Research packet contract missing {token!r}"
+
+
+def test_shared_evidence_schema_is_source_neutral_and_backward_compatible():
+    schema = (REPO / "src" / "skills" / "_bw-shared" / "ledger-schema.md").read_text().lower()
+    for token in [
+        "source_type",
+        "source_ref",
+        "source_title",
+        "source_date",
+        "source_location",
+        "source_family",
+        "independence_key",
+        "evidence_form",
+        "claim",
+        "support",
+        "limitation",
+        "related_assumptions",
+    ]:
+        assert token in schema, f"shared evidence schema missing {token!r}"
+    assert "does not require `evidence_origin`" in schema
+    assert "historical entries" in schema and "not rewritten" in schema
+
+
+def test_discovery_research_fan_in_quality_audit_creates_no_gate_output():
+    text = _skill_text()
+    for token in [
+        "decision-relevant",
+        "atomic claim",
+        "exact source reference",
+        "source location",
+        "independent source family",
+        "authority",
+        "recency",
+        "directness",
+        "bias",
+        "supporting and disconfirming",
+        "contradictions",
+        "favorable source",
+        "does not exceed",
+        "without losing limitations",
+        "unanswered questions",
+        "stop reason",
+        "stop condition",
+        "no artifact, review state, signoff, score, or Gate",
+    ]:
+        assert token in text, f"Fan-in quality audit contract missing {token!r}"
