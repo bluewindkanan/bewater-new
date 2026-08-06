@@ -307,6 +307,6 @@ def test_discovery_research_fan_in_quality_audit_creates_no_gate_output():
         "unanswered questions",
         "stop reason",
         "stop condition",
-        "no artifact, review state, signoff, score, or Gate",
+        "no artifact, review state, signoff, score, or gate",
     ]:
         assert token in text, f"Fan-in quality audit contract missing {token!r}"
