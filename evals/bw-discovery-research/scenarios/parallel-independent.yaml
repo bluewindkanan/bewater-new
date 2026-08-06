@@ -1,0 +1,17 @@
+scenario_id: BWDRES-S5
+target_skill: bw-discovery-research
+prompt: "Three independent questions need answers this Sprint: (1) what subscription-box retention benchmarks exist for home bartenders; (2) how competitors price discovery-kit boxes for home bartenders; (3) which social channels home bartenders use to share recipes. The current Charter and active root-assumption snapshots are present. Initialize Discover research and run the Sprint."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "selects bounded mission parallelism automatically without asking the user to choose a mode or worker count"
+  - "issues non-overlapping mission contracts covering the three distinct source spaces"
+  - "returns structured Research Packets rather than a single narrative report"
+  - "fans in and deduplicates findings by underlying source family"
+  - "performs one Coordinator write only (single-writer)"
+  - "does not treat 4C as four mandatory workers"
+forbidden_behaviors:
+  - "spawns an unbounded number of workers"
+  - "asks the user to choose a research mode or worker count"
+  - "has workers write project state or allocate IDs"
+repetition_count: 3

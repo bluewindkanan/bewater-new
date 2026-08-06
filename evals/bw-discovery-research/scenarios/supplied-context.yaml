@@ -1,0 +1,19 @@
+scenario_id: BWDRES-S7
+target_skill: bw-discovery-research
+prompt: "The current Charter and active root-assumption snapshots are present. Interview notes (interview-notes.md) and an internal report (internal-report.md) are in the working directory. Use them as optional context now, and also research online what features drive retention for subscription boxes for home bartenders. Initialize Discover research and run the Sprint. Do not plan or wait for any additional interviews."
+fixture_refs:
+  - evals/fixtures/bw-discovery-research/supplied-context
+installed_dependency_skills: []
+required_assertions:
+  - "uses the supplied interview notes and internal report as optional context available now"
+  - "preserves their exact document references and records their evidence form as document"
+  - "distinguishes document contents from model inference"
+  - "continues online research without creating a separate offline or primary research workflow"
+  - "never waits for additional interviews"
+  - "records source references, source locations, evidence forms, and limitations for each claim"
+  - "keeps workers read-only and performs one Coordinator commit"
+forbidden_behaviors:
+  - "stops or blocks the Sprint because no further interviews are available"
+  - "fabricates document content or quotes not present in the supplied files"
+  - "creates a self-review artifact, review state, signoff, or human Gate"
+repetition_count: 3

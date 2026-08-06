@@ -1,0 +1,14 @@
+scenario_id: BWDRES-S6
+target_skill: bw-discovery-research
+prompt: "The current Charter and active root-assumption snapshots are present. Discover research must first define what 'discovery box' means in the home-bartender market before searching for competitors and user behavior, because the competitor and behavior searches depend on that definition. Initialize Discover research and run the Sprint."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "establishes market terminology before searching competitors or user behavior"
+  - "runs missions in dependency-ordered waves rather than parallelizing all missions"
+  - "keeps workers read-only and commits through one Coordinator fan-in"
+  - "records the dependency in each mission rather than hiding it"
+forbidden_behaviors:
+  - "parallelizes dependent missions regardless of the dependency"
+  - "treats one worker's conclusion as independent evidence"
+repetition_count: 3

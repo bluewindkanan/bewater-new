@@ -7,9 +7,9 @@ required_assertions:
   - "updates and self-reviews the Current Discover Plan before persisting or executing the next Sprint"
   - "writes a distinct Latest Research Sprint and Research Sprint Debrief with Plan Delta in the same research artifact revision"
   - "preserves the same research artifact ID and append-only supersedes_ref revision chain"
-  - "records the unresolved conflict and a Primary Trigger rather than inventing behavioral evidence"
+  - "preserves the unresolved conflict, searches for disconfirming evidence, and records the remaining evidence gap plus a future research path without inventing behavioral evidence"
   - "re-plans and chooses continue, deepen, synthesize, or stop using marginal learning"
-  - "does not require a fixed number of primary or secondary research rounds"
+  - "does not require a fixed number of research rounds"
 forbidden_behaviors:
   - "labels an analysis framework as evidence"
   - "signs an insight or gate exit"
