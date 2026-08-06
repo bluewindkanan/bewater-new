@@ -16,13 +16,20 @@ current revision.
 2. **Formal inputs and priorities** — exact Charter and active root-assumption revisions; the
    assumptions, risk priorities, and beliefs to challenge in priority order.
 3. **4C coverage map** — the four learning questions, priority, coverage status, and accepted gaps.
-4. **Evidence strategy** — `research_mode` (`secondary_only`, `secondary_first`, or `mixed`),
-   constraints, evidence targets, evidence limitations, and Primary Triggers. Each new evidence
-   record is appended as an entry in `_bewater/evidence.yaml`, preserving `evidence_origin:
-   primary | secondary` and `evidence_form: behavior | self-report | expert-judgment | market-data |
-   document`.
-5. **Research missions** — for each mission: question, evidence need, selected method/framework,
-   execution need, rationale, expected output, limitation, owner or dependency, and stop condition.
+   4C is a coverage compass; it never implies four workers.
+4. **Evidence strategy** — constraints and decision-relevant evidence targets; source scope and
+   desired source-family diversity; any user-provided documents available now as optional context;
+   known source limitations and accepted gaps; verification approach and stop conditions. Missing
+   interview or internal material is an evidence limitation or a future research path, never a
+   reason to block the current ai-executed research Sprint. Each new evidence record is appended as
+   an entry in `_bewater/evidence.yaml` under the shared source-neutral contract; each claim
+   records its source reference, source location when available, source family, independence key,
+   evidence form (behavior, self-report, expert-judgment, market-data, or document), support, and
+   limitation.
+5. **Research missions** — for each mission: mission objective, decision relevance, questions,
+   evidence need, source scope, exclusions, dependencies, `parallelizable`, priority, bounded
+   search budget, stop condition, expected output, and limitation. Evidence need precedes
+   method/framework selection; an analysis framework is not evidence.
 
 ### Latest Research Sprint — after execution only
 
@@ -37,6 +44,82 @@ Record **learned**, **unresolved**, **deepen**, **drop**, and **new questions**.
 learning. The Research Debrief records the Plan Delta: which priorities, 4C gaps, evidence
 strategy, or missions changed for the next Sprint. It is the decision edge for another Sprint, not
 a human Gate.
+
+## Research Mission contract
+
+Each selected mission carries enough information to schedule and evaluate it:
+
+| Field | Meaning |
+|---|---|
+| mission objective | Decision-relevant outcome |
+| decision relevance | What judgment this can change |
+| questions | Learning questions this mission answers |
+| evidence need | Evidence required before method selection |
+| source scope | Where the mission may look |
+| exclusions | What the mission must not cover |
+| dependencies | Missions this mission depends on |
+| parallelizable | Whether independent execution is possible |
+| priority | Relative importance among missions |
+| search budget | Bounded calls/time/coverage |
+| stop condition | Evidence or diminishing-return threshold |
+| expected output | Research Packet |
+| limitation | What this mission cannot establish |
+
+`parallelizable: true` is necessary but not sufficient: missions sharing a dependency, dense
+context, or substantially overlapping source space remain sequential or are merged by the
+Coordinator.
+
+## Execution selection
+
+The Coordinator chooses the internal execution strategy automatically, without asking the user for
+a research mode or worker count:
+
+| Condition | Internal execution |
+|---|---|
+| One bounded question or dense shared context | One researcher; sequential refinement |
+| Independent queries inside one mission | Query-level parallelism |
+| 2–4 missions with distinct questions and source spaces | Mission-level parallelism |
+| One mission depends on another | Dependency-ordered waves |
+| High-risk synthesis or conflicting evidence | Add a contradiction/citation verification pass |
+| Concurrency unavailable | Sequential fallback |
+
+## Research Packet
+
+Workers return a structured, uncommitted packet instead of a narrative report. Packets are
+transient coordination payloads — not BeWater artifacts, evidence files, or ledger records. Each
+packet carries its mission ID plus findings, contradictions, unanswered questions,
+queries attempted, and stop reason. Each finding is an atomic claim with a source reference,
+source title, source date, source location, source family, independence key, evidence form,
+support, and limitation.
+
+## Evidence fan-in
+
+The Coordinator — the single writer — normalizes every Research Packet from the current dependency
+wave, then deduplicates findings by underlying origin rather than page count, resolves citation
+locations, checks claim-to-source support, searches for disconfirming evidence where important
+claims remain one-sided, and preserves contradictions and alternative explanations. Workers are
+read-only: they never write project state, never allocate evidence or artifact IDs, and never
+commit; one Coordinator commit writes all state. Duplicate findings are merged without losing
+limitations.
+
+## Fan-in quality audit
+
+Before any state write, the Coordinator checks:
+
+1. every persisted claim is decision-relevant and atomic;
+2. every claim resolves to an exact source reference and, when available, a source location;
+3. repeated pages from one report, study, or dataset count as one independent source family;
+4. source authority, recency, directness, and known bias fit the claim being made;
+5. supporting and disconfirming evidence are both preserved;
+6. contradictions are visible and are not resolved by silently selecting the favorable source;
+7. inference does not exceed what the evidence form can establish;
+8. duplicate findings are merged without losing limitations;
+9. high-priority gaps and unanswered questions remain explicit;
+10. the Sprint stop reason follows its stop condition or a documented budget constraint.
+
+The audit repairs the uncommitted synthesis when possible. It creates
+no artifact, review state, signoff, score, or Gate, and adds no checklist result or user approval
+step. It does not block Research on missing interviews.
 
 ## Plan self-review
 
@@ -61,7 +144,8 @@ decision, priority, scope, authority, or resource commitment, ask one question a
 writing or executing. The self-review itself produces no artifact, state, signoff, checklist result,
 or user confirmation.
 
-Research is flow, not waterfall. Secondary research may be sufficient for Discover, but its
-limitations and unresolved validation needs remain visible. Do not wait for every possible fact;
-do not hide an evidence gap by calling it resolved. The toolkit is a seed library, not a whitelist:
-an ad-hoc method records why selected, what it cannot prove, and is not automatically promoted.
+Research is flow, not waterfall. Research over public sources and supplied context may be sufficient
+for Discover, but its limitations and unresolved validation needs remain visible. Do not wait for
+every possible fact; do not hide an evidence gap by calling it resolved. The toolkit is a seed
+library, not a whitelist: an ad-hoc method records why selected, what it cannot prove, and is not
+automatically promoted.

@@ -1,6 +1,6 @@
 ---
 contract_id: bw-ledger-schema
-contract_version: 2
+contract_version: 3
 ---
 
 # BeWater State Schema (authoritative)
@@ -79,25 +79,42 @@ requires exactly one head per revision chain; a duplicate, missing
 predecessor, cycle, or two heads is corruption.
 
 ## evidence.yaml (evidence record)
-Evidence is a structured state record — a one-line provenance entry plus a summary — in the same
+Evidence is a structured state record — a source-bounded claim plus provenance — in the same
 family as `ledger.yaml` and `conditions.yaml`, not an artifact. It accumulates in-place in one
 per-branch file `_bewater/evidence.yaml`; never one append-only file per record.
 
 Envelope fields: `schema_version`, `revision` (envelope in-place bump), `branch_id`,
-`next_evidence_id` (canonical source for E-NNN), `evidence[]`. Entry fields: `id` (`E-001`),
-`record_revision` (in-place bump under the stable E-NNN ID; the `@n` in `evidence:E-001@n` pins
-this), `captured_at`, `source_type`, `evidence_origin{primary,secondary}`,
-`evidence_form{behavior,self-report,expert-judgment,market-data,document}`, `source_url`,
-`related_assumptions[]`, `validity{active,invalidated}`, `correction_reason`, `summary`.
+`next_evidence_id` (canonical source for E-NNN), `evidence[]`.
 
-`evidence_origin` and `evidence_form` are optional for pre-v2 records and required for new Discover
-research evidence. `related_assumptions` lists short IDs (`A-001`); it is a human reverse-lookup
-convenience, NOT a lineage edge — backtrack consumes only the forward edges `derived_from`/
-`evidence_refs`/branch/baseline, so this field never pins an assumption revision. A correction edits
-the entry in place: bump `record_revision`, set `validity: invalidated`, record `correction_reason`.
-A dependent that pins `evidence:E-001@1` is stale when the entry head `record_revision` exceeds the
-pinned `@n` — this in-place comparison replaces the append-only `supersedes_ref` chain. The file
-carries no `content_sha256`; evidence integrity is carried by `source_url` plus the summary. A skill
+New Discover evidence entries use the source-neutral contract below. Entry fields: `id` (`E-001`),
+`record_revision` (in-place bump under the stable E-NNN ID; the `@n` in `evidence:E-001@n` pins
+this), `captured_at`, `source_type`, `source_ref`, `source_title`, `source_date`,
+`source_location`, `source_family`, `independence_key`,
+`evidence_form{behavior,self-report,expert-judgment,market-data,document}`, `claim`, `support`,
+`limitation`, `related_assumptions[]`, `validity{active,invalidated}`, `correction_reason`,
+`summary`.
+
+`source_ref` accepts an exact retrieved URL, a user-supplied file reference, or another stable
+document identifier. Never invent or repair a URL, title, date, or location; record an explicit
+unknown when the value is not known. `source_family` is the publisher or originating
+dataset/study; `independence_key` is the underlying origin used for deduplication — repeated pages
+derived from one report, study, or dataset share one key and count as one independent source
+family. `claim` is an atomic, decision-relevant statement; `support` is the exact observation or
+concise source-bounded paraphrase; `limitation` states what this evidence cannot prove. New
+Discover evidence does not require `evidence_origin`.
+
+Migration rule: existing evidence entries remain valid and are **not rewritten**. Historical
+entries remain readable; historical entries are preserved as written, and new Discover entries
+follow the source-neutral contract above. Old extra fields (for example `evidence_origin` or
+`source_url`) may remain present on historical entries but do not control Research planning or
+execution.
+
+`related_assumptions` lists short IDs (`A-001`); it is a human reverse-lookup convenience, NOT a
+lineage edge — backtrack consumes only the forward edges `derived_from`/`evidence_refs`/branch/
+baseline, so this field never pins an assumption revision. A correction edits the entry in place:
+bump `record_revision`, set `validity: invalidated`, record `correction_reason`. A dependent that
+pins `evidence:E-001@1` is stale when the entry head `record_revision` exceeds the pinned `@n` —
+this in-place comparison replaces the append-only `supersedes_ref` chain. The file carries no
+`content_sha256`; evidence integrity is carried by `source_ref` plus the claim and support. A skill
 creates `_bewater/evidence.yaml` on first write (initializing the envelope) rather than at project
-init, because evidence is not required for every project. A user-provided URL is preserved exactly in
-`source_url`; skills never invent or repair URLs.
+init, because evidence is not required for every project.

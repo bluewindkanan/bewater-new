@@ -13,7 +13,7 @@ research, not prefilled answers.
 
 For each C, record the question, priority, coverage status (`planned`, `evidenced`, or
 `gap-accepted`), and the evidence needed. A gap may be accepted only with a stated limitation and
-reason; no C has a fixed fact quota. Use primary and secondary sources as appropriate. An
+reason; no C has a fixed fact quota. Use online sources and supplied context as appropriate. An
 observation remains a hypothesis until evidence supports it. The Initial Assessment can supply
 candidate beliefs to challenge, but never supplies a Fact or evidence by itself.
 
