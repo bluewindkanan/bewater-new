@@ -1,6 +1,6 @@
 scenario_id: BWINS-S1
 target_skill: bw-insight-craft
-prompt: "Turn these research findings into insights and judge them against F/P/E/T."
+prompt: "Discover research on a home-bartender cocktail-kit subscription produced these Insight Ingredients. Facts: (1) a survey shows 68% of buyers stop using the kit within three months; (2) the few repeat buyers name 'discovering new flavors' as their main reason to continue. Tension: users want both novelty (discovery) and a reliably good drink. Accepted Belief to challenge: 'stopping at three months is a retention failure.' Reframe candidate: stopping is a discovery-completion signal - the kit taught the user what they like. Turn these ingredients into insight candidates: walk Facts -> Accepted Beliefs -> Insights, generate candidates with your lenses and methods, judge each against Fresh/Potent/Energizing/Truth, and stop before recording the human F/P/E/T signoff. Treat tension and reframe candidate as ingredients, not pre-approved Insights. Do not compose directional hypotheses."
 fixture_refs: []
 installed_dependency_skills: [bw-discovery-research]
 required_assertions:
