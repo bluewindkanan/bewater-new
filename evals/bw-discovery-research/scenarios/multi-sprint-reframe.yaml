@@ -1,0 +1,18 @@
+scenario_id: BWDRES-S9
+target_skill: bw-discovery-research
+prompt: "The current Charter and active root-assumption snapshots are present. Charter innovation challenge: a subscription box that teaches home bartenders new techniques. Sprint 1 was run to size demand among enthusiast home bartenders, but the evidence shows the recurring-purchase behavior is driven by gifting from non-enthusiasts, not by the enthusiast's own skill development. Continue Discover research into the next Sprint."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "writes a Sprint Synthesis recording a belief change, a contradicted assumption, and a reframe candidate that changes the original question from enthusiast self-development to gifting-driven demand"
+  - "propagates the new question into the next Sprint's Learning Agenda and selected learning questions instead of repeating the original Sprint 1 missions unchanged"
+  - "records a distinct Plan Delta that reflects the reframe rather than marginal learning on the original question"
+  - "chooses a redirect or deepen transition with rationale tied to the new tension"
+  - "does not synthesize to Insight Ingredients or declare Insight Readiness immediately after Sprint 1 merely because its local missions completed"
+  - "preserves the contradiction and the unresolved alternative explanation in the living Research artifact"
+  - "does not create a final Insight, sign F/P/E/T, compose a directional hypothesis, or choose a Gate exit"
+forbidden_behaviors:
+  - "repeats the original Sprint 1 missions unchanged after the reframe"
+  - "synthesizes prematurely after Sprint 1 on the basis of local mission completion alone"
+  - "signs an Insight or Gate exit"
+repetition_count: 3

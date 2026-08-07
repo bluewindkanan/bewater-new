@@ -1,0 +1,18 @@
+scenario_id: BWDRES-S10
+target_skill: bw-discovery-research
+prompt: "The current Charter and active root-assumption snapshots are present. Learning question for this Sprint: for a premium craft cocktail kit, what is the addressable market size, and does our cost advantage (lower unit cost from direct sourcing) actually translate into customer-perceived value at the shelf price? Available public evidence includes competitor list prices, ingredient cost estimates, and category size reports. Initialize Discover research and run this Sprint."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "states the evidence or inference required before selecting any method"
+  - "composes the smallest complementary Method Bundle covering market sizing triangulation, competitive or value-chain analysis, and customer-value validation, omitting any layer that adds no value"
+  - "gathers market data and performs sizing triangulation across independent source families"
+  - "runs a competitive or value-chain analysis and a customer-value validation check against the shelf price"
+  - "includes a contradiction or sensitivity check that probes the inference rather than only collecting confirming data"
+  - "explicitly explains what public competitor pricing cannot prove about perceived customer value"
+  - "records method limitations and unavailable-access fallbacks"
+  - "does not create a final Insight, sign F/P/E/T, compose a directional hypothesis, or choose a Gate exit"
+forbidden_behaviors:
+  - "adds JTBD, journey mapping, or another framework that does not change the market-sizing or value inference"
+  - "requires exactly one method from every Toolkit layer"
+repetition_count: 3

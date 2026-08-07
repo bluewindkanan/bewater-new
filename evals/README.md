@@ -3,9 +3,12 @@
 Phase 1a authors **scenario manifests** (`<skill>/scenarios/`) and **RED controls**
 (`<skill>/red/`) only. The fresh-context LLM GREEN runs (spec §11.1 — 3 repetitions, 5/5
 for safety-critical) are the **deferred Phase-1 acceptance gate** and are executed in a
-separate pass once the Phase 1b G1 closed loop is in place. Structural correctness is
-covered now by `scripts/verify.py` and the per-skill pytest; state-write correctness rides
-on the Plan-1 `bwkit` CAS.
+separate pass once the Phase 1b G1 closed loop is in place. Structural correctness of every
+manifest (required keys, valid YAML, no placeholder tokens) is enforced by the per-skill
+pytest — e.g. `tests/test_skill_bw_discovery_research.py`,
+`tests/test_skill_bw_insight_craft.py` — through the shared harness loader
+(`evals/_harness/loader.load_manifest` + `tests/skill_helpers.validate_skill_evals`);
+state-write correctness rides on the Plan-1 `bwkit` CAS.
 
 ## Phase 1b
 
@@ -65,7 +68,7 @@ Before the full run:
 - [x] Verify gate accepts partial coverage (F3)
 - [x] Structured `checks:` added to bw-shape orient manifest
 - [ ] Remaining manifests: add `checks:` fields mapping NL assertions → mechanical checks
-- [ ] Run `python -m evals bw-shape --mode green --rep 3` (verify GREEN routing)
-- [ ] Run full `python -m evals --all --mode red && python -m evals --all --mode green`
+- [ ] Run `.venv/bin/python -m evals._harness run --skill bw-shape --mode green --rep 3` (verify GREEN routing)
+- [ ] Run full `.venv/bin/python -m evals._harness run --all --mode red && .venv/bin/python -m evals._harness run --all --mode green`
 - [ ] Human review all `needs-review` items, fill `reviewer` field
-- [ ] `python scripts/verify.py` → eval-results gate enforces all scenarios
+- [ ] Per-skill pytest (e.g. `tests/test_skill_bw_shape.py`) → manifest structure validation via the shared harness loader

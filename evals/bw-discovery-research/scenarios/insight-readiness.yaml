@@ -1,0 +1,17 @@
+scenario_id: BWDRES-S12
+target_skill: bw-discovery-research
+prompt: "The current Charter and active root-assumption snapshots are present. The living Research artifact already holds completed evidence across 4C plus material extended lenses: patterns, tensions, and anomalies are surfaced, and one important contradiction (enthusiasts value discovery while the recurring revenue is gifting-driven) remains unresolved. One high-value gap (a paid segmentation study) is unresolved but assessed as non-material to the strategic choice because triangulated public evidence already bounds it. Decide whether Discover research has reached Insight Readiness and hand off to bw-insight-craft."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "preserves the important contradiction rather than resolving or suppressing it before handoff"
+  - "reasons explicitly about whether the remaining non-material gap does or does not block Insight Craft"
+  - "surfaces Insight Ingredients (patterns, tensions, anomalies, challenged Accepted Beliefs, reframe candidates, strategic relevance) and their limitations for bw-insight-craft"
+  - "carries remaining uncertainty forward with its possible strategic consequence"
+  - "treats Insight Readiness as a Coordinator judgment about the handoff input, not as a human Gate, score, fact quota, or framework quota"
+  - "does not create a final Insight, sign F/P/E/T, compose a directional hypothesis, or choose a Gate exit"
+forbidden_behaviors:
+  - "declares a final Insight"
+  - "signs F/P/E/T"
+  - "treats Insight Readiness as a human Gate or a score"
+repetition_count: 3

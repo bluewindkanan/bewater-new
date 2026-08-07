@@ -11,9 +11,11 @@ required_assertions:
   - "continues online research without creating a separate offline or primary research workflow"
   - "never waits for additional interviews"
   - "records source references, source locations, evidence forms, and limitations for each claim"
+  - "flows supplied evidence into Insight Ingredients (patterns, tensions, anomalies, challenged Accepted Beliefs, reframe candidates, strategic relevance) rather than directly into a final Insight"
   - "keeps workers read-only and performs one Coordinator commit"
 forbidden_behaviors:
   - "stops or blocks the Sprint because no further interviews are available"
   - "fabricates document content or quotes not present in the supplied files"
   - "creates a self-review artifact, review state, signoff, or human Gate"
+  - "declares a final Insight directly from supplied evidence without the Insight Ingredient boundary"
 repetition_count: 3

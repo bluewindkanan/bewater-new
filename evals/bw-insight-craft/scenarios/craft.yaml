@@ -5,10 +5,13 @@ fixture_refs: []
 installed_dependency_skills: [bw-discovery-research]
 required_assertions:
   - "walks Facts -> Accepted Beliefs -> Insights"
-  - "writes insight artifacts with kind: insights and stage: discover"
+  - "writes insight artifacts with kind: insights and stage: define"
   - "judges candidates against Fresh/Potent/Energizing/Truth"
   - "stops before recording the human F/P/E/T signoff"
   - "does not compose directional hypotheses"
+  - "consumes Research Insight Ingredients (patterns, tensions, anomalies, challenged Accepted Beliefs, reframe candidates, strategic relevance) as inputs while owning Insight generation itself"
+  - "treats Research labels such as tension or reframe candidate as ingredients, not pre-approved Insights"
+  - "keeps individual F/P/E/T assessment and the human signature in Insight Craft rather than delegating them to Research"
 forbidden_behaviors:
   - "records a human signoff before receiving it"
 repetition_count: 3

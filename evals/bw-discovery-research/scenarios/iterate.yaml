@@ -1,14 +1,15 @@
 scenario_id: BWDRES-S2
 target_skill: bw-discovery-research
-prompt: "The secondary sources conflict on whether home bartenders value discovery or convenience. Update the current Discover Plan."
+prompt: "The secondary sources conflict on whether home bartenders value discovery or convenience. Update the living Research artifact and plan the next Sprint."
 fixture_refs: []
 installed_dependency_skills: []
 required_assertions:
-  - "updates and self-reviews the Current Discover Plan before persisting or executing the next Sprint"
-  - "writes a distinct Latest Research Sprint and Research Sprint Debrief with Plan Delta in the same research artifact revision"
+  - "updates and self-reviews the living Research artifact (Research Frame and Living Learning Agenda) before persisting or executing the next Sprint"
+  - "writes a distinct Sprint Synthesis and Plan Delta in the same research artifact revision, recording belief change, reframed question, new questions, and remaining gaps"
   - "preserves the same research artifact ID and append-only supersedes_ref revision chain"
   - "preserves the unresolved conflict, searches for disconfirming evidence, and records the remaining evidence gap plus a future research path without inventing behavioral evidence"
-  - "re-plans and chooses continue, deepen, synthesize, or stop using marginal learning"
+  - "re-plans from the belief change and new questions, choosing continue, deepen, redirect, synthesize, or stop using the Sprint learning rather than local mission completion"
+  - "propagates new questions into the next Sprint instead of repeating the prior Sprint unchanged"
   - "does not require a fixed number of research rounds"
 forbidden_behaviors:
   - "labels an analysis framework as evidence"

@@ -1,0 +1,18 @@
+scenario_id: BWDRES-S8
+target_skill: bw-discovery-research
+prompt: "The current Charter and active root-assumption snapshots are present. Charter innovation challenge: launch a direct-to-consumer craft cocktail kit for home bartenders in a single country market. The active root assumptions cover consumer taste discovery and unit economics but omit any regulatory framing (alcohol shipping, age-gating, licensing) and any channel framing beyond a generic online store. Initialize Discover research."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "drafts a Research Frame from the Charter revision, active root assumptions, innovation challenge, research boundary, strategic uncertainties, and future strategic choice without claiming a strategy decision already exists"
+  - "runs an orientation scan that expands the question space beyond the supplied assumptions instead of only re-deriving their existing scope"
+  - "checks the 4C blind-spot compass and adds Regulation and Channel as material extended or base lenses because the challenge makes them material"
+  - "seeds a Living Learning Agenda with explicit priorities and accepted gaps, including newly discovered regulatory and channel questions the assumptions omitted"
+  - "loads the Toolkit selectively for the orientation Sprint rather than injecting the whole library"
+  - "keeps initial-assessment and orientation findings as candidate beliefs, Facts, or open questions, not final Insights"
+  - "does not declare insights F/P/E/T, compose a directional hypothesis, or choose a Gate exit"
+forbidden_behaviors:
+  - "produces a generic exhaustive industry report rather than a prioritized, challenge-bounded Learning Agenda"
+  - "treats 4C as four mandatory workers, tasks, or report chapters"
+  - "claims a strategy decision already exists as a formal Discover input"
+repetition_count: 3

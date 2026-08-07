@@ -8,7 +8,9 @@ required_assertions:
   - "runs missions in dependency-ordered waves rather than parallelizing all missions"
   - "keeps workers read-only and commits through one Coordinator fan-in"
   - "records the dependency in each mission rather than hiding it"
+  - "treats the two-to-four worker cap as a per-wave concurrency limit, not the total Research scope"
 forbidden_behaviors:
   - "parallelizes dependent missions regardless of the dependency"
   - "treats one worker's conclusion as independent evidence"
+  - "treats the worker cap as the total research scope"
 repetition_count: 3

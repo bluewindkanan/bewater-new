@@ -1,0 +1,16 @@
+scenario_id: BWDRES-S11
+target_skill: bw-discovery-research
+prompt: "The current Charter and active root-assumption snapshots are present. One narrow verification question for this Sprint: confirm, from public regulatory sources only, whether direct-to-consumer spirit shipment is permitted in the target market, and cite the source. Initialize Discover research and run this Sprint."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "states the evidence need before method selection and chooses the minimal method that answers it"
+  - "follows a direct evidence path to the regulatory source with claim-to-source traceability"
+  - "rejects redundant analysis or synthesis frameworks that do not change this verification inference"
+  - "loads only the Toolkit method or methods relevant to this single question rather than the whole Toolkit"
+  - "records source references, source locations, evidence forms, and limitations"
+  - "does not create a final Insight, sign F/P/E/T, compose a directional hypothesis, or choose a Gate exit"
+forbidden_behaviors:
+  - "adds multiple analysis frameworks that do not change the verification inference"
+  - "loads the whole Toolkit into the Sprint"
+repetition_count: 3

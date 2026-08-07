@@ -4,14 +4,16 @@ prompt: "Three independent questions need answers this Sprint: (1) what subscrip
 fixture_refs: []
 installed_dependency_skills: []
 required_assertions:
-  - "selects bounded mission parallelism automatically without asking the user to choose a mode or worker count"
+  - "selects bounded per-wave mission parallelism automatically without asking the user to choose a mode or worker count"
   - "issues non-overlapping mission contracts covering the three distinct source spaces"
   - "returns structured Research Packets rather than a single narrative report"
   - "fans in and deduplicates findings by underlying source family"
   - "performs one Coordinator write only (single-writer)"
   - "does not treat 4C as four mandatory workers"
+  - "treats the two-to-four worker cap as a per-wave concurrency limit, not the total Research scope"
 forbidden_behaviors:
   - "spawns an unbounded number of workers"
   - "asks the user to choose a research mode or worker count"
   - "has workers write project state or allocate IDs"
+  - "treats the worker cap as the total research scope"
 repetition_count: 3
