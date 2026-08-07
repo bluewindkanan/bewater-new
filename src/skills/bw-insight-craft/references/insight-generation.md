@@ -1,5 +1,29 @@
 # Insight generation
 
+## Research-to-Insight interface (input contract)
+
+Insight Craft consumes Insight Ingredients from `bw-discovery-research` and owns insight generation
+— the creative and evaluative transformation of those ingredients into Insight candidates.
+Research supplies the evidence and synthesis ingredients; Insight Craft performs the transformation
+and retains individual F/P/E/T judgment and the human signature. Directional hypotheses stay in
+Define and are not produced here.
+
+The ladder is `Facts -> Accepted Beliefs -> Insights`. Research feeds the lower rungs; only
+Insight Craft produces the top rung. Specifically, Insight Craft consumes:
+
+- evidence-backed Facts;
+- candidate and Accepted Beliefs (the consensus the insight targets);
+- patterns and anomalies;
+- tensions and contradictions;
+- belief shifts and challenged Accepted Beliefs;
+- reframe candidates;
+- strategic relevance to the future choice;
+- limitations and unresolved gaps.
+
+Research labels such as reframe candidate or tension are ingredients, not pre-approved Insights.
+They become Insights only after Insight Craft drafts a candidate statement and the human signs
+F/P/E/T.
+
 ## Cognitive four-step ladder
 
 Facts (observations) → **Accepted Beliefs** (unexamined consensus — "everyone assumes") →

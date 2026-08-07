@@ -1,49 +1,143 @@
 # Discover Plan
 
 The Discover Plan is the forward-looking planning section of the branch's living `research`
-artifact. Revision 1 contains a reviewed Current Discover Plan. A Research Sprint first uses that
-snapshot, then writes the next append-only revision of the same artifact ID using `supersedes_ref`.
-That next revision carries the updated Current Discover Plan, Latest Research Sprint, and Research
-Sprint Debrief. Older revisions preserve history; do not duplicate every prior Sprint in the
-current revision.
+artifact. The artifact iterates through adaptive Sprints: a Research Frame anchors every Sprint,
+the Living Learning Agenda drives what the next Sprint must learn, and after execution each
+meaningful Sprint appends a next revision of the same artifact ID using `supersedes_ref`. That next
+revision carries the updated sections plus the Latest Research Sprint, the Sprint Synthesis and Plan
+Delta, the Insight Ingredients, and the Remaining uncertainty. Older revisions preserve history; do
+not duplicate every prior Sprint in the current revision.
+
+Revision 1 contains a reviewed Research Frame and Living Learning Agenda; omit a section rather than add an empty placeholder. An internal Orient pass may be part of initialization, but persist it as a
+separate meaningful delta only when it changes the agenda, priorities, boundary, or lens map.
 
 ## Artifact layout
 
-### Current Discover Plan — required sections
+The living research artifact is organized around adaptive Sprints. Each revision persists the stable
+sections below; the execution-only sections appear only after a Sprint has actually run.
 
-1. **Discovery mission and decision** — the core exploration question, provisional proposition,
-   research boundary, and the decision this research must inform.
-2. **Formal inputs and priorities** — exact Charter and active root-assumption revisions; the
-   assumptions, risk priorities, and beliefs to challenge in priority order.
-3. **4C coverage map** — the four learning questions, priority, coverage status, and accepted gaps.
-   4C is a coverage compass; it never implies four workers.
-4. **Evidence strategy** — constraints and decision-relevant evidence targets; source scope and
-   desired source-family diversity; any user-provided documents available now as optional context;
-   known source limitations and accepted gaps; verification approach and stop conditions. Missing
-   interview or internal material is an evidence limitation or a future research path, never a
-   reason to block the current ai-executed research Sprint. Each new evidence record is appended as
-   an entry in `_bewater/evidence.yaml` under the shared source-neutral contract; each claim
-   records its source reference, source location when available, source family, independence key,
-   evidence form (behavior, self-report, expert-judgment, market-data, or document), support, and
-   limitation.
-5. **Research missions** — for each mission: mission objective, decision relevance, questions,
-   evidence need, source scope, exclusions, dependencies, `parallelizable`, priority, bounded
-   search budget, stop condition, expected output, and limitation. Evidence need precedes
-   method/framework selection; an analysis framework is not evidence.
+1. **Research Frame** — the current Charter revision and active-assumption revision snapshot; the
+   innovation challenge; the research boundary; the strategic uncertainties; and the future
+   strategic choices the research may inform without implying such a choice already exists.
+2. **Living Learning Agenda** — the current hypotheses and Accepted Beliefs to challenge; open
+   questions with priority, dependencies, and evidence needs; the 4C coverage plus any applicable
+   extended-lens blind-spot map; and material accepted gaps with why each is acceptable.
+3. **Latest Research Sprint — after execution only** — the learning questions selected for this
+   Sprint; the validity-relevant Method Bundle and its limitations; the work actually executed with
+   evidence references; and material deviations and tool or access fallbacks.
+4. **Sprint Synthesis and Plan Delta — after execution only** — what was learned, contradicted,
+   reframed, deepened, or dropped; new questions and remaining gaps; and the next transition with
+   rationale.
+5. **Insight Ingredients and Insight Readiness** — evidence-backed patterns, tensions, anomalies,
+   challenged Accepted Beliefs, reframe candidates, and strategic relevance, plus the Insight
+   Readiness assessment that decides whether to hand off.
+6. **Remaining uncertainty** — the high-value gaps that survive this Sprint, what each may change,
+   and the future research path when one is known.
+
+### Research Frame
+
+The Research Frame fixes what the research is about for this revision. Record the exact Charter
+revision and active root-assumption revision snapshot, the innovation challenge, the research
+boundary, and the strategic uncertainties. List the future strategic choices the research may inform
+without claiming a strategy decision already exists; the Frame orients research toward a decision
+edge, it does not assume the decision has been made.
+
+### Living Learning Agenda
+
+The Living Learning Agenda is the working backlog of this research. Seed it from Charter questions,
+root assumptions, advisory candidate beliefs, and a broad orientation scan; treat hypotheses as
+prioritization inputs, never as the outer boundary of research. Record, for each open question, its
+priority, dependencies, and evidence need. Map the Consumer, Company, Category, and Channel lenses
+plus any challenge-specific extended lens that is material here, and keep them as a blind-spot map,
+not four tasks. Record accepted gaps and why each is acceptable, including what strategic
+consequence the gap may carry. Add newly discovered questions and material lenses as Sprints proceed.
 
 ### Latest Research Sprint — after execution only
 
-Record the reviewed mission, work actually executed, evidence references, deviations from the
-Plan, and limitations. Revision 1 has no Latest Research Sprint or Research Sprint Debrief section:
-omit them rather than adding empty placeholders.
+After a Sprint has executed, record the learning questions selected for it, the validity-relevant
+Method Bundle and its limitations, the work actually executed with evidence references, and material
+deviations and tool or access fallbacks. Keep connector and worker detail transient (see Stable
+versus transient state); persist only what affects what the evidence can support or explains a
+fallback. Revision 1 has no Latest Research Sprint section: omit it rather than adding an empty
+placeholder.
 
-### Research Sprint Debrief and Plan Delta — after execution only
+### Sprint Synthesis and Plan Delta — after execution only
 
-Record **learned**, **unresolved**, **deepen**, **drop**, and **new questions**. Then choose
-`continue`, `deepen`, `synthesize`, or `stop` with a reason and stop rule based on marginal
-learning. The Research Debrief records the Plan Delta: which priorities, 4C gaps, evidence
-strategy, or missions changed for the next Sprint. It is the decision edge for another Sprint, not
-a human Gate.
+Replace a collection-only debrief with a synthesis that records what changed in belief and
+understanding:
+
+- **learned** — new evidence-backed findings;
+- **contradicted** — prior belief or evidence overturned;
+- **belief changed** — which Accepted Belief or candidate belief shifted, and how;
+- **reframed** — where the question itself was restructured;
+- **deepened** — where confidence or detail increased without changing the frame;
+- **dropped** — questions or hypotheses that no longer earn research effort;
+- **new questions** — questions this Sprint surfaced;
+- **remaining gaps** — material gaps that survive and what each may change.
+
+Then record the Plan Delta (which priorities, agenda items, lens map, boundary, or Method Bundles
+changed for the next Sprint) and choose the next transition from `continue`, `deepen`, `redirect`,
+`synthesize`, or `stop`, with a rationale and stop rule based on marginal strategic learning rather
+than on a fixed Sprint count. `redirect` is chosen when evidence moves the question to a different
+frame. The synthesis is the decision edge for another Sprint; it is not a human Gate.
+
+### Insight Ingredients and Insight Readiness
+
+**Insight Ingredients** are the evidence-backed handoff inputs surfaced by research: patterns,
+tensions, anomalies, challenged Accepted Beliefs, reframe candidates, and strategic relevance, each
+with its limitations. They are candidates only; Research does not create a final Insight, does not
+sign F/P/E/T, does not compose a directional hypothesis, and does not choose a Gate exit.
+
+**Insight Readiness** is a Coordinator judgment that the handoff input is ready for `bw-insight-craft`.
+Research may move to synthesize only when:
+
+- critical strategic uncertainties are evidenced or retained as explicit material gaps;
+- 4C and any challenge-specific extended lens have been checked for strategy-changing blind spots;
+- important supporting and disconfirming evidence have both been considered;
+- contradictions and plausible alternative explanations remain visible;
+- the Sprint Synthesis identifies evidence-backed Insight Ingredients, or explicitly explains why
+  no meaningful tension or reframe emerged;
+- continuing immediately is unlikely to add enough strategic learning value to justify another
+  Sprint, given current access and constraints;
+- remaining uncertainty is carried forward with its possible strategic consequence.
+
+Insight Readiness is not a human Gate, not a score, not a fact quota, not a framework quota, and not
+permission to sign F/P/E/T. One wave's local missions completing is not, by itself, Insight
+Readiness.
+
+### Remaining uncertainty
+
+Record the high-value gaps that survive this revision, what each gap may change strategically, and
+the future research path when one is known. Remaining uncertainty travels with the Insight
+Ingredients into `bw-insight-craft` so downstream judgment is never made blind to what is still
+unknown.
+
+## Stable versus transient state
+
+Only durable, validity-relevant content is persisted in the living research artifact. Transient
+execution detail stays out of the artifact.
+
+**Stable — persist:**
+
+- Research Frame;
+- Living Learning Agenda;
+- evidence references;
+- meaningful method limitations (only when they affect what the evidence can support or explain a
+  fallback);
+- Sprint Synthesis and Plan Delta;
+- Insight Ingredients;
+- remaining uncertainty.
+
+**Transient — do not persist:**
+
+- scratch issue trees and alternative decompositions;
+- queries attempted, except when needed to explain a material gap;
+- routine connector selection;
+- worker count and topology;
+- intermediate Research Packets after normalized fan-in;
+- unused Toolkit candidates;
+- framework selection deliberation;
+- duplicate source material already normalized into evidence.
 
 ## Research Mission contract
 
@@ -72,16 +166,20 @@ Coordinator.
 ## Execution selection
 
 The Coordinator chooses the internal execution strategy automatically, without asking the user for
-a research mode or worker count:
+a research mode or worker count. Execution is automatic and internal:
 
 | Condition | Internal execution |
 |---|---|
 | One bounded question or dense shared context | One researcher; sequential refinement |
 | Independent queries inside one mission | Query-level parallelism |
-| 2–4 missions with distinct questions and source spaces | Mission-level parallelism |
+| 2-4 missions with distinct questions and source spaces | Mission-level parallelism |
 | One mission depends on another | Dependency-ordered waves |
 | High-risk synthesis or conflicting evidence | Add a contradiction/citation verification pass |
 | Concurrency unavailable | Sequential fallback |
+
+Two-to-four workers is a per-wave concurrency limit, not a research-scope limit. Build
+dependency-ordered waves, mark independent missions eligible for bounded parallel execution, and
+fall back to sequential execution whenever worker concurrency is unavailable.
 
 ## Research Packet
 
@@ -106,7 +204,7 @@ limitations.
 
 Before any state write, the Coordinator checks:
 
-1. every persisted claim is decision-relevant and atomic;
+1. every persisted claim is decision-relevant and an atomic claim;
 2. every claim resolves to an exact source reference and, when available, a source location;
 3. repeated pages from one report, study, or dataset count as one independent source family;
 4. source authority, recency, directness, and known bias fit the claim being made;
@@ -118,14 +216,14 @@ Before any state write, the Coordinator checks:
 10. the Sprint stop reason follows its stop condition or a documented budget constraint.
 
 The audit repairs the uncommitted synthesis when possible. It creates
-no artifact, review state, signoff, score, or Gate, and adds no checklist result or user approval
+no artifact, review state, signoff, score, or gate, and adds no checklist result or user approval
 step. It does not block Research on missing interviews.
 
 ## Plan self-review
 
-Run one in-context self-review after drafting or changing the Current Discover Plan and before
-persistence or execution. Use the same four checks as the brainstorming self-review, adapted to
-research:
+Run one in-context self-review after drafting or changing the living research artifact's Frame,
+Living Learning Agenda, or next Sprint, and before persistence or execution. Use the
+same four checks as the brainstorming self-review, adapted to research:
 
 1. **Placeholder scan** — remove temporary or incomplete placeholders, incomplete required
    sections, and vague mission fields.
@@ -141,8 +239,8 @@ Also confirm that an Initial Assessment, self-report, or model inference remains
 than a Fact. Automatically repair a problem when the current context resolves it. Explicit Unknowns
 are valid when the Plan names a research path. If an unresolved ambiguity would change the mission,
 decision, priority, scope, authority, or resource commitment, ask one question and stop before
-writing or executing. The self-review itself produces no artifact, state, signoff, checklist result,
-or user confirmation.
+writing or executing; do not persist or execute. The review creates no artifact, review state,
+signoff, or human gate.
 
 Research is flow, not waterfall. Research over public sources and supplied context may be sufficient
 for Discover, but its limitations and unresolved validation needs remain visible. Do not wait for
