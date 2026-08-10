@@ -46,6 +46,13 @@ Shape artifact.
 
 Shape consumes the portfolio and produces `solution` artifacts. It does not reselect concepts.
 
+`document_status` and `validation_status` retain their existing meanings. Do not add a third
+authoritative status axis. Seed shortlist decisions are authoritative in the seed-pool revision;
+`selected`, `killed`, and `merged` decisions are authoritative in the concept-portfolio decision
+records. In-flight concept state (`developed`, `evaluated`, `needs-revision`) is derived from the
+latest concept revision's evaluation and iteration fields. A renderer may show the derived state,
+but no writer may persist a conflicting lifecycle status in frontmatter.
+
 ### Concept lifecycle
 
 ```text
@@ -81,6 +88,11 @@ uncertainty remains visible.
 The loop has a maximum of two AI revision proposals per concept before `recycle-to-OA` is
 presented. The human may explicitly request another pass, but the system must never loop silently.
 
+`recycle-to-OA` is a recommendation and a stop condition, never a lifecycle terminal state. The
+capability hands it to `bw-backtrack` with the exact trigger and proposed route. A concept-local
+reframe is a small Ideate/Shape loop; changing the OA boundary is a large loop that returns to
+Define + G1 recertification. Ideate never edits a G1-baselined OA implicitly.
+
 ### Human decision surface
 
 The user is not asked to complete eight fields or eight separate choices.
@@ -97,8 +109,22 @@ portfolio revision after the decision.
 Concepts carry exact references to their OA, locked strategy, source insights, and relevant evidence.
 Concept-level assumptions are created in the ledger with `layer: concept` and `derived_from` pointing
 to the exact concept revision. Evidence at Ideate may remain L1-L3; L4+ behavioral evidence belongs
-to Shape/G2. Item-level seed lineage uses an explicit fragment reference in the shared contract,
-for example `artifact:ART-101@2#item:CS-004`.
+to Shape/G2. A concept's canonical `derived_from` points to the exact seed-pool artifact revision;
+its `source_seed_id` records the stable item ID inside that pool. The lifecycle validator resolves
+the item ID against the pool. This preserves exact provenance without extending the global typed-ref
+grammar or every shared resolver.
+
+### Contract Clarifications
+
+- Add `concept-seed-pool` and `concept-portfolio` to `ArtifactKind`; they are not dual-sided kinds.
+  Keep `concept` in the dual-sided set.
+- Treat item IDs as pool-local (`CS-001`, `CS-002`, ...), allocated inside the pool artifact rather
+  than in `config.next_ids`. IDs are never reused within an OA pool's revision chain.
+- Integrate lifecycle invariants into `bw.validate.validate_all`, the single health-check path used
+  by gates and resume. Do not create a second schema-aware validation command. Generic integrity and
+  impact helpers remain reusable where they already apply.
+- Add parser/schema tests for the new enum values, status derivation, source-seed resolution, and
+  old typed references without fragments. No global `#item:` parser change is in scope.
 
 ## Implementation Plan
 
@@ -107,9 +133,13 @@ for example `artifact:ART-101@2#item:CS-004`.
 - Add a shared `concept-lifecycle` contract covering artifact kinds, item IDs, statuses, actions,
   hard/soft criteria, decision ownership, and item-level references.
 - Add `concept-seed-pool`, `concept`, and `concept-portfolio` templates.
-- Add a schema-agnostic `bwkit` lifecycle validator for counts, reference resolution, legal state
-  transitions, exact revision pins, per-OA seed minimums, and the 2-4 portfolio exit.
-- Add CLI wiring and deterministic unit tests before changing skills.
+- Extend `src/bw/schema.py` with the two new artifact kinds and update the kind-specific validation
+  sets; do not add a new global status axis.
+- Add concept lifecycle checks to `src/bw/validate.py::validate_all`: seed counts, source-seed
+  resolution, derived in-flight state, portfolio decision ownership, legal revision references,
+  per-OA minimums, and the 2-4 portfolio exit.
+- Add deterministic schema/validator tests before changing skills. A separate lifecycle CLI is not
+  needed; `bw validate` remains the single health-check entry point.
 
 ### Phase 2: Seed capability
 
@@ -117,7 +147,10 @@ for example `artifact:ART-101@2#item:CS-004`.
 - Generate 10-15 seeds per OA with stable IDs; capture one-line mechanism, intended audience,
   source insight refs, and initial strategy-filter result.
 - Cluster near-duplicates and expose all seeds plus recommendations; never hide AI-rejected seeds.
-- Stop at the seed checkpoint and require the human to confirm the development shortlist.
+- Treat 10 as the hard minimum and 15 as a soft ceiling. Above 15, emit a warning and ask whether
+  the additional divergence is justified; never silently truncate the pool.
+- Stop at a capability continuation checkpoint (not a gate, signoff, or baseline) and require the
+  human to confirm the development shortlist.
 
 ### Phase 3: Concept development capability
 
@@ -135,6 +168,11 @@ for example `artifact:ART-101@2#item:CS-004`.
 - Update `bw-ideate` to report seed counts, shortlist status, concept lifecycle states, revision
   blockers, and portfolio readiness; route to the correct capability mode.
 - Remove `bw-concept-card` from source/deployment and route maps.
+- Update `bw-resume` and `bw-resume/references/routing.md` to inspect the latest seed-pool and
+  concept/portfolio heads, surface pending human decisions, and route back to `bw-ideate` without
+  inventing a new recovery owner.
+- Update the project `CLAUDE.md` routing table and installer manifests to replace
+  `bw-concept-card` with the two capabilities.
 - Update `bw-shape` to require an Ideate `concept-portfolio` containing 2-4 selected concepts.
 - Update `bw-solution-shape` to preserve concept references and record the selected concept-to-
   solution path.
@@ -144,10 +182,13 @@ for example `artifact:ART-101@2#item:CS-004`.
 
 - Update `bewater-core.md` and the English skill references to define the linear macro-flow plus
   bounded intra-stage loops.
-- Clarify the quantity contract: 10-15 seeds per OA, 3-5 developed concepts per OA as a working
-  shortlist, and 2-4 selected concepts globally.
+- Unify all methodology references to one quantity contract: 10-15 seeds per OA, 3-5 developed
+  concepts per OA as a working shortlist, and 2-4 selected concepts globally. Remove the conflicting
+  "20-30 total", "3-5 then 5", and other legacy counts from the core and quick-start sections.
 - Replace keyword-only tests with structural tests for artifacts, lifecycle transitions, lineage,
-  human-decision boundaries, and Shape handoff.
+  human-decision boundaries, resume routing, and Shape handoff. Explicitly remove/rewrite
+  `tests/test_skill_bw_concept_card.py`, `tests/test_skill_bw_ideate.py`, and `evals/bw-concept-card/`;
+  add `evals/bw-concept-seed/` and `evals/bw-concept-development/`.
 - Add behavioral evals for duplicate seeds, missing evidence, failed hard criteria, repeated
   revision, merge/pivot lineage, OA abandonment, AI premature kill, and user overload.
 - Run a fresh end-to-end fixture from OA through concept portfolio and Shape input.
@@ -155,10 +196,15 @@ for example `artifact:ART-101@2#item:CS-004`.
 ## Acceptance Criteria
 
 - Every OA has a persisted 10-15 item seed pool with stable IDs.
+- Seed IDs are pool-local, stable across revisions, and allocated without changing global
+  `config.next_ids`.
 - The system never silently removes seeds or records human convergence decisions.
 - Formal concepts have independent revision chains and exact Insight/Evidence/OA lineage.
+- `selected`, `killed`, and `merged` resolve only from concept-portfolio decisions; no conflicting
+  lifecycle frontmatter is accepted.
 - A failed hard criterion produces a bounded revision action, not an automatic selection.
 - Two failed revision proposals produce an explicit `recycle-to-OA` choice.
+- `recycle-to-OA` stops and routes through `bw-backtrack`; it never edits an OA or bypasses G1.
 - The user sees two batch decision points, not eight field-level questions per concept.
 - Ideate cannot hand off fewer than 2 or more than 4 selected concepts.
 - Shape consumes the exact `concept-portfolio` revision and produces 1-2 solution candidates.
@@ -175,6 +221,8 @@ for example `artifact:ART-101@2#item:CS-004`.
 | AI still performs convergence | Separate recommendations from human-owned statuses and preserve rejected items |
 | Scores become decorative | Anchored scores, rationale, confidence, and hard criteria separate from soft scores |
 | Shape reopens Ideate selection | Require an exact `concept-portfolio` input and route failures through bounded backtrack |
+| New artifact kinds break shared runtime paths | Enum/schema tests, `validate_all` integration tests, and explicit no-fragment parser coverage |
+| Resume loses a pending seed/concept decision | `bw-resume` derives pending work from artifact heads and routes to `bw-ideate` |
 
 ## Verification Order
 
