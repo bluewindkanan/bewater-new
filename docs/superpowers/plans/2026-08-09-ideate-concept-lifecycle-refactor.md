@@ -7,11 +7,9 @@ Replace the current one-shot `bw-concept-card` flow with an explicit Ideate life
 ```text
 Opportunity Area
   -> 10-15 Concept Seeds per OA
-  -> shortlist
-  -> Formal Concepts
-  -> bounded evaluation/revision loop
-  -> 2-4 Selected Concepts
-  -> Ideate-to-Shape concept portfolio handoff
+  -> Concept Portfolio with formal candidate items
+  -> bounded candidate evaluation/revision loop
+  -> same portfolio revision with 2-4 Selected Concepts
   -> 1-2 Solutions in Shape
 ```
 
@@ -34,24 +32,23 @@ one human decision surface.
 
 ### Artifact layers
 
-All three artifacts are owned by Ideate. The portfolio is an Ideate-to-Shape handoff, not a
-Shape artifact.
+Both artifacts are owned by Ideate. The portfolio is an Ideate-to-Shape handoff, not a Shape
+artifact.
 
 1. `concept-seed-pool`: one append-only artifact per OA; contains 10-15 stable seed item IDs,
    one-line mechanisms, and source references.
-2. `concept`: one append-only artifact per developed concept; contains its own revision chain,
-   card fields, evaluation, assumptions, and iteration history.
-3. `concept-portfolio`: one append-only artifact per convergence event; references exact concept
-   revisions and records the human-selected 2-4 concept set.
+2. `concept-portfolio`: one append-only artifact for the Ideate working set; contains the formal
+   candidate Concept Items, their card fields, evaluation, assumptions, iteration history, and the
+   final human-selected 2-4 subset.
 
 Shape consumes the portfolio and produces `solution` artifacts. It does not reselect concepts.
 
 `document_status` and `validation_status` retain their existing meanings. Do not add a third
 authoritative status axis. Seed shortlist decisions are authoritative in the seed-pool revision;
 `selected`, `killed`, and `merged` decisions are authoritative in the concept-portfolio decision
-records. In-flight concept state (`developed`, `evaluated`, `needs-revision`) is derived from the
-latest concept revision's evaluation and iteration fields. A renderer may show the derived state,
-but no writer may persist a conflicting lifecycle status in frontmatter.
+records. In-flight Concept Item state (`developed`, `evaluated`, `needs-revision`) is derived from
+the latest portfolio revision's item evaluation and iteration fields. A renderer may show the
+derived state, but no writer may persist a conflicting lifecycle status in frontmatter.
 
 ### Concept lifecycle
 
@@ -61,7 +58,11 @@ seeded -> shortlisted -> developed -> evaluated
                               |          v
                        needs-revision <-+
                               |
-                selected / killed / merged / recycle-to-OA
+                selected / killed / merged
+                               |
+                 recommend recycle-to-OA
+                               |
+                        bw-backtrack (stop)
 ```
 
 AI may propose transitions and write evaluation evidence. Only the accountable human may record
@@ -106,18 +107,20 @@ portfolio revision after the decision.
 
 ### Lineage and evidence
 
-Concepts carry exact references to their OA, locked strategy, source insights, and relevant evidence.
-Concept-level assumptions are created in the ledger with `layer: concept` and `derived_from` pointing
-to the exact concept revision. Evidence at Ideate may remain L1-L3; L4+ behavioral evidence belongs
-to Shape/G2. A concept's canonical `derived_from` points to the exact seed-pool artifact revision;
-its `source_seed_id` records the stable item ID inside that pool. The lifecycle validator resolves
-the item ID against the pool. This preserves exact provenance without extending the global typed-ref
-grammar or every shared resolver.
+Each Concept Item carries exact references to its OA, locked strategy, source insights, and relevant
+evidence. Concept-level assumptions are created in the ledger with `layer: concept`, `derived_from`
+pointing to the exact portfolio revision, and a validated `source_concept_id`. Evidence at Ideate may
+remain L1-L3; L4+ behavioral evidence belongs to Shape/G2. A Concept Item records the exact seed-pool
+artifact revision plus `source_seed_id`; the lifecycle validator resolves the item ID against the
+pool. This preserves exact provenance without extending the global typed-ref grammar or every shared
+resolver.
 
 ### Contract Clarifications
 
-- Add `concept-seed-pool` and `concept-portfolio` to `ArtifactKind`; they are not dual-sided kinds.
-  Keep `concept` in the dual-sided set.
+- Add `concept-seed-pool` and `concept-portfolio` to `ArtifactKind`; remove top-level `concept` as
+  an artifact kind. Formal Concepts are nested `concept_item` records inside the portfolio.
+- Remove top-level `concept` from the dual-sided artifact set and validate Money/Magic fields on each
+  Concept Item inside `concept-portfolio`.
 - Treat item IDs as pool-local (`CS-001`, `CS-002`, ...), allocated inside the pool artifact rather
   than in `config.next_ids`. IDs are never reused within an OA pool's revision chain.
 - Integrate lifecycle invariants into `bw.validate.validate_all`, the single health-check path used
@@ -131,8 +134,9 @@ grammar or every shared resolver.
 ### Phase 1: Contracts and deterministic validation
 
 - Add a shared `concept-lifecycle` contract covering artifact kinds, item IDs, statuses, actions,
-  hard/soft criteria, decision ownership, and item-level references.
-- Add `concept-seed-pool`, `concept`, and `concept-portfolio` templates.
+  hard/soft criteria, decision ownership, Concept Item structure, and pool/item references.
+- Add `concept-seed-pool` and `concept-portfolio` templates. The portfolio template contains the
+  nested formal Concept Item schema and its decision record; there is no standalone concept file.
 - Extend `src/bw/schema.py` with the two new artifact kinds and update the kind-specific validation
   sets; do not add a new global status axis.
 - Add concept lifecycle checks to `src/bw/validate.py::validate_all`: seed counts, source-seed
@@ -156,12 +160,15 @@ grammar or every shared resolver.
 
 - Create `src/skills/bw-concept-development/SKILL.md` and references.
 - Consume only confirmed seed IDs.
-- Generate one formal concept artifact per developed seed, fill the eight fields, run anchored
-  criteria/scoring, attach evidence and concept assumptions, and emit a bounded revision proposal.
-- Preserve every revision and parent relation for refine, pivot, split, and merge.
+- Create or revise Concept Items inside the single `concept-portfolio` artifact, fill the eight
+  fields, run anchored criteria/scoring, attach evidence and concept assumptions, and emit a bounded
+  revision proposal.
+- Preserve every portfolio revision, Concept Item revision, and parent relation for refine, pivot,
+  split, and merge. A merge creates a new Concept Item and records both parent IDs; it does not
+  mutate the parent items in place.
 - Present a batch convergence view and stop before human decisions.
-- After the decision, write `concept-portfolio` with exact selected concept revisions and explicit
-  kill/merge records.
+- After the decision, write the next `concept-portfolio` revision with the selected Concept Item IDs
+  and explicit kill/merge records.
 
 ### Phase 4: Router and downstream contracts
 
@@ -174,9 +181,11 @@ grammar or every shared resolver.
 - Update the project `CLAUDE.md` routing table and installer manifests to replace
   `bw-concept-card` with the two capabilities.
 - Update `bw-shape` to require an Ideate `concept-portfolio` containing 2-4 selected concepts.
-- Update `bw-solution-shape` to preserve concept references and record the selected concept-to-
-  solution path.
-- Update `bw-assumption-map` and `bw-backtrack` for concept-layer assumptions and item-level impact.
+- Update `bw-solution-shape` to preserve portfolio revision + Concept Item IDs and record the selected
+  concept-to-solution path.
+- Update `bw-assumption-map` and `bw-backtrack` for concept-layer assumptions and portfolio-item
+  impact. A concept revision reframe updates the portfolio; a changed OA still routes through the
+  baseline-aware large loop.
 
 ### Phase 5: Methodology and evaluation coverage
 
@@ -199,7 +208,8 @@ grammar or every shared resolver.
 - Seed IDs are pool-local, stable across revisions, and allocated without changing global
   `config.next_ids`.
 - The system never silently removes seeds or records human convergence decisions.
-- Formal concepts have independent revision chains and exact Insight/Evidence/OA lineage.
+- The portfolio has an append-only revision chain; every Concept Item has a stable ID, item revision,
+  and exact Insight/Evidence/OA/Seed lineage.
 - `selected`, `killed`, and `merged` resolve only from concept-portfolio decisions; no conflicting
   lifecycle frontmatter is accepted.
 - A failed hard criterion produces a bounded revision action, not an automatic selection.
