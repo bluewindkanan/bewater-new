@@ -12,6 +12,9 @@ investment narratives, and plans L4+ behavioral experiments for each Achilles He
 ## On invoke
 
 - Confirm `current_stage` is `shape`.
+- Verify the Ideate handoff: a `concept-portfolio` with 2–4 selected concepts. If
+  it is missing, out of range, or a selected concept's hard criteria have not
+  passed, route back to **bw-ideate** instead of producing solutions.
 - Report Shape status: which concepts are being shaped, open experiments + their Kill/Proceed state,
   Achilles-Heel / open-L4 resolution progress, count of solutions at `validated` status.
 - Route to the matching capability — see `references/stage.md`. Present the choice and stop when

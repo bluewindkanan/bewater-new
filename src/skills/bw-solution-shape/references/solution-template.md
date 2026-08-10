@@ -38,10 +38,12 @@ dual_sided:
   tension:
     statement: ""
   balance_choice: ""
-derived_from: []                  # the concept(s) it springs from
+derived_from: []                  # the concept-portfolio (artifact:ART-NNN@r) it springs from
 signoffs: []
 stale_reason: null
 ```
 
 The body carries the solution narrative + business case (financial assumptions sourced with logic —
-see bw-investment-narrative). Field semantics: `../_bw-shared/ledger-schema.md`.
+see bw-investment-narrative) and records the source Concept Item id (`CI-NNN`) from the consumed
+portfolio revision along each concept→solution path. Field semantics:
+`../_bw-shared/ledger-schema.md`; lifecycle contract: `../_bw-shared/concept-lifecycle.md`.

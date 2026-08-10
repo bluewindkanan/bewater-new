@@ -2,7 +2,11 @@
 /resources/
 
 # per-project runtime (created by `bw init` in a product project)
-# NOTE: _bewater/ and _bewater-output/ are tracked in this repo on purpose.
+# NOTE: _bewater/ and _bewater-output/ are tracked in this repo on purpose,
+# but backup files, lock files, and tmp files are excluded.
+_bewater/.backup-*
+_bewater/.bw-lock
+_bewater/.tmp-*
 
 # misc / unrelated
 /Frog:f212\ General/

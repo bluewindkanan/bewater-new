@@ -11,8 +11,12 @@ carries one or two solutions at `validated` status.
 
 ## Workflow
 
-1. Carry each chosen concept → solution via the five paths (linear refine / pivot / hybridize /
-   invent / scope-extend) using `references/solution-template.md`.
+1. Consume the Ideate `concept-portfolio` handoff (2–4 selected Concept Items).
+   Carry each selected concept → solution via the five paths (linear refine /
+   pivot / hybridize / invent / scope-extend) using `references/solution-template.md`,
+   and record the exact portfolio revision plus the source Concept Item id on
+   each concept→solution path (`derived_from` the portfolio; body carries the
+   `CI-` id). Shape never reselects or invents concepts.
 2. Fill the dual-sided solution (Magic: consumer_value_proposition + consumer_target; Money:
    commercial_value_proposition + leverageable_assets; tension; balance_choice) and attach a
    business case + traceable evidence. Achilles Heels must be resolved by L4+ experiments

@@ -147,5 +147,6 @@ def _rotate_backup(path: Path, keep_backups: int) -> None:
     backup.write_text(old_text)
     backups = sorted(parent.glob(f"{BACKUP_PREFIX}{path.stem}-*"),
                      key=_backup_sort_key)
-    for extra in backups[:-keep_backups]:
+    extras = backups if keep_backups == 0 else backups[:-keep_backups]
+    for extra in extras:
         extra.unlink()
