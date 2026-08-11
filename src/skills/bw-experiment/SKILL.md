@@ -12,7 +12,9 @@ satisfies the L4 obligation.
 
 ## Workflow
 
-1. **Design** — create/revise `_bewater-output/EXP-xxx-rN-experiment.md` linked to ≥1 assumption.
+1. **Design** — create/revise `_bewater-output/EXP-xxx-rN-experiment.md` linked to ≥1 assumption
+   and the exact artifact revision under test. Shape experiments pin an exact `solution_ref` and
+   target Solution-layer or inherited Concept-layer assumption records without copying them.
    Before execution, secure human approval of: target assumption refs; method + target evidence
    level; metric + baseline; **Proceed threshold**; **Kill threshold**; inconclusive treatment;
    owner/timebox/evidence-capture path. Thresholds are fixed BEFORE observing results.
@@ -20,10 +22,12 @@ satisfies the L4 obligation.
    level + why; conclusion (supported/falsified/inconclusive); proposed ledger changes; the human
    decision (proceed/kill/retest); artifact + ledger revisions changed. Append captured evidence as
    an `evidence:E-xxx@n` entry in `_bewater/evidence.yaml` (typed-ref syntax is unchanged; only the
-   storage form moves from a standalone file to an in-place entry).
+   storage form moves from a standalone file to an in-place entry). Preserve the exact Solution
+   revision in the experiment result so later Solution revisions can detect stale evidence.
 3. Present the result + proposed ledger diff, name the human decision authority, and **stop**. The
    human decides Kill/Proceed; you update the assumption only after that decision and show the diff.
    A falsified assumption initiates **bw-backtrack** — never a local note.
 
 See `references/experiment-template.md` for the design checklist, result fields, the L1–L6 table,
-and the experiment menu. Field semantics: `../_bw-shared/ledger-schema.md`.
+and the experiment menu. Field semantics: `../_bw-shared/ledger-schema.md`;
+lifecycle contract: `../_bw-shared/idea-concept-solution-lifecycle.md`.

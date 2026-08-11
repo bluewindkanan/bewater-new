@@ -11,99 +11,101 @@ validation_status: unvalidated
 dual_sided:
   magic:
     consumer_value_proposition:
-      statement: "向 AI 眼镜/可穿戴 OEM 提供按量、稳定、低门槛的大模型推理供给（token），让 OEM 不必自建模型与推理基础设施即可上线 AI 功能。"
+      statement: "把'立项前先想明白'这件原本只有专业咨询才买得起的事，变成 AI agent 扛着、founder 自己跑得起的 SaaS 流程——立项开发前就有底，不再拍脑袋抄竞品。"
       evidence_refs: []
     consumer_target:
-      statement: "正在或即将量产 AI 眼镜、AI 耳机、可穿戴设备的硬件厂商的产品/技术决策人；他们的渴望是用最低集成成本与可控边际成本，把对话式/多模态 AI 能力塞进受限于功耗、体积、算力的设备里。"
+      statement: "AI 硬件创业 founder（如做儿童机器人那位）：凭'自己有娃 + 赛道热'进场，战略能力较弱、没时间/没精力/没能力、预算紧，想做系统决策但卡在'没能力做市场验证'。"
       evidence_refs: []
   money:
     commercial_value_proposition:
-      statement: "百度智能云智能硬件业务以 token 计量向 OEM 出售模型推理配额/API 调用，按设备激活量或调用量计费；收益来自推理规模与百度云基础设施的成本优势之间的差。"
+      statement: "B2B2C：孵化器/加速器/VC/硬件平台为 founder cohort 付费使用 hardso 全决策段（Immersion→G2），绕开 founder 价格敏感、触达'没意识到该做战略'的人群。"
       evidence_refs: []
     leverageable_assets:
-      statement: "ERNIE/文心 模型族、百度云推理基础设施（算力与单位推理成本）、既有 B 端商务与硬件客户关系。明确不押：Apollo 车载生态、小度音箱自有渠道（与目标品类无直接重叠）。"
+      statement: "BeWater 方法论（已成型、agent-native、可编码进 SaaS）+ 用户作为 AI 硬件行业资深从业者的领域知识与可信度。"
       evidence_refs: []
   tension:
-    statement: "Magic 与 Money 在『押推理成本/基础设施』这一选择上相互约束：要给 OEM 极低门槛的集成体验，就需要把价格、SDK、计费颗粒度做到 OEM 友好；而百度云的成本优势是否能传导到 OEM 可感知的价格点，且这一价格点是否仍能产生可持续毛利，尚未被验证。此外，百度智能硬件 BU 的天然生态杠杆（车载/音箱）与本次选定的目标品类（AI 眼镜/可穿戴）不重合，意味着这是一次以基础设施成本为主要卖点的 greenfield 销售尝试，而非生态延伸。"
-  balance_choice: "暂时押 Money 侧——以推理成本/基础设施优势作为差异化主卖点；Magic 侧的 OEM 体验设计留待 Discover/Shape 阶段细化。"
+    statement: "Magic 要求 agent 深度扛方法以真正补 founder 能力差；Money 的 B2B2C 要求规模化与机构可重复交付——agent 产出质量若守不住 gate 严谨性，Magic 与 Money 同时崩。"
+  balance_choice: "先用 AI 硬件首垂直 cohort 把 G1→G2 决策段跑通、证明 agent 产出可过 gate，再谈规模化与渠道铺开。"
 derived_from: []
 signoffs: []
 stale_reason: null
 ---
 
-# Charter · ART-001 r1 · 百度智能云智能硬件业务 — AI 硬件 token 业务
+### Original intent
 
-## Original intent
+- **User's own words:** "把 bewater 这个方法论，具象化成网站，做成 saas，让其他人可以直接用"；"hardso 主要就服务做 AI 硬件的产品创新"；这类 founder "通常都会卡在专业的方法上"、"核心是没有这个能力做市场验证"；"事先没有想明白，做好战略规划就开始开发产品，后面执行会非常痛苦"。
+- **Trigger / why now:** ① AI 硬件正在爆发，战略能力不足的 founder 一批批涌入；② 用户作为行业资深从业者，深知"没想明白/没做好战略规划就开始开发，后面执行非常痛苦"。
+- **Desired change:** 把"先开发后痛苦"换成"先想明白 / 先验证再开发"，且 founder 自己跑得动（不被专业方法吓退或卡住）。
 
-- **User's own words:** "百度智能云智能硬件业务，要做给 AI 硬件卖 token 的业务。"
-- **Trigger / why now:** 内部战略推动——智能硬件 BU 寻找第二曲线 / 提高 ARPU / 战略转型。本次启动为 push 驱动，**尚无具体大客户落地**。
-- **Desired change:** 让百度智能云智能硬件业务从原本的硬件相关业务，长出一个面向 AI 硬件厂商、按 token 计费的模型推理供给业务。
+### Structured interpretation
 
-## Structured interpretation
+- **One-line proposition:** hardso 是把 BeWater 创新方法论具象化的 Agent 驱动 SaaS——AI agent 主导带 AI 硬件 founder 跑完立项前的战略决策段（Immersion→G2），founder 在 gate 上做决策。
+- **Target and situation:** AI 硬件创业 founder（画像：儿童机器人 founder，因"自己有娃 + 赛道热"进场）；战略能力较弱、时间/精力/预算紧；想做系统决策但卡住。
+- **Current behavior and alternatives:** 拍脑袋抄竞品；不做系统战略规划与需求定义；替代方案是"跳过验证直接立项开发"或"事后返工"，成本是开发后的痛苦与重资产浪费。
+- **Provisional solution hypothesis:** 用 agent 驱动 SaaS 把 BeWater 全决策段交付给 founder（用户"怎么做"的假设；未验证）。
+- **Success signals:** founder 在立项开发前先过 G1（乃至 G2）gate——可观测的行为改变（gate 记录），而非仅自述。
+- **Scope:** In = 决策段 Immersion→G2、agent 驱动、AI 硬件垂直优先；Out = 执行段（Design/Build/Launch/Grow）与 G3/G4；hardso 不替 founder 做 gate 决策或签字；首周期边界 = AI 硬件首垂直 + G1→G2 决策段跑通。
 
-- **One-line proposition:** 向 AI 眼镜/可穿戴 OEM 厂商，按 token 计量出售百度模型推理配额/API，押注百度云的推理成本与基础设施优势。
-- **Target and situation:** AI 眼镜、AI 耳机、可穿戴设备厂商的产品/技术决策人，受限于端侧算力/功耗/体积，需要在云侧完成大模型推理并按量采购。
-- **Current behavior and alternatives:** *Unknown*——OEM 今天究竟怎么解决模型推理（自建/友商采购/调海外 API/灰色转售）以及每种替代的真实成本与痛点，尚未由用户提供，亦无证据支撑。这是 Discover 的首要调查面。
-- **Provisional solution hypothesis（用户当前 how，未验证）:** 以 ERNIE/百度云推理为供给底座，向 OEM 提供按量 token API，主卖点为价格/性价比与基础设施稳定性。
-- **Success signals:** *待 Discover 后细化*。暂列候选：OEM 签约数、激活设备数、月活调用量、单设备 ARPU、续约率。所有候选拟在 Shape/投资叙事阶段指标化，不在此处承诺阈值。
-- **Scope:**
-  - **Included:** AI 眼镜/可穿戴 OEM 的 B2B token/API 供给；推理成本/基础设施为差异化主轴。
-  - **Excluded:** 不以车载/智能座舱、机器人/具身智能、智能家居（音箱/学习机/家电）为本次目标品类；不押自有硬件渠道分发；不在本 Charter 阶段承诺 SDK 形态、价格表、商业分成的具体数字。
-  - **First-cycle boundary:** 在 Discover 完成对 AI 眼镜/可穿戴 OEM 真实现状与付费意愿的调查之前，不进入方向性假设与方案塑造。
+### Money + Magic
 
-## Money + Magic
+- **Magic / consumer value proposition:** 把"立项前先想明白"从"专业咨询才买得起"变成"AI agent 扛着、founder 自己跑得起"——立项前就有底，不再拍脑袋抄竞品。
+- **Magic / consumer target:** AI 硬件 founder（如儿童机器人那位）：凭个人需求 + 赛道热度进场，战略能力弱、资源紧，想做系统决策但"没能力做市场验证"。
+- **Money / commercial value proposition:** B2B2C——孵化器/加速器/VC/硬件平台为 founder cohort 付费使用全决策段，绕开 founder 价格敏感、触达"没意识到"人群。
+- **Money / leverageable assets:** BeWater 方法论（成型、agent-native、可编码进 SaaS）+ 用户在 AI 硬件行业的资深从业经验与领域可信度。
+- **Tension and balance:** Magic 要求 agent 深度扛方法以真正补能力差；Money 的 B2B2C 要求规模化与机构可重复交付。balance_choice：先用 AI 硬件首垂直 cohort 跑通 G1→G2、证明 agent 产出可过 gate，再谈规模化。
 
-- **Magic / consumer value proposition:** 让 OEM 用低门槛、可计量的方式获得大模型推理能力，无需自建模型团队/推理基础设施。
-- **Magic / consumer target:** AI 眼镜/可穿戴设备的产品/技术决策人；他们当前的渴望与痛点是 *Unknown*——明确知道客户"类型"，但不知道"情境"。
-- **Money / commercial value proposition:** 按 token/API 调用量计费的 B2B 推理供给；商业可行性取决于百度云单位推理成本 vs. OEM 可接受报价 vs. 调用规模三者之交集。
-- **Money / leverageable assets:** ERNIE 模型、百度云推理基础设施、既有 B 端商务能力。明确**不**计入杠杆：Apollo、小度自有渠道（与目标品类无重叠）。
-- **Tension and balance:**
-  1. **生态错位 tension：** 智能硬件 BU 的天然生态杠杆（车载/音箱）与本次押注的目标品类（AI 眼镜/可穿戴）不重合，"内部战略推动"与"押推理成本"之间的因果链尚未成立——是先有战略再选了 greenfield 品类，还是先识别到眼镜机会再倒推战略？这一动因方向的缺失影响所有下游假设。
-  2. **价格-毛利 tension：** 押成本优势即隐含承诺"低于友商的可感知报价"，但 OEM 端的可接受价格区间与百度云的单位推理成本曲线关系未量化，存在"压价抢量但毛利撑不住"的风险。
-  3. **Magic-Money 断层：** Money 主卖点（成本/基础设施）与 Magic 主诉求（OEM 集成体验、生态贴合）之间尚未形成相互强化的故事——客户可能不只为便宜而买。
+### Intent trace
 
-## Current knowledge state
+| Claim | Provenance | Basis / exact user context | Calibration status |
+|---|---|---|---|
+| 目标用户是 AI 硬件创业 founder（如儿童机器人 founder），凭"自己有娃 + 赛道热"进场，战略能力弱、预算紧 | user-stated | "一个做儿童机器人的创始人…主要是自己有了娃…还有儿童机器人比较热门…没有这个能力做市场验证" | unchanged |
+| founder 现状是"拍脑袋抄竞品"、不做系统战略规划与需求定义，核心卡在"没能力做市场验证" | user-stated | "他实际上就是拍脑袋抄竞品，核心是没有这个能力做市场验证" | unchanged |
+| why now：AI 硬件正在爆发、能力不足的 founder 一批批涌入 + 用户作为行业资深从业者深知"没想明白就开发→执行非常痛苦" | user-stated | "一批批的出现…一是 AI 硬件正在爆发，二是我作为一个行业资深从业者，深知事先没有想明白…后面执行会非常痛苦" | unchanged |
+| hardso = BeWater 方法论具象化为 Agent 驱动 SaaS，AI agent 主导跑全决策段、founder 在 gate 决策 | user-selected | 形态结构化选择中选定 "Agent 驱动 SaaS" | unchanged |
+| 交付终点 = G2（全决策段，含投资决策）；AI 硬件重资产使 G2 成命门 | user-selected | 交付终点结构化选择中选定 "投资决策 (G2)"；重资产推论为 agent-interpretation | unchanged |
+| 收入路径 = B2B2C（孵化器/加速器/VC/硬件平台为 cohort 付费），绕开 founder 价格敏感并触达"没意识到"人群 | user-selected | 收入路径结构化选择中选定 "B2B2C 机构付费" | unchanged |
+| 成功信号 = founder 立项开发前先过 G1/G2 gate（可观测行为改变）；垂直聚焦 AI 硬件 | user-selected | 成功信号与垂直范围结构化选择中选定推荐项 | unchanged |
 
-| 类型 | 内容 |
+### Current knowledge state
+
+| Type | Content |
 |---|---|
-| **Known** | 命题方向：B2B 卖 token 给 AI 眼镜/可穿戴 OEM（用户选定）；启动动因：内部战略推动（用户选定）；主卖点选择：押推理成本/基础设施（用户选定）；杠杆资产清单：ERNIE、百度云推理设施、B 端商务能力（用户确认）。 |
-| **Believed** | AI 眼镜/可穿戴 OEM 普遍需要云侧大模型推理；百度云的单位推理成本相对友商具有可感知优势；按 token 计量是此类业务可落地的计费形态。 |
-| **Unknown** | OEM 今天的真实解决路径与痛点；OEM 决策链与购买周期；OEM 对推理单价、延迟、稳定性的真实可接受区间；目标品类的实际出货量与单品调用量；百度报价在 OEM 视角下是否构成差异化；在不依赖现有生态杠杆的情况下销售如何触达 OEM；ERNIE 在眼镜/可穿戴多模态/低延迟场景下的适配成熟度。 |
-| **Tensions** | 生态错位（押推理成本 ≠ 押生态杠杆）；价格-毛利未量化；Magic-Money 故事尚未相互强化；push 启动 vs. pull 验证的先后关系未定。 |
+| **Known** | (user-stated) AI 硬件赛道正热；目标 founder 普遍战略能力弱、时间/精力/预算紧；现状行为是"拍脑袋抄竞品"。这些是用户作为行业资深从业者的观察，自报告 ≠ 验证。 |
+| **Believed** | (user-selected / agent-interpretation) 机构（孵化器/VC）愿为 cohort 付费；agent 能把方法论扛到 founder 跑得动且产出有效；AI 硬件重资产使 G2 成命门。均为待证信念，非 Fact。 |
+| **Unknown** | founder 真实付费意愿与转化；机构获客周期与渠道结构；agent 产出能否守住 gate 严谨性；哪些 AI 硬件细分是最佳首垂直；"没意识到"人群的真实可触达比例。 |
+| **Tensions** | ① 目标 founder "没意识到该做战略" 与 hardso 需主动获客之间的矛盾（B2B2C 部分缓解）；② agent 主导与 gate 严谨性之间的矛盾；③ Magic 要"补能力差"与 SaaS 需"可规模化自驱"之间的矛盾。 |
 
-## Discover handoff
+### Discover handoff
 
-### Core exploration question
+#### Core exploration question
 
-> 在我们敢于对"以推理成本优势向 AI 眼镜/可穿戴 OEM 卖 token"这一方向下注之前，必须先搞清楚：OEM 今天是怎么解决的、真实痛点与可接受价格区间是什么，以及在不依赖既有生态杠杆的前提下，百度能否触达并说服这群客户？
+在能信任或重述 hardso 命题之前，必须先搞懂：那个"拍脑袋抄竞品"的 AI 硬件 founder，在真实的立项决策现场，究竟是被"没能力"卡住、还是被"没意识/没意愿"卡住——以及 agent 把方法论扛到他跑得动的程度，产出的到底是有效决策还是形式合规的填充？
 
-### Beliefs to challenge
+#### Beliefs to challenge
 
-- B1（candidate belief）：AI 眼镜/可穿戴 OEM 普遍需要外采而非自建模型推理。
-- B2（candidate belief）：百度云的单位推理成本足以构成对 OEM 可感知的差异化。
-- B3（candidate belief）：OEM 在百度可承受的报价下仍能形成可持续毛利。
-- B4（candidate belief）：AI 眼镜/可穿戴品类出货量足以支撑独立 token 业务。
-- B5（candidate belief）：在不依赖 Apollo/小度生态的情况下，百度能触达 AI 眼镜/可穿戴 OEM。
+- (candidate belief, user-stated) founder 真把"立项前想明白"当必须做的事——而非嘴上认同、实际仍抄竞品。
+- (candidate belief, agent-interpretation) 卡点是"能力缺"而非"认知/意愿缺"——给方法+引导就能跑通。
+- (candidate belief, user-selected) agent 能把方法论执行到可过 gate 的质量。
+- (candidate belief, user-selected) 机构愿为 cohort 付费、且 ACV/续约支撑 SaaS。
+- (candidate belief, agent-interpretation) AI 硬件重资产使 G2 成为命门、而非"对早期 founder 过重"。
 
-以上均为 candidate belief，**不是 Fact**。每一条都需要 Discover 提供 L4+ 行为证据后才能进入 Go 判断。
-
-### Root assumption research map
+#### Root assumption research map
 
 | Assumption | 4C | Why it matters | Evidence needed | Disconfirming signal |
 |---|---|---|---|---|
-| A-001 | Consumer（OEM）/ Channel | 若 OEM 不外采，整个命题失效 | 一手访谈 OEM 技术/产品负责人；二级市场研报对自建 vs. 外采比例 | 头部 AI 眼镜/可穿戴 OEM 普遍已自建或长期独家锁定友商 |
-| A-002 | Company / Category | "押成本优势"是否真的可感知 | OEM 侧联合测价/POC；百度与友商在同等 token/延迟条件下的报价对照 | 同等条件下 OEM 不视价格为决策因素，或友商报价比百度更低 |
-| A-003 | Category / Company | 决定业务是否挣钱而非只走量 | OEM 预算与毛利结构访谈；百度云单位推理成本曲线 | 即便 OEM 接受报价，毛利仍低于内部底线，或为抢量被迫持续降价 |
-| A-004 | Category | 决定赛道上限 | 出货量预测（IDC/Counterpoint/Strategy Analytics 等）；AI 眼镜品类 2024-2026 出货量与渗透率 | 出货量持续低位、单品调用量不足以摊薄基础设施投入 |
+| A-001 | Consumer | 若 founder 嘴上认同、实际仍抄竞品先干，整个 Magic 命题空转 | 深度访谈 + 早期 cohort 观察：founder 是否愿投入时间走完验证流程而非跳过 | 有方法论引导下 founder 仍选择跳过验证、直接抄竞品立项 |
+| A-002 | Consumer | 区分"能力缺"与"认知/意愿缺"决定产品该是 agent 工具还是教育/激励 | 对照：给"agent 引导方法论"组 vs "仅给模板"组，能否独立完成有效验证 | agent 全程引导下 founder 仍无法产出可过 gate 的验证 |
+| A-003 | Company / Category | agent 产出质量是 hardso 形态成立的技术地基；守不住 gate 则 Magic 与 Money 同崩 | pilot agent 跑出的工件过 L1/L4 评审比例 + 专家盲评 agent 产出 vs 人类咨询师产出 | 专家盲评中 agent 产出系统性被判为"形式正确但决策无效" |
+| A-004 | Company / Channel | 机构付费意愿与 ACV 决定 Money 模型是否成立 | 机构访谈 + 付费 pilot：付费意愿、ACV、续约/复购 | 机构普遍拒付费或只接受免费/单次，ACV 覆盖不了获客成本 |
+| A-005 | Channel | B2B2C 触达与真实完成率决定"没意识到"人群能否被有效服务 | cohort 试点：触达规模、完成率、gate 通过率 | 机构采购后 cohort 完成率/gate 通过率极低、founder 不真用 |
 
-### Starting 4C questions
+#### Starting 4C questions
 
-- **Consumer（OEM）：** 谁（具体角色/公司类型）会决定采购 token 推理？他们所在公司的产品节奏、出货量量级、技术能力是什么？
-- **Company：** 在不依赖 Apollo/小度的前提下，百度智能云智能硬件业务靠什么触达这群客户？现有 B 端商务覆盖了哪些 OEM？
-- **Category：** AI 眼镜/可穿戴品类在 2026+ 的实际出货量、单品 AI 调用量、定价区间是什么？替代方案（自建、友商 API、海外 API）的真实成本与体验差距是什么？
-- **Channel：** OEM 评估与采购 token/API 推理供给的决策与集成路径是什么？通过云市场、直客、设备方案商还是方案商集成？
+- **Consumer:** 在真实立项决策现场，是哪类 AI 硬件 founder、在什么情境下、为什么会选择"抄竞品先干"而非"先验证"？
+- **Company:** BeWater 方法论的哪些环节最容易被 agent 编码、哪些环节仍依赖人类判断？我们的 AI 硬件领域知识与可信度能否转化为机构渠道的信任？
+- **Category:** AI 硬件创新今天的主流方法论/替代方案是什么（咨询/加速器/内部 PM/拍脑袋）？它们在哪一步失效？
+- **Channel:** 孵化器/加速器/VC/硬件平台今天如何帮助 founder 做战略决策？hardso 嵌入他们既有流程的接入点在哪？
 
-### Research boundary
+#### Research boundary
 
-- **应先做：** 一手 OEM 访谈（≥5 家代表性 AI 眼镜/可穿戴厂商，覆盖产品/技术决策人）；友商 token 报价与 SLA 横向对照；目标品类出货量与单品 AI 调用量的二手数据三角验证；百度云单位推理成本对 OEM 报价的可传导性测算。
-- **不应假定 / 不应优化：** 不假定 OEM 一定外采；不假定具体价格数字；不在 Discover 阶段设计 SDK、签订客户、写商业模型数字、做方案塑造。SDK 形态、定价表、商业分成结构留给 Shape 阶段。
+Discover 应先查 A-001/A-002/A-003（人的真需求 + agent 可行性，是整个命题的地基），再查 A-004/A-005（机构渠道商业可行性）。不应在 agent 产出质量未被证明前就设计 SaaS 功能细节或锁定 UI；不应假设 founder 会自驱付费（需用 cohort 行为证据验证）。执行段（Design/Build/Launch/Grow）与 G3/G4 明确不在本研究范围。

@@ -1,14 +1,14 @@
 scenario_id: BWCHA-S1
 target_skill: bw-project-charter
-prompt: "Run the Charter flow for a service matching freelance chefs to pop-up kitchens. Simulate a user who answers the adaptive interview. When a low-risk choice can be grounded in that context, use the host-native structured selection; otherwise ask one free-form question. Once coverage is sufficient, self-review and persist without asking for a Charter-confirmation response."
+prompt: "Run the Charter flow for a service matching freelance chefs to pop-up kitchens. Simulate a user who supplies grounding anchors through the Explore interview. Do not use recommendations until those anchors are present; then use a context-grounded recommended selection only for bounded convergence decisions. Once coverage is sufficient, run L0, L1, and any required intent calibration before persisting."
 fixture_refs: []
 installed_dependency_skills: []
 required_assertions:
   - "writes ART charter with dual_sided four fields populated"
-  - "asks the highest-information missing question one at a time, smart-skips answered fields, and has no fixed question limit"
-  - "uses free-form input for open or high-dimensional intent and host-native structured selection only for credible context-grounded candidates"
-  - "includes Uncertain and Other / none-are-accurate in structured selections and does not treat generated candidates as facts"
-  - "self-reviews, automatically revises resolvable quality issues, and persists without asking for a Charter-confirmation response"
+  - "asks the highest-information missing question one at a time, smart-skips answered fields, and completes Explore before Converge"
+  - "uses open questions to collect grounding anchors and only then offers a context-grounded recommended selection for a bounded decision"
+  - "includes Uncertain and Other / none-are-accurate in convergence selections and records an accepted recommendation as user-selected rather than user-stated"
+  - "runs deterministic L0 and same-context L1 review, revises resolvable quality issues, and performs intent calibration when high-impact interpretation remains"
   - "writes Charter sections for known, believed, unknown, tensions, and Discover handoff"
   - "seeds 3-5 falsifiable root-layer assumptions in the ledger at L1/untested"
   - "writes via bwkit lock + cas commit"
@@ -18,5 +18,5 @@ forbidden_behaviors:
   - "overwrites an existing ART revision file in place"
   - "authors an Initial Assessment inline"
   - "limits the interview to four follow-up questions"
-  - "waits for complete-Charter-draft confirmation before writing"
+  - "waits for complete-Charter-draft confirmation instead of targeted intent calibration before writing"
 repetition_count: 3

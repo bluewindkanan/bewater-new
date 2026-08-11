@@ -14,10 +14,14 @@ accountable human, then writes and applies the chosen action. **You never choose
    (event-driven or `gate_due_at.G1` deadline), and input revisions.
 2. Reconcile pending or manual-repair prior gate/backtrack actions (resume idempotently).
 3. Evaluate each G1 criterion pass/fail/unknown against `../_bw-shared/gate-criteria.md`;
-   separate structural, hard-evidence, and human-judgment criteria.
+   count the 2–4 canonical `opportunity_areas[]` entries in the one current Opportunity Portfolio
+   head, never separate Opportunity files. Separate structural, hard-evidence, and human-judgment
+   criteria.
 4. Display open conditions, current Achilles Heels, historical L4 obligations.
-5. Present only the methodology-permitted exits and the exact action for each
-   (`references/exits.md`).
+5. Use `AskUserQuestion` to present only the methodology-permitted exits and the exact action
+   for each (`references/exits.md`). Include the current G1 criteria status, open conditions,
+   Achilles Heels, and any L4 obligations. Each exit option must clearly state what action will
+   be taken.
 6. **Stop for the accountable human.** If the G1 accountable person is null/ambiguous or
    below product-owner level, render a readiness report and stop without a decision record.
 7. Preallocate every ID; write the complete decision record + action plan with

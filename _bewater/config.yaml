@@ -1,6 +1,6 @@
 schema_version: 1
-revision: 6
-updated_at: "2026-08-05T14:47:11Z"
+revision: 8
+updated_at: "2026-08-11T10:20:09Z"
 updated_by: bw-insight-craft
 next_ids:
   branch: 2
@@ -10,9 +10,9 @@ next_ids:
   baseline: 1
   backtrack: 1
   action: 1
-  evidence: 1
+  evidence: 15
 project:
-  name: "百度智能云智能硬件 — AI 硬件 token 业务"
+  name: ""
   success_criteria: []
 decision_authority:
   G1:
@@ -28,7 +28,7 @@ active_execution_handoff: null
 branches:
   BR-001:
     status: active
-    current_stage: discover
+    current_stage: define
     parent_ids: []
     merged_into: null
     gate_due_at:

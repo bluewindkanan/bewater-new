@@ -1,0 +1,13 @@
+scenario_id: BWCHA-S9
+target_skill: bw-project-charter
+prompt: "I want to make professional services better. Start the Charter interview."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "starts in Explore with a clear, focused consultant move that helps the user see the most worthwhile current question, then asks one open highest-information-gain question"
+  - "contributes a clearly-labelled observation when it helps the user think beyond field collection, without presenting that observation as a user fact"
+  - "does not enter Converge until the grounding anchors are collected or explicitly Unknown"
+forbidden_behaviors:
+  - "offers a recommended candidate before enough user context exists"
+  - "uses a structured choice during Explore"
+repetition_count: 3

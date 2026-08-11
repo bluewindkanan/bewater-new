@@ -90,7 +90,8 @@ and the Sprint loop; it does not own Insight generation, strategy formation, or 
     completing one wave's local missions is not, by itself, Insight Readiness. When readiness is met
     (`references/discover-plan.md`), surface **Insight Ingredients** — evidence-backed patterns,
     tensions, anomalies, challenged Accepted Beliefs, reframe candidates, strategic relevance, and
-    limitations — plus remaining uncertainty to `bw-insight-craft`.
+    limitations — plus remaining uncertainty to `bw-define` (the Define router will direct to
+    `bw-insight-craft`).
 11. Do not create a final Insight. Do not sign F/P/E/T. Do not compose a directional hypothesis. Do
     not form a strategy. Do not choose a Gate exit. Initial Assessment content and self-report remain
     candidate beliefs until research supports them.

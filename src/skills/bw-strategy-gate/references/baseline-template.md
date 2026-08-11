@@ -20,10 +20,12 @@ depends_on_baseline: null
 checklist_result: []
 frozen:
   strategy_statement: ""
-  opportunity_areas: []
+  opportunity_areas: []        # 2–4 canonical OA-NNN entries from input_refs.opportunity
   assumption_inventory: []
   money_magic_judgment: ""
 ```
 
-G1 baseline freezes the signed insights, locked strategy, opportunity portfolio, initial
-assumption portfolio, and the Money + Magic judgment.
+G1 baseline freezes the signed insights, locked strategy, exact Opportunity
+Portfolio revision, its 2–4 canonical `OA-NNN` entries, the initial assumption
+portfolio, and the Money + Magic judgment. It never represents the OAs as
+separate Opportunity artifacts.

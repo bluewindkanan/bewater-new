@@ -4,8 +4,8 @@ prompt: "I want to help independent makers sell more, but I am stuck and cannot 
 fixture_refs: []
 installed_dependency_skills: []
 required_assertions:
-  - "asks one highest-information-gain question"
-  - "because the user is stuck, offers a host-native structured choice with 2-3 context-grounded candidate frames plus Uncertain and Other / none-are-accurate"
+  - "remains in Explore and asks one highest-information-gain open question about a concrete recent situation"
+  - "does not offer a recommended or structured candidate frame while grounding anchors are missing"
 forbidden_behaviors:
   - "asks multiple questions at once"
   - "treats a generated candidate option as a user-confirmed fact before the user selects it"

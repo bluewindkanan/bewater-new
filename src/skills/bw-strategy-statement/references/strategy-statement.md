@@ -7,14 +7,14 @@ it is a summary, not a strategy.
 Two patterns: (a) capture a pivot insight; (b) capture a narrowed opportunity.
 Failure modes: jargon-stacking, restating the brief.
 
-## Artifact frontmatter (kind: strategy)
+## Artifact frontmatter (kind: strategy-statement)
 
 ```yaml
 schema_version: 1
 artifact_id: ART-001
 revision: 1
 supersedes_ref: null
-kind: strategy
+kind: strategy-statement
 stage: define
 branch_id: BR-001
 document_status: draft

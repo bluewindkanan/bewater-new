@@ -1,12 +1,12 @@
 schema_version: 1
 revision: 2
-next_id: 5
-updated_at: "2026-08-05T14:47:11Z"
+next_id: 6
+updated_at: "2026-08-11T07:39:23Z"
 updated_by: bw-project-charter
 assumptions:
   A-001:
     record_revision: 1
-    statement: "AI 眼镜/可穿戴 OEM 普遍需要外采（而非自建）大模型推理——这是 B2B 卖 token 命题成立的前提。"
+    statement: "AI 硬件创业 founder 真把'立项前先想明白（战略规划 + 需求定义 + 市场验证）'当成必须做的事，而非嘴上认同、实际仍抄竞品先干。"
     branch_id: BR-001
     layer: root
     category: consumer
@@ -25,13 +25,13 @@ assumptions:
     history: []
   A-002:
     record_revision: 1
-    statement: "百度云的单位推理成本/基础设施优势，在 AI 眼镜/可穿戴场景下能构成 OEM 可感知、且影响采购决策的差异化（而非商品化同质供给）。"
+    statement: "founder 的核心障碍是'能力/可用性缺'（给方法 + 引导就能跑通），而非'认知/意愿缺'（不知道要做或不愿做）。"
     branch_id: BR-001
     layer: root
-    category: commercial
-    side: money
+    category: consumer
+    side: magic
     impact: high
-    uncertainty: high
+    uncertainty: medium
     evidence_level: L1
     validation_status: untested
     status: active
@@ -44,11 +44,11 @@ assumptions:
     history: []
   A-003:
     record_revision: 1
-    statement: "存在一个 OEM 可接受、且百度仍能形成可持续毛利的 token 报价区间——价格-成本结构对双方可持续。"
+    statement: "AI agent 能把 BeWater 方法论执行到足够质量，让战略能力弱的 founder 也能产出有效的 Charter/验证/方案（可过 gate），而非形式正确但决策无效的填充。"
     branch_id: BR-001
     layer: root
-    category: commercial
-    side: money
+    category: technical
+    side: magic
     impact: high
     uncertainty: high
     evidence_level: L1
@@ -63,10 +63,29 @@ assumptions:
     history: []
   A-004:
     record_revision: 1
-    statement: "AI 眼镜/可穿戴品类在 2026+ 的出货量与单品 AI 调用量，足以摊薄基础设施投入并支撑一个独立的 token 业务（赛道上限成立）。"
+    statement: "孵化器/加速器/VC/硬件平台愿意为'founder cohort 用 hardso 做战略决策'付费，且客单价/续约能支撑 SaaS，而非认为该工具应免费或 founder 该自学。"
     branch_id: BR-001
     layer: root
     category: commercial
+    side: money
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+      - artifact:ART-001@1
+    supersedes_ref: null
+    risk_history: []
+    l4_obligation_status: open
+    history: []
+  A-005:
+    record_revision: 1
+    statement: "通过 B2B2C 机构渠道能系统性触达'没意识到该做战略'的 founder 并让他们真走完流程，而非机构采购后 founder 敷衍了事。"
+    branch_id: BR-001
+    layer: root
+    category: distribution
     side: money
     impact: high
     uncertainty: medium

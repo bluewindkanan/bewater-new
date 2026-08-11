@@ -4,10 +4,11 @@ prompt: "I run a regional network of licensed shared kitchens. In the last six m
 fixture_refs: []
 installed_dependency_skills: []
 required_assertions:
-  - "smart-skips the already covered interview fields"
-  - "does not repeat low-value fact questions or force a free-form response when a credible scoped choice remains"
-  - "self-reviews the completed Charter, preserves the user's distinctive wording, and automatically persists without a confirmation checkpoint"
+  - "smart-skips the Explore fields already covered by the user's grounding anchors"
+  - "responds as a consultant by surfacing the most material insight or tension and naturally leads into the next open question that sharpens intent"
+  - "moves to Converge only for a remaining bounded choice, with a recommendation grounded in the supplied context and its trade-off"
+  - "preserves the user's distinctive wording and uses intent calibration instead of a complete-document confirmation when high-impact interpretation remains"
 forbidden_behaviors:
   - "asks a fixed battery of questions"
-  - "asks the user to confirm a complete Charter draft before persistence"
+  - "asks the user to confirm a complete Charter draft instead of a targeted calibration"
 repetition_count: 1

@@ -1,14 +1,17 @@
 # Investment-narrative template
 
-The narrative is the shell the investment-decision level reads at G2. Goal: "make it impossible not
-to invest." File: `_bewater-output/ART-xxx-rN-investment-narrative.md` (append-only).
+The narrative is the shell the investment-decision level reads at G2. It wraps
+one or two complete validated Solutions and never fills gaps that belong in
+canonical Solution frontmatter. Goal: “make it impossible not to invest.” File:
+`_bewater-output/ART-xxx-rN-investment-narrative.md` (append-only).
 
 ## The six parts
 
 1. **Brief** — one-paragraph framing.
 2. **Opportunity** — the consumer situation + desire (Magic) and the commercial opening (Money).
-3. **Solution** — the validated dual-sided solution (wrap the three-part definition: How it works /
-   How to implement / How it makes money).
+3. **Solution** — the complete validated dual-sided Solution; present its
+   Definition/Dimensions, How It Works, How To Implement, How It Makes Money,
+   and Validation without recreating canonical content.
 4. **Why big** — the prize; why this is large.
 5. **Financial Case** — sourced assumptions only (below).
 6. **Roadmap** — phased plan (Exploratory → Product Design → Ops → Business Rules → Development →

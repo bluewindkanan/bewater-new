@@ -87,6 +87,12 @@ def test_commit_keeps_only_n_backups(v5_root):
     assert len(list((v5_root / "_bewater").glob(".backup-ledger-*"))) == 5
 
 
+def test_commit_keep_backups_zero_keeps_no_backups(v5_root):
+    p = _ledger(v5_root)
+    cas.commit(p, _bump(p.read_text(), 4), expected_revision=3, keep_backups=0)
+    assert list((v5_root / "_bewater").glob(".backup-ledger-*")) == []
+
+
 def test_commit_keeps_most_recent_backups_when_revision_has_two_digits(v5_root):
     """Rotation must keep the 5 most recent backups by numeric revision, not by
     lexicographic filename order (where '10' < '5')."""

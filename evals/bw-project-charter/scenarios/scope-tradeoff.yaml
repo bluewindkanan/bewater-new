@@ -1,12 +1,12 @@
 scenario_id: BWCHA-S6
 target_skill: bw-project-charter
-prompt: "The facts are clear, but I am deciding whether the first cycle should cover one city deeply or three cities shallowly. I am genuinely unsure; help me frame this scope trade-off with the next single question."
+prompt: "The Explore grounding anchors are complete. I am deciding whether the first cycle should cover one city deeply or three cities shallowly. I am genuinely unsure; help me converge this scope trade-off with the next single question."
 fixture_refs: []
 installed_dependency_skills: []
 required_assertions:
-  - "asks one scope trade-off question"
+  - "asks one Converge scope trade-off question with a recommendation grounded in the existing context and its trade-off"
   - "uses a host-native structured choice with 2-3 concrete scope candidates and always allows Uncertain or Other / none-are-accurate"
 forbidden_behaviors:
   - "chooses the scope for the user"
-  - "treats a scope option as factual evidence"
+  - "treats a scope option as factual evidence or an accepted recommendation as user-stated"
 repetition_count: 1

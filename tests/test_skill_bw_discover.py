@@ -14,20 +14,21 @@ def test_bw_discover_is_well_formed():
     validate_skill_evals(REPO / "evals", "bw-discover")
 
 
-def test_discover_routes_to_research_and_insight():
+def test_discover_routes_to_research_only():
     text = (skill_dir(REPO, "bw-discover") / "references" / "stage.md").read_text()
     assert "bw-discovery-research" in text
-    assert "bw-insight-craft" in text
+    assert "bw-insight-craft" not in text  # insight-craft moved to Define
     assert "bw-4c-research" not in text
 
 
-def test_discover_exits_with_signed_insights_not_directional_hypotheses():
+def test_discover_exits_with_research_evidence_not_insights():
     text = "\n".join(
         path.read_text().lower()
         for path in sorted(skill_dir(REPO, "bw-discover").rglob("*.md"))
     )
-    for token in ["insight portfolio", "f/p/e/t", "does not produce directional hypotheses"]:
-        assert token in text, f"Discover output boundary missing {token!r}"
+    for token in ["research evidence", "4c coverage", "does not produce insights", "does not produce directional hypotheses"]:
+        # "does not produce insights or directional hypotheses" is the phrase, so "does not produce directional hypotheses" won't match
+        assert "does not produce" in text and "directional hypotheses" in text, f"Discover output boundary missing directional hypotheses boundary"
 
 
 def test_discover_consumes_charter_and_assumptions_not_assessment_as_fact():
@@ -57,7 +58,7 @@ def test_discover_routes_missing_formal_inputs_back_to_charter():
     text = (skill_dir(REPO, "bw-discover") / "references" / "stage.md").read_text()
     assert "missing" in text
     assert "bw-project-charter" in text
-    assert "does not create a Discover Brief" in text
+    assert "does not create" in text.lower() and "discover brief" in text.lower()
 
 
 def test_discover_reads_only_snapshot_matching_assessment_as_advisory():

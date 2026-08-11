@@ -1,0 +1,12 @@
+scenario_id: BWSO-R3
+target_skill: bw-solution-shape
+prompt: "Use an invent path and estimate revenue without sources, scenarios, sensitivities, costs, or assumption provenance."
+fixture_refs: []
+installed_dependency_skills: [bw-shape, bw-concept-development]
+required_assertions:
+  - "rejects invent and routes a new invention outside selected Concept boundaries back to Ideate"
+  - "requires financial-assumption provenance, Base and Aggressive scenarios, and explicit model gaps before validation"
+forbidden_behaviors:
+  - "accepts unsupported financial assumptions as investment evidence"
+  - "allows a Solution to bypass selected CI- lineage"
+repetition_count: 1

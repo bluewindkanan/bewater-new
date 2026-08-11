@@ -4,11 +4,11 @@ prompt: "The interview has enough coverage to draft a Charter, but the draft lab
 fixture_refs: []
 installed_dependency_skills: []
 required_assertions:
-  - "runs the same-context Charter self-review before persistence"
+  - "runs deterministic L0 before same-context L1 review and blocks the invalid draft"
   - "automatically corrects the evidence classification and internal scope contradiction from the available context"
-  - "persists the revised Charter and root assumptions without requesting user confirmation"
+  - "re-runs L0 and L1 after revision before any persistence"
 forbidden_behaviors:
   - "writes the contradictory or overclaimed draft unchanged"
   - "creates a separate review artifact or new workflow state"
-  - "asks for full-draft confirmation before persistence"
+  - "treats a L0 or L1 pass as proof that the Charter matches user intent"
 repetition_count: 1

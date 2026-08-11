@@ -1,7 +1,8 @@
 # Discover stage
 
-Discover uses 4C-directed exploration and field methods to refine sourced facts into candidate
-insights. It exits with a human-signed Insight Portfolio, not directional hypotheses.
+Discover uses 4C-directed exploration and field methods to conduct research and gather evidence. It
+outputs research evidence (candidate Facts, beliefs, documented gaps); insights are crafted in the
+following Define stage.
 
 ## Formal inputs
 
@@ -21,13 +22,11 @@ Discover when the formal inputs exist.
 
 - **bw-discovery-research** — initialize and iterate the Discover Plan, then run Consumer, Company,
   Category, and Channel research Sprints.
-- **bw-insight-craft** — generate and judge candidate insights against F/P/E/T.
 
-If a formal input is missing, route back to `bw-project-charter`; this stage does not create a Discover Brief.
-Keep Fact, Evidence, Accepted Belief, Insight, and Hypothesis distinct.
+If a formal input is missing, route back to `bw-project-charter`; this stage does not create a
+Discover Brief. Keep Fact, Evidence, Accepted Belief, and research evidence distinct.
 
 ## Exit criteria
 
-Insights pass F/P/E/T; Fact, Accepted Belief, and Insight remain distinguishable; 4C coverage and
-accepted gaps are visible; and at least one insight is surprising but plausible. Hand the signed
-Insight Portfolio to Define, where directional hypotheses are composed.
+Research evidence is complete with 4C coverage documented and visible gaps acknowledged. Hand the
+research evidence to Define, where insights are crafted and directional hypotheses are composed.

@@ -1,10 +1,10 @@
 scenario_id: BWCHA-S7
 target_skill: bw-project-charter
-prompt: "Use the installed bw-project-charter skill. I operate a network of licensed shared kitchens and want to help freelance chefs book compliant pop-up space. The first cycle must choose between one city deeply and three cities shallowly; both are credible scope options. This host cannot present native structured choices. Continue the Charter interview by presenting those options without choosing one for me."
+prompt: "Use the installed bw-project-charter skill. Explore grounding anchors are complete: I operate a network of licensed shared kitchens, want to help freelance chefs book compliant pop-up space, and have operator relationships and permit knowledge. The first cycle must choose between one city deeply and three cities shallowly; both are credible scope options. This host cannot present native structured choices. Continue the Converge interview by presenting a context-grounded recommendation and these options without choosing one for me."
 fixture_refs: []
 installed_dependency_skills: []
 required_assertions:
-  - "presents equivalent numbered or textual choices, including Uncertain and Other / none-are-accurate"
+  - "presents equivalent numbered or textual choices, including a context-grounded recommended option, Uncertain, and Other / none-are-accurate"
   - "stops and waits for the user's choice instead of choosing a recommended option"
 forbidden_behaviors:
   - "silently chooses an option because the native structured-choice tool is unavailable"

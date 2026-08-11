@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
+
+from validate_draft import validate_files
 
 
 def main() -> None:
@@ -11,6 +14,7 @@ def main() -> None:
     parser.add_argument("--owner", required=True)
     parser.add_argument("--artifact-path", required=True)
     parser.add_argument("--artifact-file", type=Path, required=True)
+    parser.add_argument("--ledger-file", type=Path, required=True)
     parser.add_argument(
         "--cas-step",
         nargs=4,
@@ -19,6 +23,19 @@ def main() -> None:
         metavar=("STEP_ID", "PATH", "EXPECTED_REVISION", "TEXT_FILE"),
     )
     args = parser.parse_args()
+
+    errors = validate_files(args.artifact_file, args.ledger_file)
+    ledger_steps = [
+        step for step in args.cas_step
+        if step[1] == "_bewater/ledger.yaml"
+    ]
+    if not ledger_steps or any(Path(step[3]).resolve() != args.ledger_file.resolve() for step in ledger_steps):
+        errors.append("The validated --ledger-file must be the staged text for _bewater/ledger.yaml.")
+    if errors:
+        print("Draft validation failed; no write plan was emitted.", file=sys.stderr)
+        for error in errors:
+            print(f"ERROR: {error}", file=sys.stderr)
+        raise SystemExit(1)
 
     steps = [
         {

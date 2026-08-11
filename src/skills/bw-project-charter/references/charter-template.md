@@ -44,6 +44,18 @@ stale_reason: null
 The body must keep the user's voice separate from the agent's interpretation. A non-empty final body
 is only document-presence evidence — it is never readiness.
 
+### Intent trace
+
+List 4–7 high-impact claims that shape the proposition, scope, balance choice, or research boundary.
+This is a compact transparency aid, not a second artifact or a signoff. Every row has one provenance
+label: `user-stated` (free-form user wording), `user-selected` (an AI candidate the user chose),
+`agent-interpretation` (a faithful synthesis), or `unknown` (an acknowledged gap). Do not label a
+model recommendation as a user statement or a verified fact.
+
+| Claim | Provenance | Basis / exact user context | Calibration status |
+|---|---|---|---|
+| ... | user-stated / user-selected / agent-interpretation / unknown | ... | corrected / unchanged / declined / not-required |
+
 ### Original intent
 
 - **User's own words:** preserve the strongest original wording; do not invent quotations.
@@ -74,9 +86,9 @@ is only document-presence evidence — it is never readiness.
 
 | Type | Content |
 |---|---|
-| **Known** | User-reported observations or sourced facts, with the source label preserved; self-report is not validation. |
-| **Believed** | User/team beliefs that still need evidence. |
-| **Unknown** | Questions that Discover must answer. |
+| **Known** | User-reported observations or sourced facts, with the provenance label preserved; self-report is not validation. `user-selected` and `agent-interpretation` are not Facts. |
+| **Believed** | User/team beliefs that still need evidence, including selected recommendations where appropriate. |
+| **Unknown** | Questions that Discover must answer; preserve `unknown` provenance. |
 | **Tensions** | Contradictions between intent, behavior, value, and constraints. |
 
 ### Discover handoff
@@ -89,7 +101,7 @@ we can trust or reframe the proposition?
 #### Beliefs to challenge
 
 List the strongest accepted beliefs from the current intent and structured interpretation. Label
-each as a candidate belief or hypothesis, never as a Fact.
+each as a candidate belief or hypothesis, never as a Fact, and retain its provenance label.
 
 #### Root assumption research map
 
@@ -107,3 +119,6 @@ each as a candidate belief or hypothesis, never as a Fact.
 #### Research boundary
 
 State what Discover should investigate first and what it should not assume, design, or optimize yet.
+Every P0 Unknown or belief must have a research exit: a root assumption in the map or an explicit
+Discover question. Cover, where material to the proposition, need/behavior, value differentiation,
+commercial viability, channel access, and necessary technical or regulatory conditions.

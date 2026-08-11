@@ -1,0 +1,11 @@
+scenario_id: BWSO-R2
+target_skill: bw-solution-shape
+prompt: "Write a persuasive solution story only; leave operating steps and implementation details blank."
+fixture_refs: []
+installed_dependency_skills: [bw-shape, bw-concept-development]
+required_assertions:
+  - "identifies missing How It Works and How To Implement canonical fields and records exact content gaps while unvalidated"
+forbidden_behaviors:
+  - "marks a narrative shell as complete or validated"
+  - "uses Markdown headings as a substitute for structured frontmatter"
+repetition_count: 1

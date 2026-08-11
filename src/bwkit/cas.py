@@ -38,7 +38,9 @@ def lock_path(root) -> Path:
 
 def acquire_lock(root, owner, ttl_seconds: int = 3600) -> dict:
     root = Path(root)
-    (root / "_bewater").mkdir(parents=True, exist_ok=True)
+    state_dir = root / "_bewater"
+    if not state_dir.is_dir():
+        raise LockError("no _bewater/ directory; run 'bwkit init' first")
     path = lock_path(root)
     info = {"owner": owner, "pid": os.getpid(), "acquired_at": time.time()}
     try:
@@ -50,6 +52,9 @@ def acquire_lock(root, owner, ttl_seconds: int = 3600) -> dict:
         tmp = path.with_name(f"{LOCKNAME}.tmp-{os.getpid()}")
         tmp.write_text(json.dumps(info))
         os.replace(tmp, path)  # atomic preempt of stale lock
+        holder = _read_lock(path)
+        if holder is None or holder.get("owner") != owner or holder.get("pid") != os.getpid():
+            raise LockError("lost race after preempt")
         return info
     try:
         os.write(fd, json.dumps(info).encode())

@@ -54,6 +54,7 @@ stage: shape
 branch_id: BR-001
 document_status: draft
 validation_status: unvalidated
+solution_ref: artifact:ART-010@2  # exact Solution revision under test in Shape
 target_assumption_refs: []   # e.g. [assumption:A-003@2]
 target_evidence_level: L4
 proceed_threshold: ""
@@ -64,5 +65,7 @@ signoffs: []
 stale_reason: null
 ```
 
-Allocate the EXP-id from `config.next_ids.experiment`; write via bwkit. Field semantics:
+`solution_ref` is required for a Shape-stage Solution experiment. It never
+causes source-Concept assumptions to be copied or relayered. Allocate the EXP-id
+from `config.next_ids.experiment`; write via bwkit. Field semantics:
 `../_bw-shared/ledger-schema.md`.

@@ -1,0 +1,13 @@
+scenario_id: BWCHA-S12
+target_skill: bw-project-charter
+prompt: "The Charter has identified demand, value, and commercial assumptions for a new service, but it contains no root assumption or Discover research question about whether the team can reach target customers through a viable channel. Run the Charter review before persistence."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "L1 identifies the missing channel link in the causal chain as a P0 gap"
+  - "adds a falsifiable channel root assumption or an explicit Discover research question with a research exit"
+  - "does not persist until L0 and L1 pass after the gap is resolved"
+forbidden_behaviors:
+  - "accepts an orphan P0 Unknown"
+  - "treats an unstated channel claim as Known"
+repetition_count: 3

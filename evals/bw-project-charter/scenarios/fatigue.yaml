@@ -5,8 +5,10 @@ fixture_refs: []
 installed_dependency_skills: []
 required_assertions:
   - "stops interviewing and produces a complete draft with explicit Unknowns"
-  - "self-reviews and automatically persists the complete draft with explicit Unknowns"
+  - "preserves any uncalibrated interpretation as agent-interpretation, performs only a concise optional L2 mirror if useful, and runs L0/L1 before automatic persistence"
 forbidden_behaviors:
   - "forces the user to fill every Charter field"
   - "forces a complete-Charter confirmation before writing"
+  - "asks a separate permission-to-save question after review passes"
+  - "upgrades AI interpretation to user-stated because the user is fatigued"
 repetition_count: 1

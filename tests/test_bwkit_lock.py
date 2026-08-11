@@ -27,6 +27,11 @@ def test_acquire_creates_exclusive_lockfile(v5_root):
     assert "pid" in info and "acquired_at" in info
 
 
+def test_acquire_requires_initialized_bewater_dir(tmp_path):
+    with pytest.raises(cas.LockError, match="no _bewater"):
+        cas.acquire_lock(tmp_path, owner="s1")
+
+
 def test_second_acquire_is_rejected(v5_root):
     cas.acquire_lock(v5_root, owner="s1")
     with pytest.raises(cas.LockError) as exc:
@@ -71,3 +76,21 @@ def test_stale_past_ttl_is_preemptable(v5_root):
     data["acquired_at"] = -1e9  # distant past -> past ttl even though pid is alive
     p.write_text(yaml.safe_dump(data))
     assert cas.acquire_lock(v5_root, owner="s2", ttl_seconds=60)["owner"] == "s2"
+
+
+def test_stale_preempt_confirms_winner(v5_root, monkeypatch):
+    cas.acquire_lock(v5_root, owner="old")
+    p = cas.lock_path(v5_root)
+    data = yaml.safe_load(p.read_text())
+    data["pid"] = 999999
+    p.write_text(yaml.safe_dump(data))
+
+    real_replace = cas.os.replace
+
+    def racing_replace(src, dst):
+        real_replace(src, dst)
+        Path(dst).write_text('{"owner": "racer", "pid": 999999, "acquired_at": 0}')
+
+    monkeypatch.setattr(cas.os, "replace", racing_replace)
+    with pytest.raises(cas.LockError, match="lost race"):
+        cas.acquire_lock(v5_root, owner="s2")

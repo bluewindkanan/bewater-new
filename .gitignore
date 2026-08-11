@@ -8,6 +8,9 @@ _bewater/.backup-*
 _bewater/.bw-lock
 _bewater/.tmp-*
 
+# rendered HTML reading copy of _bewater-output/ (regenerable via render script)
+/_bewater-html/
+
 # misc / unrelated
 /Frog:f212\ General/
 .DS_Store

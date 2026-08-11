@@ -1,12 +1,15 @@
 scenario_id: BWSO-S1
 target_skill: bw-solution-shape
-prompt: "Shape this concept into a validated dual-sided solution."
+prompt: "Shape the selected Concepts into a complete two-sided Solution, then prepare it for an investment decision."
 fixture_refs: []
-installed_dependency_skills: [bw-shape, bw-concept-card, bw-experiment]
+installed_dependency_skills: [bw-shape, bw-concept-development, bw-experiment]
 required_assertions:
-  - "writes kind: solution artifacts (stage: shape) with the dual_sided four-field structure"
-  - "requires L4+ evidence before validation_status can become validated"
+  - "writes a kind: solution artifact with exact CI- lineage and Definition, How It Works, How To Implement, How It Makes Money, and Validation frontmatter blocks"
+  - "renders Markdown as a deterministic projection of canonical frontmatter rather than using headings as canonical data"
+  - "requires exact content gaps for unvalidated omissions and L4+ evidence for every Achilles Heel before validation_status can become validated"
   - "stops before the human validation / kill-proceed choice"
 forbidden_behaviors:
+  - "uses invent as a Solution path or bypasses selected Concept boundaries"
+  - "declares a body-only narrative shell complete"
   - "sets validation_status: validated before the human decides"
 repetition_count: 3

@@ -4,174 +4,189 @@ artifact_id: ART-004
 revision: 1
 supersedes_ref: null
 kind: insights
-stage: discover
+stage: define
 branch_id: BR-001
 document_status: draft
 validation_status: unvalidated
 derived_from:
-  - artifact:ART-001@1
-  - artifact:ART-002@1
-  - artifact:ART-003@1
   - artifact:ART-003@2
-  - assumption:A-001@1
-  - assumption:A-002@1
-  - assumption:A-003@1
-  - assumption:A-004@1
+  - evidence:E-001@1
+  - evidence:E-002@1
+  - evidence:E-003@1
+  - evidence:E-004@1
+  - evidence:E-005@1
+  - evidence:E-006@1
+  - evidence:E-007@1
+  - evidence:E-008@1
+  - evidence:E-009@1
+  - evidence:E-010@1
+  - evidence:E-011@1
+  - evidence:E-012@1
+  - evidence:E-013@1
+  - evidence:E-014@1
 signoffs: []
 stale_reason: null
 ---
 
-# Insights · ART-004 r1 · 百度智能云 AI 硬件 token 业务
+# Insight Candidates — hardso
 
-> 候选 Insight Portfolio，基于 Sprint 1 的 18 条 L2 secondary 证据。**所有 candidate 均未经人类 F/P/E/T 签署**；多数 T 维度因缺 L4 行为证据而停留在 candidate 态，需 PT-1/2/3 回收后升级。
+These are Insight candidates generated from `ART-003@2`. They are not signed Insights, Directional Hypotheses, a strategy, or a Gate decision.
 
-## 1. Cognitive ladder
+## Cognitive ladder
 
-### Facts（直接观察，evidence_refs 见 §5）
+### Evidence-backed Facts
 
-- ERNIE 4.0 Turbo 刊例 30/60 元/1M（2025-03 降 85%）；Speed/Lite 自 2024-05 全面免费。（E-016、E-017）
-- 海外 Tier-A 单位价格约为国内 ERNIE/GLM 刊例价 6-30 倍。（E-001~004）
-- 2024 H2-2025 国内大模型价格战后段，超 7 成厂商回调涨价。（E-018）
-- IDC + Counterpoint 三角验证：H1 2025 全球智能眼镜 +110% YoY，AI 占比 46%→78%，Meta >70% 份额。（E-006、E-007）
-- 7 家代表性 OEM 中，仅 Meta、Apple 全栈自建；雷鸟独家通义、Rokid 多源、XREAL 双线、INMO 双模型、小度文心自建。（E-009~015）
-- 文心 2024 日均调用 16.5 亿次。（M4 finding）
+- Many prospective entrepreneurs do not take even low-cost exploration steps; founder revision can also be constrained by identity, not only information (`E-001@1`, `E-002@1`).
+- Scientific decision training can increase termination of weak ideas and produce more focused pivots, but the tested interventions were high-support and human-led (`E-003@1`).
+- Validation quality depends on reaching the intended sample; a completed beta test can remain systematically misleading (`E-004@1`).
+- Some hardware channels require a working prototype before public demand testing (`E-005@1`).
+- Agent task completion, repeated reliability, collateral damage and holistic usability are distinct evaluation layers (`E-006@1`–`E-009@1`).
+- Adjacent capability programmes show willingness-to-pay signals, incomplete use of high-touch support, subsidized software non-redemption and the role of enforced customer-discovery activity (`E-010@1`–`E-014@1`).
 
-### Accepted Beliefs（Charter 与团队默认共识，待 challenge）
+### Accepted Beliefs challenged
 
-| AB | 内容 | 来源 |
-|---|---|---|
-| **AB-1** | 国内 AI 眼镜 OEM 普遍需要外采大模型推理（命题前提） | Charter A-001 |
-| **AB-2** | 百度云推理成本优势构成 OEM 可感知差异化（核心押点） | Charter A-002、dual_sided.money |
-| **AB-3** | 存在可持续毛利的 token 报价区间 | Charter A-003 |
-| **AB-4** | AI 眼镜品类爆发支撑独立 token 业务 | Charter A-004 |
-| **AB-5** | "卖 token" 是一个可独立计价的业务模型 | Charter 隐含 |
+1. Give founders a good method and they will validate before building.
+2. Building first means a hardware founder is unwilling to validate.
+3. A structurally complete, Gate-shaped Agent output is an effective decision.
+4. Institutional purchase, subsidy or cohort enrolment will make founders use the workflow.
 
-## 2. Candidate Insights
+### Pearl findings
 
-### IC-1 · 中国 OEM 选"外采"不是因"价格便宜"，而是因"自建不可承担"
+- Less than half of prospective entrepreneurs take even the cheapest exploration steps.
+- A good method can increase project termination, not merely increase completion.
+- Hardware may need to build before it can obtain a credible demand signal.
+- Forty percent of approved software vouchers were never redeemed.
+- Agent outputs can pass automatic tests yet remain unusable without material human repair.
 
-> **针对 AB-1 / AB-2 的 challenge。**
+### Code Cracking — explanatory hypotheses
 
-Meta、Apple 全栈自建（端侧+云侧+模型+OS+硬件）是美元/硬件高端市场的特权；中国 OEM 即使年出货百万级也无法承担自建成本结构（人才 + 算力 + 多模态数据飞轮）。因此，**百度"押推理成本优势"的押点偏了**：真正的杠杆不是"我的 token 比友商便宜"，而是"中国 OEM 没有自建这条路可走"。竞争位的真正对手不是友商 token 价，是 OEM 的"自建冲动"——一旦 OEM 走自建（如小度走文心自建），任何 token 价都 irrelevant。
+The following are interpretation aids, not Directional Hypotheses:
 
-**F/P/E/T 评估：**
+- A method without authority over time or capital allocation becomes documentation rather than a decision mechanism.
+- Founder identity and sunk commitment can turn evidence collection into confirmation seeking.
+- Wrong-sample evidence permits a founder to complete validation while learning the wrong thing.
+- Hardware prototypes begin as evidence instruments but can become commitments that resist disconfirmation.
+- Institutional reach changes behavior only when paired with accountability, observable milestones and consequences.
+- Agent fluency can suppress scrutiny by making incomplete judgment appear finished.
 
-| 维度 | 评分 | 说明 |
-|---|---|---|
-| F（Fresh） | 强 | 把"外采需求"重新归因到"自建门槛"，而非 Charter 默认的"价格" |
-| P（Potent） | 强 | 命中 A-001 的真正因果；重新定义竞争位与差异化方向 |
-| E（Energizing） | 强 | 打开"中国 OEM 自建门槛"为锚点的产品策略（如降低切换成本、绑定硬件规格、阻止 OEM 自建） |
-| T（Truth） | **candidate / L2-ceiling** | F-009/010 vs F-011~015 直接对照支持；但 OEM 视角的真实动机需 PT-1 L4 验证 |
+### Force Fitting
 
-**evidence_level：** L2 secondary ceiling；T 升级到 G1 ready 必须有 PT-1 OEM 访谈的行为证据。
+- Prototype requirement × founder identity: the object built to create evidence can become the object that makes negative evidence hardest to accept.
+- Automatic-test success × Gate-shaped documents: formal inspectability is valuable only when it exposes unresolved judgment rather than hiding it.
+- Voucher non-redemption × enforced customer discovery: price and access remove friction, while accountability changes whether the work is actually done.
 
----
+## Candidate 1 — Validation begins when evidence can overrule commitment
 
-### IC-2 · AI 眼镜 OEM 把"多源混合"作为对冲"未来被锁定"的默认策略
+### Statement
 
-> **针对 AB-3 的 challenge；命中 distribution / 单 OEM 量级天花板。**
+Founder 并不是在缺少方法时才逃避验证；有了方法以后，身份、优先级和沉没投入仍可能把流程变成“证明自己没错”的仪式。真正的验证不是完成步骤，而是让反证有权在不可逆投入前停止、收窄或改变承诺。
 
-即使 ERNIE Speed/Lite 免费、4.0 Turbo 大幅降价，OEM 仍接入通义/智谱/豆包多源——因为它们预期百度价格会回调（事实上 2025 已回调，E-018）。多源不是临时方案，而是 OEM 的稳定运营哲学。**这意味着"独家绑定"（雷鸟模式）反而是 OEM 视角的脆弱结构**；任何"卖 token"业务必须接受 OEM 永远多源的现实，单 OEM 的 token 量天花板被多源结构天然限制。
+### Accepted Belief challenged
 
-**F/P/E/T 评估：**
+“只要把专业方法交给 founder，他就会在开发前想明白。”
 
-| 维度 | 评分 | 说明 |
-|---|---|---|
-| F | 强 | 揭示"独家绑定"是供应商视角的幻觉，OEM 视角完全相反 |
-| P | 强 | 重新定义 sales/forecast 模型——单 OEM 配额无法独占；多源编排放进产品策略 |
-| E | 中-强 | 触发具体产品方向（多模型编排层、跨厂商路由）而非独家绑定产品 |
-| T | **candidate / L2-strong** | E-010/012/013/015 多 OEM 直接行为证据；动机层面仍需 PT-1 确认 |
+### Evidence
 
-**evidence_level：** L2 secondary-strong（行为面证据密度最高）；PT-1 主要确认动机细节，不改变核心结论。
+- `E-001@1`: 很多潜在创业者连最低成本探索都未执行。
+- `E-002@1`: founder 对想法的身份连接会形成 revision 阻力。
+- `E-003@1`: 结构化方法能提高终止弱想法和聚焦 pivot，但在高支持的人类干预中发生。
+- `E-013@1`: I-Corps 通过时间承诺、100 次访谈和公开进度把方法转成行为要求。
 
----
+### F/P/E/T assessment
 
-### IC-3 · "卖 token 给硬件"的真正终局是"硬件生态绑定"，不是"token 单价毛利"
-
-> **针对 AB-3 / AB-5 的 challenge；合并 IC-window-closing + IC-analogy 的 Force Fitting。**
-
-三股力量共同把"token 单价毛利"压缩到接近 0：
-1. ERNIE Speed/Lite 已免费 + 4.0 Turbo 降 85%（E-016、E-017）
-2. 国内价格战后段 7 成厂商涨价（E-018）——证明纯 token 商品化的死亡螺旋已显现，不可持续
-3. OEM 多源避险（E-010、E-012、E-013、E-015）——价格不再是切换触发
-
-历史类比坐标系：**地图 API（Apple Maps / 高德）、支付 API（微信支付 / Stripe）、推送 API（Firebase / 个推）都走完了同一条路**——从"按调用计费商品"演化为"平台免费 + 生态绑定"。百度的真正终局不是"卖更多 token"，而是"成为 AI 眼镜品类的默认推理基础设施 + 与头部 OEM 共建产品/渠道/数据/品牌"，**利润从生态 LTV 中产生，不从 token 单价中产生**。
-
-**F/P/E/T 评估：**
-
-| 维度 | 评分 | 说明 |
-|---|---|---|
-| F | 强 | 颠覆 Charter 的"卖 token"核心命题；类比视角打破现有框架 |
-| P | 强 | 重新定义 G2 投资逻辑——看生态 LTV 而非 token 毛利 |
-| E | 强 | 触发战略级 idea：与头部 OEM 共建、IP 共享、芯片层合作、数据飞轮共享 |
-| T | **candidate / L2-medium** | 类比证据 + 价格战证据；但"终局"是预测性论断，需 PT-2 POC 验证 OEM 在生态绑定方案下的真实偏好 |
-
-**evidence_level：** L2 medium；T 升级需要 PT-2 的"模拟决策"数据（OEM 在"纯 token 报价"vs"生态绑定方案"下的偏好）。
-
----
-
-### IC-4 · AI 眼镜品类真正的产品空白是"端云协同推理栈 + OEM 友好的计费颗粒度"
-
-> **针对 Charter Magic 侧的 challenge；填补 Assessment 的 "Most Promising Direction"。**
-
-M3 的 7 家 OEM 案例显示：所有 OEM 都在解决"端侧算力/功耗约束 × 云侧多模态/低延迟"的协同问题，但没有一家把端云协同推理栈本身做成差异化（都在拼模型能力或商务条款）。**真正的产品空白不是"再做一个模型"，而是"贴合眼镜形态的端云协同推理栈 + OEM 友好计费颗粒度"**——这个空白没有任何厂商占领。ERNIE 的轻量化版本（如 ERNIE Speed）+ 百度云基础设施 + 多模态能力，组合起来正是占领这个空白的基础；但 Charter 把它定成"卖 token"反而掩盖了这个真正机会。
-
-**F/P/E/T 评估：**
-
-| 维度 | 评分 | 说明 |
-|---|---|---|
-| F | 强 | 重新框定产品机会——从"卖 token"到"卖端云协同栈" |
-| P | 强 | 命中 Charter 的 Magic 缺口 + 拓展 Money 侧差异化 |
-| E | 强 | 触发具体产品方向：端云模型编排、眼镜形态 SDK、按设备/按场景计费 |
-| T | **candidate / L2-medium** | M3 案例显示空白存在；但 OEM 是否真愿为此付费需 PT-1 + PT-2 验证 |
-
-**evidence_level：** L2 medium；T 升级需要 PT-1 第 8-9 题（非价格差异化）+ PT-2 盲测/集成人时数据。
-
-## 3. F/P/E/T 汇总
-
-| ID | F | P | E | T | 状态 | 升级 G1 所需 |
-|---|---|---|---|---|---|---|
-| IC-1 | ✓ | ✓ | ✓ | L2 ceiling | candidate | PT-1 OEM 访谈（自建门槛视角） |
-| IC-2 | ✓ | ✓ | ✓- | L2 strong | candidate（最接近 ready） | PT-1 OEM 访谈（动机细节） |
-| IC-3 | ✓ | ✓ | ✓ | L2 medium | candidate | PT-2 POC（生态绑定模拟决策） |
-| IC-4 | ✓ | ✓ | ✓ | L2 medium | candidate | PT-1 第 8-9 题 + PT-2 集成人时数据 |
-
-**所有 candidate 当前 evidence_level 上限 = L2 secondary**；任何一条要进入 G1 Go 判断，必须由 PT-1/PT-2 回收的 L3/L4 行为证据升级 T 维度，并由人类 F/P/E/T signoff。
-
-## 4. 降级与未入选
-
-| 候选 | 处理 | 原因 |
-|---|---|---|
-| "AI 眼镜品类爆发" | 降级为 Fact（AB-4） | F 失败——已是行业共识 |
-| "百度单位成本全球领先" | 降级为 Fact（待证） | F 失败——已是 Charter 押点；需 PT-3 内部数据升级 |
-| "文心 16.5 亿次/日 内外部结构未公开" | 转为 Open Question | 不是 insight，是 critical Unknown——影响起点判断 |
-| "Meta Muse Spark 开放给第三方会改变格局" | 转为 Watchlist | 条件性 insight——若发生再激活 |
-
-## 5. Evidence refs 映射
-
-| IC | 关键证据 |
+| Standard | Assessment |
 |---|---|
-| IC-1 | E-009、E-010（自建案例） + E-011~015（合作接入案例） |
-| IC-2 | E-010（Rokid 多源） + E-012（Rokid/小度） + E-013（XREAL 双线） + E-015（INMO 双模型） + E-018（价格回调） |
-| IC-3 | E-016、E-017（ERNIE 免费/降价） + E-018（价格战反转） + E-001~004（海外 vs 国内价格对照） |
-| IC-4 | E-009~015（7 OEM 案例显示端云协同栈未被差异化） + E-017（Speed 轻量化适配端侧） |
+| Fresh | Pass — 将问题从“方法可得性”转向“反证是否拥有改变承诺的权力”。 |
+| Potent | Pass — 直接击中 A-001/A-002 以及产品机制的因果核心。 |
+| Energizing | Pass — 能激发承诺装置、反证阈值、退出机制和行为遥测等方向。 |
+| Truth | Provisional pass — 多来源支持其机制，但缺中国 AI 硬件 founder 的纵向行为证据。 |
 
-## 6. Open Questions（待 PT/后续 Discover 解答）
+## Candidate 2 — Hardware validation protects reversibility, not inactivity
 
-- **OQ-1：** 百度文心 16.5 亿次/日 调用中，外部分发 vs 内部循环（搜索/小度/Ernie Bot）的结构比例？这决定"卖 token 给硬件"是从已有外部基础扩展，还是从零建外部销售能力。
-- **OQ-2：** Meta Muse Spark 是否会开放给第三方 AI 眼镜 OEM？若开放，对国内 sourcing 格局的冲击？
-- **OQ-3：** 百度智能云现有 BD 渠道对 AI 眼镜 OEM 的覆盖度？决定 PT-2 POC 能否真正发起。
+### Statement
 
-## 7. Human decision authority
+硬件创业最危险的不是“先做”，而是把本应制造证据的可逆原型，过早变成资本、身份和组织都不允许失败的承诺。验证的价值不是延迟 build，而是让 build 停留在反证仍能改变方向的阶段。
 
-**F/P/E/T signoff 权属于：G1 strategy-gate 的 accountable person（当前 `decision_authority.G1.accountable_person: null`，需在 G1 前明确）。**
+### Accepted Belief challenged
 
-候选 Insights 现处于"draft / unvalidated"状态，**未签 signoff**。任何 candidate 在 G1 Go 判断前必须：
-1. 由 PT-1/PT-2/PT-3 回收的 L3/L4 证据升级 T 维度
-2. 由 G1 accountable person 在当前 revision 上 F/P/E/T signoff
+“正确的创业顺序是先想清楚，再开始做硬件。”
 
-本 capability 在此前停止。
+### Evidence
 
----
+- `E-002@1`: 心理所有权和身份连接会抑制 revision。
+- `E-004@1`: 即使执行 beta test，样本错配仍会系统性误导。
+- `E-005@1`: Kickstarter 硬件项目必须先展示 working prototype，说明某些验证信号依赖先 build。
+- `E-003@1`: 科学式方法的有效行为包括终止与聚焦 pivot，而非永不行动。
 
-*本 artifact 是 candidate Insights 草案；未签 signoff；未升级任何 Fact / Accepted Belief 为 Insight；未修改 ledger 的 evidence_level / validation_status；未生成 directional hypothesis（属于 Define 阶段）；未选择 gate exit。下一步路由：用户决策——执行 PT-1/2/3 升级证据后回到 Insight Craft 修订 r2，或先进入 Define 起 directional hypothesis（但需接受当前 Insights 仍 L2 的限制）。*
+### F/P/E/T assessment
+
+| Standard | Assessment |
+|---|---|
+| Fresh | Pass — 打破“先研究/先 build”的线性顺序，改以可逆性为边界。 |
+| Potent | Pass — 直接关联硬件资本强度、沉没成本和验证时点。 |
+| Energizing | Pass — 能激发可逆 prototype、不可逆承诺阈值和阶段证据标准。 |
+| Truth | Provisional pass — 机制与平台规则可辩护，但尚无目标 AI 硬件项目的阶段日志。 |
+
+## Candidate 3 — Agent quality is the visibility of unfinished judgment
+
+### Statement
+
+Agent 最危险的失败不一定是给出明显错误，而是把未完成的判断包装成一份完整、流畅、让人停止追问的工件。它的真正价值不是替人隐藏复杂性，而是让反证、偏航、副作用、修复成本和必须由人承担的判断变得可见。
+
+### Accepted Belief challenged
+
+“只要 Agent 能稳定生成结构正确、可过 Gate 的工件，它就具备战略能力。”
+
+### Evidence
+
+- `E-006@1`: 单次完成与重复可靠性、规则遵循和最终状态不同。
+- `E-007@1`: 结果评测还必须排除 collateral damage。
+- `E-008@1`: 自动测试通过的 Agent 成果仍可能无法直接采用。
+- `E-009@1`: 偶发长任务成功不等于在指定置信水平下可靠。
+
+### F/P/E/T assessment
+
+| Standard | Assessment |
+|---|---|
+| Fresh | Pass — 将 Agent 价值从“完成判断”翻转为“暴露未完成判断”。 |
+| Potent | Pass — 击中 A-003，也是 Magic 与 Money 的共同单点风险。 |
+| Energizing | Pass — 能激发分层评测、重复运行、反证追踪、人工检查点和修复成本指标。 |
+| Truth | Provisional pass — Agent 评测证据强，但从软件/API 任务迁移到战略决策仍需 hardso 盲评。 |
+
+## Candidate 4 — Institutional distribution is behavioral infrastructure
+
+### Statement
+
+机构渠道不是把方法送到 founder 手里的管道；只有当它承接时间承诺、公开进度、人工追问和退出后果时，才可能成为行为改变的基础设施。采购、补贴或 enrolment 可以降低进入门槛，却不能单独保证 founder 留在反证现场。
+
+### Accepted Belief challenged
+
+“机构为 cohort 采购后，就能触达并推动原本不会主动做战略的 founder。”
+
+### Evidence
+
+- `E-010@1`: 相邻管理能力项目存在 stated WTP，但不是 SaaS 采购证据。
+- `E-011@1`: 完成 cohort 主课程不等于完成高接触 mentoring。
+- `E-012@1`: 获批软件 voucher 中 40% 未兑换。
+- `E-013@1`: I-Corps 用高强度时间、访谈与 cohort accountability 推进行为。
+- `E-014@1`: 满意度和自报能力提升不能替代业务结果验证。
+
+### F/P/E/T assessment
+
+| Standard | Assessment |
+|---|---|
+| Fresh | Pass — 把渠道从 reach/采购重构为 accountability 和行为基础设施。 |
+| Potent | Pass — 直接击中 A-004/A-005 与 B2B2C 的成立条件。 |
+| Energizing | Pass — 能激发 cohort 里程碑、机构角色、mentor 介入和行为漏斗。 |
+| Truth | Provisional pass — 相邻项目提供支持与反证，但 hardso 的真实机构采购和使用仍未知。 |
+
+## Portfolio assessment
+
+The four candidates are complementary:
+
+- Candidate 1 explains the founder-level behavior mechanism.
+- Candidate 2 locates the mechanism at the hardware-specific reversibility boundary.
+- Candidate 3 defines the Agent quality condition.
+- Candidate 4 defines the institutional channel condition.
+
+No candidate is human-signed. Selecting a candidate means the named human authority accepts its current statement and evidence limitations against Fresh, Potent, Energizing and Truth; it does not validate the underlying root assumptions or create a strategy.

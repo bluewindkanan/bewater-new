@@ -88,7 +88,7 @@ tensions, anomalies, challenged Accepted Beliefs, reframe candidates, and strate
 with its limitations. They are candidates only; Research does not create a final Insight, does not
 sign F/P/E/T, does not compose a directional hypothesis, and does not choose a Gate exit.
 
-**Insight Readiness** is a Coordinator judgment that the handoff input is ready for `bw-insight-craft`.
+**Insight Readiness** is a Coordinator judgment that the handoff input is ready for `bw-define`.
 Research may move to synthesize only when:
 
 - critical strategic uncertainties are evidenced or retained as explicit material gaps;
@@ -109,7 +109,7 @@ Readiness.
 
 Record the high-value gaps that survive this revision, what each gap may change strategically, and
 the future research path when one is known. Remaining uncertainty travels with the Insight
-Ingredients into `bw-insight-craft` so downstream judgment is never made blind to what is still
+Ingredients into `bw-define` so downstream judgment is never made blind to what is still
 unknown.
 
 ## Stable versus transient state

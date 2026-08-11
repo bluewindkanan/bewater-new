@@ -14,63 +14,140 @@ derived_from:
   - assumption:A-002@1
   - assumption:A-003@1
   - assumption:A-004@1
+  - assumption:A-005@1
 signoffs: []
 stale_reason: null
 ---
 
-# Initial Assessment · ART-002 r1 · 百度智能云 AI 硬件 token 业务
+# Initial Assessment — hardso (AI-hardware founder decision-stage SaaS)
 
-## 1. Overall Preliminary Conclusion
+Preliminary and advisory. Not a Gate, not validation, not an investment decision. All root
+assumptions remain `evidence_level: L1 / untested`.
 
-百度面向 AI 眼镜/可穿戴 OEM 的 B2B token 供给，是一个**方向合理、动因可疑、毛利未证实的 greenfield 机会**：云侧推理确为该品类的硬需求，但"内部战略推动 + 押成本优势"的因果链尚未成立，且百度智能硬件 BU 的天然生态杠杆与本品类错位，最大未知是**OEM 是否会在百度可承受报价下持续外采**。
+### 1. Overall Preliminary Conclusion
 
-> **Charter basis:** ART-001 押 Money 侧，以"推理成本/基础设施优势"为主卖点。 → **External signal:** 全球 AI 眼镜出货 2025 ≈ 870 万台、2026 预测 ≈ 1360 万台（IDC）；Ray-Ban Meta 采用"端-云混合"架构，云侧推理为硬需求（ZenML/Meta）。 → **Assessment inference:** 品类增量真实存在，且结构性依赖云侧推理，外采命题的方向性成立。 → **Implication:** Discover 应优先证伪 A-001/A-002 而非重新论证赛道。 → **What would change this view:** 头部 OEM 普遍自建推理或被友商长期独家锁定（A-001 证伪信号）。
+hardso's premise — that AI-hardware founders routinely skip pre-build strategy and pay for it in
+execution — is plausible and aligns with widely cited failure data, but the load-bearing unknown is
+not "founders lack a method"; it is whether agent-led methodology can hold gate rigor for
+strategically weak founders, and whether institutions will pay for that outcome.
 
-## 2. Professional Perspectives
+The space is worth further exploration because the pain is real and recurring, the B2B2C channel
+structure exists, and a methodology-native agent is a genuinely new mechanism — but every one of
+those points is currently a belief, not an established fact.
 
-- **Magic：** 让 OEM 跳过自建模型/推理团队即可上线 AI 功能——价值真实，但 Meta/Google 已示范"自有生态 + 自有推理"路径，第三方 token 供给只是**若干可行选项之一**，而非默认选项。
-- **Money：** ERNIE 4.5 21B A3B 报价约 $0.06–0.22 / 百万 token（pricepertoken），价格工具齐全；但消费侧 Ernie Bot 已于 2025-04 起免费，API 价格曲线持续下行，**单位毛利被双向挤压**，"低成本优势可传导为可感知差异化"未被任何源证实。
-- **Innovation：** 真正差异化的机制不是"卖 token"，而是**给眼镜品类提供贴合场景的多模态/低延迟推理 + OEM 友好的计费颗粒度**——Charter 暂未押此层。
+The largest unknown: in the real founding decision moment, is the founder blocked by "can't"
+(capability/access) or by "won't / doesn't know to" (awareness/willingness)? That fork decides
+whether hardso is a tool or an education/motivation product.
 
-## 3. Candidate Insights
+> **Charter basis:** ART-001 names AI-hardware founders who "copy competitors and build first,"
+  strategially weak, time/budget-poor, wanting systematic decisions but stuck. → **External
+  signal:** the #1 startup failure cause is "no market need" at 42% of 400+ post-mortems [1], and
+  hardware fails specifically on product strategy and demand misjudgment [2]. → **Assessment
+  inference:** the documented top failure mode is exactly the pain hardso targets. →
+  **Implication:** the problem is real and measurable, not invented. → **What would change this
+  view:** evidence that this 42% is a willingness problem (founders know but skip) rather than a
+  capability/access gap.
 
-1. **CI-1：** 百度智能硬件 BU 选"AI 眼镜/可穿戴"更像先有战略再选 greenfield 品类，而非先识别到 OEM 真实 pull——动因方向倒置会使所有下游假设系统性偏乐观。
-2. **CI-2：** 在 Meta/Google/Apple 都把"眼镜 + 自有推理生态"做成默认路径的市场里，第三方 token 供给的**真实生态位是"非阵营 OEM 的备选推理源"**，而非品类级基础设施。
-3. **CI-3：** 价格曲线下行（消费侧已免费、企业 API 持续降价）意味着**"压价抢量"几乎必然，可持续毛利只能来自百度云单位推理成本的长期结构性领先**——这是 A-002 与 A-003 的真正交汇点。
+### 2. Professional Perspectives
 
-## 4. Core Conflict / Tension
+- **Magic:** A strategically weak, time-poor founder gets an agent that carries the methodology end
+  to end through Immersion→G2, so "think before building" stops being something only expensive
+  consulting affords.
+- **Money:** B2B2C — incubators/accelerators/VCs/hardware platforms pay per cohort, sidestepping
+  founder price sensitivity and reaching the "unaware" segment via the institution's existing funnel.
+- **Innovation:** A methodology (BeWater) encoded so an agent drives it while a human decides only
+  at gates — distinct from templates (no guidance) and from consulting (not scalable).
 
-**生态错位 vs. 成本差异化：** 智能硬件 BU 的天然杠杆（车载、小度）与目标品类不重合，使本命题成为一次**只凭"成本优势"打开 greenfield OEM 的纯销售尝试**；而消费侧 token 已免费、企业 API 持续降价，"成本优势"作为差异化主轴的护城河宽度未被任何源证实。
+> **Charter basis:** balance_choice = AI-hardware first vertical, G1→G2 decision segment, agent
+  drives / founder decides at gates. → **External signal:** accelerator cohorts of 10–15 with
+  ~$120K/6% deals show institutions already pay for structured founder development [3][4];
+  methodology-driven cohort builders (e.g. Founder Institute, ~$20BN portfolio) exist as a category
+  [5]. → **Assessment inference:** institutions have budget and a repeatable cohort unit, and the
+  pain hardso targets is the documented top failure mode. → **Implication:** B2B2C is structurally
+  viable and the value proposition maps to a real failure. → **What would change this view:**
+  institutions refusing to pay for a tool-based (vs. mentor-based) cohort program.
 
-> **Charter basis:** Tension 章节明确生态错位与价格-毛利 tension。 → **External signal:** Ernie Bot 2025-04 起免费（Yicai）；ERNIE API 多档报价区间公开（pricepertoken/ZenMux）。 → **Assessment inference:** 价格工具虽齐全，但行业单价整体下行，单凭报价难以构成 OEM 决策差异。 → **Implication:** 必须把"差异化"从价格拓宽到 SLA/集成/场景适配。 → **What would change this view:** 出现 OEM 把"百度单位推理成本显著低于友商"列为采购主因的实测证据。
+### 3. Candidate Insights
 
-## 5. Most Promising Direction
+- **Candidate Insight 1 — The fork is capability-vs-willingness, not method-vs-no-method.** If
+  founders verbally agree yet still copy competitors, the binding constraint is awareness/willingness
+  and no agent methodology fixes that by itself.
+- **Candidate Insight 2 — Agent rigor is the single point of failure for both Magic and Money.** If
+  agent output is "formally correct but decision-irrelevant," Magic (founder gets real help) and
+  Money (institutions pay for outcomes, not compliance) collapse together.
+- **Candidate Insight 3 — The B2B2C channel is also the validation channel.** A paying cohort is
+  simultaneously the GTM and the L4 behavioral-evidence source — so commercial viability and
+  evidence quality are the same pilot, not two separate workstreams.
 
-**优先方向：** "非阵营 AI 眼镜/可穿戴 OEM 的备选云侧推理供给"——服务那些**未被 Meta/Google/Apple 阵营锁定、又无力自建**的腰部厂商。
-**备选方向 A：** 面向中国本土眼镜/耳机 OEM 的多模态低延迟推理 + OEM 友好计费（贴近百度既有 B 端商务覆盖）。
-**备选方向 B：** 以单位推理成本结构性优势为锚的可持续毛利定价模型（与 A-002/A-003 同向）。
+### 4. Core Conflict / Tension
 
-## 6. Key Risks
+Magic demands the agent go deep on methodology to truly close the founder capability gap; Money's
+B2B2C demands scalable, repeatable delivery to institutions. If agent output quality cannot hold
+gate rigor at scale, both sides fail at once.
 
-- **R-1（生态错位）：** 无既有生态杠杆，纯靠成本打开 OEM。 → **What would change this view:** 百度在眼镜/可穿戴品类获得非成本型合作证据（场景共建、SDK 共担）。
-- **R-2（价格-毛利）：** 消费侧免费、企业 API 持续降价，可持续毛利假设脆弱。 → **What would change this view:** 拿到 OEM 联合测价/POC 中百度仍保持内部毛利底线的实测数据。
-- **R-3（赛道上限）：** 出货量与单品调用量是否足以摊薄基础设施投入，二手数据口径分歧大（2026 市场规模 $3.2B–$12.5B）。 → **What would change this view:** 出货量与单品调用量的三角验证收敛到一致量级。
+> **Charter basis:** ART-001 states this tension verbatim and chooses AI-hardware first vertical +
+  G1→G2 as the balance. → **External signal:** cohort programs scale by standardized curricula and
+  mentor reuse [3][5]; nothing in sources addresses whether an agent can hold gate quality at scale.
+  → **Assessment inference:** the scalability lever (standardization) is exactly what endangers
+  depth, so the tension is structural, not incidental. → **Implication:** agent output quality
+  (A-003) is the hinge that resolves or breaks the tension. → **What would change this view:**
+  evidence that standardized agent delivery preserves depth in practice.
 
-## 7. Discover Mission
+### 5. Most Promising Direction
 
-- **优先任务：** 一手访谈 ≥5 家非阵营 AI 眼镜/可穿戴 OEM 的产品/技术决策人，弄清他们**今天怎么解决推理、真实可接受报价区间、决策链**。
-- **两个关键问题：** (1) OEM 在什么条件下会**持续外采**而非自建或投奔阵营？(2) 在同等 SLA 下，百度报价是否构成 OEM 决策因素？
-- **本轮不优化：** SDK 形态、定价表、商业分成结构（留给 Shape）。
+Priority: prove agent output can pass G1/G2 gates for strategically weak AI-hardware founders inside
+one institution-supplied cohort — because A-003 (agent quality) is the technical foundation and
+A-001/A-002 (the capability-vs-willingness fork) is the demand foundation, and a single cohort tests
+both.
 
-## 8. Research Boundary & Sources
+Alternatives: (a) position hardso as an internal tool for one hardware platform's portfolio services;
+(b) narrow the first vertical to a single AI-hardware sub-segment where the founder strategic gap is
+most acute and observable.
 
-**研究边界：** 仅做了 4 次公开网检，得到 4 类可信源（二手市场预测、一手 API 报价、架构分析、消费侧免费公告）。**未做**一手 OEM 访谈、未拿到百度云单位推理成本曲线、未做友商 SLA 横向对照。"外采比例""OEM 决策权重""百度毛利结构"在公开源中**未建立**，相关推断均为 Assessment inference。源之间在 2026 市场规模（$3.2B vs $12.5B）与 ERNIE 报价（$0.06 vs $2.65 / 百万 token，不同型号）存在显著分歧，已保留为风险 R-3 而非选择有利源。
+### 6. Key Risks
 
-**Sources:**
+- **Risk 1 — "Verbal-only" founders (A-001):** founders espouse "think first" but still copy
+  competitors and build first. → **What would change this view:** in a guided pilot, founders
+  genuinely complete validation rather than skipping to build.
+- **Risk 2 — Agent formality trap (A-003):** output passes structural review but experts blind-judge
+  it as decision-irrelevant. → **What would change this view:** blind expert review rates agent
+  output as effective, not merely compliant.
+- **Risk 3 — Channel pays for mentorship, not tooling (A-004/A-005):** institutions buy mentor-based
+  programs and treat a tool as free/self-serve; cohorts purchase but founders do not engage. →
+  **What would change this view:** a paying pilot with measurable cohort completion and gate-pass
+  behavior.
 
-1. IDC — *Smart Glasses Surge: XR Market Rewriting Its Own Rules*（2026 预测 ≈13.6M 台、≈$5.1B）。https://www.idc.com/resource-center/blog/smart-glasses-surge-the-xr-market-is-rewriting-its-own-rules/
-2. pricepertoken.com — *Baidu API Pricing (Updated 2026) – All Models*（ERNIE 多档报价）。https://pricepertoken.com/pricing-page/provider/baidu
-3. ZenML LLMOps Database — *Meta / Ray-Ban: Edge AI Architecture for Wearable Smart Glasses*（端-云混合架构）。https://www.zenml.io/llmops-database/edge-ai-architecture-for-wearable-smart-glasses-with-real-time-multimodal-processing
-4. Yicai Global — *Baidu to Turn AI Model Ernie Bot Free-of-Charge From April 1*（2025-04-01）。https://www.yicaiglobal.com/news/baidu-to-turn-ai-model-ernie-bot-free-of-charge-from-april-1
+### 7. Discover Mission
 
-*本报告为初步咨询性判断，非 Insight、非 Gate、不含评分/红黄绿 readiness 标签，不决定是否投资或是否进入 Discover。*
+- **Priority research mission:** determine, in the real founding decision moment, whether the
+  AI-hardware founder is blocked by capability/access or by awareness/willingness — and whether
+  agent-led methodology changes the outcome.
+- **Key questions:** (1) Which AI-hardware founder, in what situation, chooses "copy and build" over
+  "validate first," and why? (2) Can an agent carry BeWater to a quality that passes gates for a
+  strategically weak founder?
+- **Do not optimize yet:** SaaS feature scope, UI, or pricing tiers before agent output quality and
+  the capability-vs-willingness fork are evidenced.
+
+### 8. Research Boundary & Sources
+
+This is a preliminary, source-bounded assessment, not validation. Sources are general startup /
+accelerator data, not AI-hardware-specific nor China-market-specific; founder behavior and
+institutional willingness-to-pay in the target segment remain untested. **Charter basis** is the
+user's own statements and selections in ART-001 (self-report, not verified). **External signal** is
+limited to the five sources below. **Assessment inference** is reasoning over those two, clearly
+labeled, and must not be read as established fact. No Evidence wrapper is created; ledger levels
+stay L1/untested. Sources actually retrieved:
+
+1. CB Insights — "Top 9 Reasons Startups Fail" (analysis of 400+ post-mortems; 42% no market need).
+   https://www.cbinsights.com/research/report/startup-failure-reasons-top/
+2. Robotics Tomorrow — "Why Do Hardware Startups Fail?" (hardware-specific: product strategy, demand
+   misjudgment, funding missteps). https://www.roboticstomorrow.com/article/2024/01/why-do-hardware-startups-fail/21886
+3. FlowCap — "The Top 10 Accelerators for SaaS Founders" (cohort structure, 6–10% equity norms).
+   https://www.flowcap.com/post/the-top-10-incubators-and-accelerators-for-saas-startups
+4. Value Add VC — "Top 7 Startup Accelerators for B2B SaaS Founders" (cohorts of 10–15; $120K/6%
+   standard deal). https://valueaddvc.com/blog/top-7-startup-accelerators-for-b2b-saas-founders-ranked-by-outcomes-and-network
+5. Founder Institute — program overview (methodology-driven, cohort-based company builder; ~$20BN
+   portfolio). https://fi.co/
+
+This report contains no score, no readiness label, no Gate record. It does not modify the Charter,
+does not change assumption validation, does not change `current_stage`, and writes no signoff.

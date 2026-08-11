@@ -19,19 +19,19 @@ directional hypotheses; they stay in Define.
 
 ## Workflow
 
-1. Walk the cognitive ladder (`references/insight-generation.md`): Facts → Accepted Beliefs →
+1. Confirm the selected branch has `current_stage: define`. If not, route to `bw-resume`
+   (the global recovery router will read the actual stage and route correctly).
+2. Walk the cognitive ladder (`references/insight-generation.md`): Facts → Accepted Beliefs →
    Insights. Accepted Beliefs are the target insights challenge; explanatory hypotheses may support
    interpretation but are not directional-hypothesis artifacts.
-2. Generate candidates with the 13 lenses and the Pearl/Code/Force methods.
-3. Judge each candidate against F/P/E/T (`references/fpet-judgment.md`); reclassify a failing
+3. Generate candidates with the 13 lenses and the Pearl/Code/Force methods.
+4. Judge each candidate against F/P/E/T (`references/fpet-judgment.md`); reclassify a failing
    candidate as a Fact only when it is directly observed, otherwise retain it as a candidate belief
    or explanatory hypothesis.
-4. Write insight artifacts (`_bewater-output/ART-xxx-rN-insights.md`, `kind: insights`,
+5. Write insight artifacts (`_bewater-output/ART-xxx-rN-insights.md`, `kind: insights`,
    `stage: define`).
-5. Use `AskUserQuestion` to present each insight candidate with your F/P/E/T judgment and request
-   the human's signature. For each insight, show: the insight statement, your F/P/E/T assessment
-   (Fresh, Potent, Energizing, Truth — each with yes/no and reasoning), and ask
-   the human to sign or reject. Present candidates one at a time or in a small batch; do not
-   request signature on all candidates at once without individual review. Name the human decision
-   authority and **stop**. Current-revision human F/P/E/T signoff is a G1 readiness requirement —
+6. Present all insight candidates in the artifact body with their number, statement, evidence,
+   and your F/P/E/T assessment. Then use `AskUserQuestion` once to ask the human to enter the
+   numbers of insights to sign (e.g., "1,3,4"). Record signoff for each selected insight.
+   Name the human decision authority and **stop**. Current-revision human F/P/E/T signoff is a G1 readiness requirement —
    the human signs, not you (`../_bw-shared/gate-criteria.md`). This capability does not create directional hypotheses.

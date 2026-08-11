@@ -4,20 +4,23 @@
 
 ## Purpose
 
-Improve the Immersion experience so BeWater reaches a faithful user intent quickly while reducing
-typing effort. The Charter capability should adapt each question to the available context, use a
-host-native structured-choice dialog whenever it can safely do so, self-review a completed Charter,
-and automatically persist it. The Initial Assessment remains a separate fresh-context evaluation and
-automatically persists its report without a user confirmation or a second self-review phase.
+Improve the Immersion experience so BeWater first develops a faithful shared understanding with the
+user, then reduces effort by recommending bounded decisions. The Charter capability should use an
+explicit Explore → Converge interaction, a consultative Explore dialogue, provenance-labelled
+interpretation, a staged draft-quality loop, and automatic persistence. The Initial Assessment remains
+a separate fresh-context evaluation and automatically persists its report without a user confirmation
+or a second self-review phase.
 
 This design borrows the interaction principles of `superpowers:brainstorming`: one question at a
-time, multiple choice when useful, open-ended input when choices would be misleading, no fixed
-question count, and no unnecessary follow-up after the intent is clear.
+time, open-ended exploration where context is still forming, and choices where a bounded decision
+can help the user think and respond with less effort.
 
 ## Goals
 
 - Obtain the user's actual intent with the fewest low-value questions.
-- Prefer low-effort structured choices without turning model guesses into facts.
+- Elicit grounding context through useful reflection before using recommendations to converge bounded
+  decisions.
+- Prefer low-effort structured choices without turning model guesses or user selections into facts.
 - Automatically persist a complete, reviewed Charter; do not require a final user confirmation.
 - Preserve Assessment isolation and automatic persistence.
 - Keep every human-controlled workflow decision explicit; the AI must never choose on the user's
@@ -34,28 +37,41 @@ question count, and no unnecessary follow-up after the intent is clear.
 
 ## Interaction Architecture
 
-### Question selection
+### Explore → Converge question selection
 
 The Charter capability maintains its existing coverage checklist in working context only. On every
 turn it identifies the unanswered item with the highest information gain, smart-skips information
 already established by the user's input, and asks exactly one question.
 
-The capability then selects an interaction modality based on the information shape rather than a
-fixed number of free-form or structured turns.
+The capability begins in **Explore**. It must collect, or explicitly mark Unknown, four grounding
+anchors: trigger / why now; a specific person and situation; current behavior or alternative; and
+desired change. Explore questions are free-form only and seek concrete recent events, observed
+behavior, workarounds, constraints, and outcomes. Each reply uses clear, focused, natural language to
+surface the one point most worth thinking about and invite the next thought with one open question.
+The capability keeps its reasoning internal and lets the question's complexity determine the necessary
+context for shared understanding. Any implication, tension, ambiguity, or assumption is labelled
+`agent-interpretation`. A rich initial prompt can establish anchors and move directly to Converge.
+
+Only after those anchors are available does the capability enter **Converge**. Converge uses
+recommendations to resolve bounded framing, scope, priority, trade-off, Magic–Money balance, success
+signals, and corrections. A recommendation must cite stated context and its material trade-off,
+explain what it optimizes and sacrifices, name a credible alternative, and state what unknown would
+change the recommendation. It may never supply a customer behavior, willingness to pay, market fact,
+or unstated resource or constraint. The capability still asks exactly one question per turn.
 
 | Condition | Interaction |
 |---|---|
-| The intent, experience, named facts, or constraints are open-ended; candidate answers would lead or distort the user. | Free-form input. |
-| The current context supports two or three credible, mutually distinguishable candidates. | Host-native structured-choice dialog. |
-| The next issue is a scope, priority, trade-off, correction, or other bounded decision. | Host-native structured-choice dialog. |
+| Explore anchor is missing. | Free-form input; no recommendation or structured choice. |
+| Converge has two or three credible, mutually distinguishable candidates grounded in stated context. | Host-native structured-choice dialog, with a stated recommendation basis and trade-off where one is recommended. |
+| The next Converge issue is a scope, priority, trade-off, correction, or other bounded decision. | Host-native structured-choice dialog. |
 | The user does not know, or Discover should determine the answer. | Offer `Uncertain`; persist the result as an explicit Unknown when appropriate. |
 | No candidate accurately represents the user. | Offer `None are accurate — I want to add context`, which opens a free-form response. |
 | The coverage and usefulness thresholds are met. | Stop interviewing and draft the Charter. |
 
-The first interaction is not inherently free-form. A rich initial prompt may already cover most of
-the Charter, while an ambiguous first prompt may require an open question. Candidate options must
-be grounded in stated context; they are prompts for correction or selection, not user facts or
-evidence. Only a user's selection or free-form addition may be recorded as L1 input.
+Candidate options must be grounded in stated context; they are prompts for correction or selection,
+not user facts or evidence. Track each high-impact claim as `user-stated`, `user-selected`,
+`agent-interpretation`, or `unknown`. A selection can be L1 user input, but never becomes a
+user-stated claim, a Fact, or validation merely because it was selected.
 
 ### Structured-choice transport
 
@@ -72,26 +88,34 @@ than simulating a human selection.
 ## Charter Drafting and Quality Loop
 
 When intent coverage is sufficient, the capability creates the complete Charter and three to five
-root assumptions. It then runs an in-context self-review before any project-state mutation:
+root assumptions. It then runs a staged quality loop before any project-state mutation:
 
-1. Scan for placeholders, omitted required sections, contradictions, scope drift, and ambiguous
-   language.
-2. Verify that original user intent and structured interpretation remain distinct; that quoted
-   language is not invented; and that no model-generated candidate is represented as a user fact.
-3. Verify Magic, Money, leverageable assets, boundaries, success signals, and
-   Known/Believed/Unknown/Tension are coherent and complete enough for the context.
-4. Verify each root assumption is `layer: root`, falsifiable, uncertain, linked to an evidence need
-   and disconfirming signal, and remains `L1`/`untested`.
-5. Revise automatically when the existing context resolves the issue.
+1. **L0 deterministic validation:** reject missing sections, placeholders, invalid provenance,
+   incomplete dual-sided fields, malformed root-assumption records, missing evidence needs or
+   disconfirming signals, and any forbidden signoff/state change.
+2. **L1 same-context semantic audit:** use the claim trace to check frontmatter/body consistency,
+   scope drift, knowledge-state classification, invented quotations, source-labelled fidelity,
+   causal-chain coverage (need, value, commercial, channel, technical/regulatory), and whether P0
+   Unknowns have a root-assumption or explicit Discover-question exit. L1 is draft lint, not proof
+   of user intent or external reality.
+3. Revise automatically when existing context resolves the issue, then re-run L0 and L1.
+4. Run a final unified intent calibration: show a compact 4–7-row source-labelled intent mirror and
+   ask: `Which point is least accurate, or most needs to be in your own words?` Apply any correction
+   and re-run L0 and L1. This is an open correction chance, not full-document confirmation, signoff,
+   approval, validation, or a Gate.
+5. If the user declines calibration or is fatigued, retain the source labels and explicit Unknowns;
+   do not recast them as user facts. After the final L0/L1 pass, persist immediately without asking
+   for save confirmation.
 
-Explicit Unknowns are valid and do not block drafting. If the review finds a material ambiguity that
-could change the user's intended proposition, the capability returns to adaptive intake and asks one
-new highest-information-gain question. It must not fabricate an answer or persist until that
+Explicit Unknowns are valid and do not block drafting. If the L1 audit finds a material ambiguity
+that could change the user's intended proposition, the capability returns to adaptive intake and asks
+one new highest-information-gain question. It must not fabricate an answer or persist until that
 ambiguity is resolved or legitimately classified as Unknown.
 
 No review artifact, review state, or separate reviewer is created. The former complete-draft
-confirmation checkpoint is removed: once the self-review passes, the Charter and assumptions are
-written automatically through the existing lock/CAS transaction. The committed Charter remains
+confirmation checkpoint is removed: once L0/L1 pass and any required calibration is handled, the
+Charter and assumptions are written automatically through the existing lock/CAS transaction. The
+committed Charter remains
 `document_status: draft` and `validation_status: unvalidated`; root assumptions remain
 `evidence_level: L1` and `validation_status: untested`.
 
@@ -122,7 +146,8 @@ a human choice by the appropriate router; routers still do not write stage state
 
 ## Data and Safety Invariants
 
-- Do not persist interview state, modal choices, a review report, or a new workflow artifact.
+- Do not persist interview state, modal choices, a review report, or a new workflow artifact; retain
+  the compact claim-level provenance only in the Charter body.
 - Continue to use the existing transactional `bwkit plan apply` path for all state mutation.
 - Preserve immutable artifact revisions, CAS checks, exact lineage snapshots, and integrity checks.
 - Preserve the formal Discover input definition: current Charter plus at least three active root
@@ -136,10 +161,13 @@ Implement test-first and maintain at least 80% coverage for changed executable b
 
 ### Structural tests
 
-- Assert the adaptive modality contract, one-question limit, smart-skip behavior, choice escape
-  hatches, structured-tool preference, and prose fallback.
-- Assert the Charter self-review checklist, automatic repair behavior, removal of the complete-draft
-  confirmation gate, and automatic CAS persistence after review.
+- Assert the Explore-before-Converge contract, grounding-anchor requirement, one-question limit,
+  smart-skip behavior, recommendation provenance, choice escape hatches, structured-tool preference,
+  and prose fallback.
+- Assert the advisory Explore cadence, inspiration-oriented Converge recommendations, L0 validation,
+  L1 semantic-audit contract, final unified L2 intent calibration, automatic repair and rerun
+  behavior, removal of the complete-draft and save-confirmation gates, and automatic CAS persistence
+  after review.
 - Assert that Assessment has no newly introduced self-review or confirmation gate while retaining
   its independent context boundary and pre-write contract checks.
 - Reassert all methodology boundaries: draft/unvalidated Charter, L1/untested assumptions, advisory
@@ -147,13 +175,16 @@ Implement test-first and maintain at least 80% coverage for changed executable b
 
 ### Behavioral evaluations
 
-- Ambiguous intent selects one free-form, high-information question.
-- Rich initial context smart-skips redundant questions.
-- A grounded scope or priority question invokes the native structured-choice tool.
+- Ambiguous intent receives a mirror, a tentative observation, and one free-form, high-information
+  Explore question.
+- Rich initial context smart-skips redundant questions and may enter Converge directly.
+- A grounded scope or priority question invokes the native structured-choice tool only in Converge,
+  explaining what each recommended direction optimizes, sacrifices, and could change.
 - `Uncertain` becomes an Unknown; the custom escape hatch opens free-form input.
 - An unavailable dialog tool produces a prose fallback and waits; it does not auto-select.
-- Charter self-review repairs resolvable problems, asks one follow-up for material ambiguity, and
-  automatically persists a passing Charter without requesting confirmation.
+- Charter L1 repairs resolvable problems, catches claim/provenance or causal-chain gaps, asks one
+  follow-up for material ambiguity, and automatically persists a passing Charter without requesting
+  full-document confirmation.
 - A successful Assessment automatically persists in a fresh context; an unavailable or source-empty
   Assessment does not write and exposes the three next-action choices.
 - Run a live interactive check where a structured-choice tool exists; keep headless evaluations on

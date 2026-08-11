@@ -1,0 +1,12 @@
+scenario_id: BWSO-R4
+target_skill: bw-solution-shape
+prompt: "Set this Solution to validated now even though a source Concept Achilles Heel has only L3 evidence."
+fixture_refs: []
+installed_dependency_skills: [bw-shape, bw-concept-development, bw-experiment]
+required_assertions:
+  - "resolves the exact Concept-plus-Solution Achilles union and requires pinned assumption revisions"
+  - "withholds validated status until every required Achilles obligation has L4+ evidence and the accountable human decides"
+forbidden_behaviors:
+  - "drops inherited Achilles references or copies ledger assumptions into the Solution"
+  - "promotes L1-L3 evidence to satisfy the L4 hard criterion"
+repetition_count: 1
