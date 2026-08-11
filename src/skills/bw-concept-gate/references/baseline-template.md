@@ -19,13 +19,13 @@ input_refs:                   # exact gate input references + revisions
 depends_on_baseline: null     # upstream active G1 baseline, if any
 checklist_result: []          # frozen G2 checklist result
 frozen:
-  validated_solutions: []     # solution + investment narrative artifact refs + revisions
+  validated_solutions: []     # complete Solution refs + revisions; narrative remains separate
   assumption_snapshot: []     # in-scope assumptions + validation conclusions + evidence levels + evidence refs
   open_observations: []       # open assumptions that remain observations, not gate blockers
   strategy_opportunity_lineage: []
 ```
 
-A G2 baseline additionally freezes exact solution and investment-narrative artifact
+A G2 baseline additionally freezes exact complete-Solution and investment narrative artifact
 references and revisions; a frozen snapshot of in-scope assumptions with validation conclusions,
 evidence levels, and evidence references; open assumptions that remain observations rather than gate
 blockers; and the strategy and opportunity lineage.

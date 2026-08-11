@@ -1,28 +1,64 @@
 # Global resume routing
 
+Use reads only. Never invoke a state-changing command from this router.
+
 ## Scan order
 
-Use only reads. Never invoke a state-changing command from this router.
+1. Read `_bewater/config.yaml`, `_bewater/ledger.yaml`,
+   `_bewater/conditions.yaml`, and `_bewater/records/`; collect branch-applicable
+   open conditions.
+2. Verify active G1/G2 baseline pointers and their source decisions. Any
+   active-baseline mismatch is a blocker.
+3. Inspect gate and backtrack records for `pending` or `manual-repair` action
+   plans. Derive ownership from persisted root fields and record type: root `gate`
+   with `gate: G1` routes to **bw-strategy-gate**; `gate: G2` routes to
+   **bw-concept-gate**; a backtrack record is identified by record type plus
+   `backtrack_id` and routes to **bw-backtrack**. A single persisted recovery
+   owner takes precedence over normal stage routing. A conflict between record
+   type and root fields, corrupt data, or unknown ownership fails closed.
+4. Inspect lifecycle heads before using the branch stage map.
 
-1. **Open conditions** — collect every `status: open` entry in `conditions.yaml` that applies to
-   the selected branch. Report each as a blocker to the affected gate.
-2. **Active-baseline validity** — inspect `active_baselines.G1` and `active_baselines.G2` for the
-   current branch. A missing referenced baseline, an invalidated source decision, or a branch
-   mismatch is an active-baseline blocker.
-3. **Pending recovery** — inspect gate and backtrack records under `_bewater/records/`. An
-   `action_plan.action_status` of `pending` or `manual-repair` takes precedence over normal stage
-   routing. Derive ownership from persisted root fields, never from a guessed action plan owner:
-   a gate record's root `gate` field maps `gate: G1` → **bw-strategy-gate** and `gate: G2` →
-   **bw-concept-gate**; a backtrack record is identified by its record type and `backtrack_id` and
-   maps to **bw-backtrack**. A conflict between record type and root fields, or more than one
-   recovery owner, fails closed. bw-resume does not execute the plan or write step status.
+## Ideate lifecycle scan
 
-If any record is unknown, corrupt, contradictory, or lacks a single recovery owner, fail closed and
-make manual inspection the next human decision.
+For the current branch, resolve all `idea-pool` and `concept-portfolio` revision
+chains:
+
+- zero Idea Pools → route to **bw-ideate** / **bw-concept-seed**;
+- more than one Pool chain → corruption; fail closed;
+- stale Pool `input_snapshot` → revise that Pool chain via **bw-concept-seed**;
+- any OA with fewer than 10 Seeds, or an empty `shortlist.confirmed` → pending
+  divergence or human shortlist checkpoint;
+- zero Concept Portfolios after confirmed Seeds → route to
+  **bw-concept-development**;
+- more than one Portfolio chain → corruption; fail closed;
+- Concepts awaiting refine/pivot/split/merge/kill/recycle or a human convergence
+  decision → route to **bw-concept-development**;
+- `exit.selected_concept_ids` outside 2–4, or any selected Concept whose hard
+  criteria fail → Ideate is not handoff-ready.
+
+Surface human checkpoints without writing them. Validate exact Pool, Seed,
+Opportunity, and OA lineage; never infer identity from Markdown headings.
+
+## Shape lifecycle scan
+
+For `current_stage: shape`, verify the exact selected Concept Portfolio handoff
+and inspect every current Solution chain:
+
+- no Solution, invalid source Concept lineage, or an incomplete Solution with
+  exact `content_gaps` → **bw-shape** / **bw-solution-shape**;
+- unlisted omissions, unjustified applicability exceptions, invalid path, or
+  body projection drift → fail closed and surface validation errors;
+- open Solution assumptions or Achilles obligations → **bw-experiment**;
+- complete but human-unvalidated Solution → pending validation checkpoint;
+- complete validated Solution without the required narrative →
+  **bw-investment-narrative**;
+- 1–2 complete validated Solutions plus the narrative → **bw-concept-gate**.
+
+Never set `validation_status: validated` or choose a G2 exit.
 
 ## Stage map
 
-When no pending recovery owns the next action, map the selected branch's `current_stage`:
+When no recovery or lifecycle checkpoint owns the next action:
 
 | Current stage | Recommended skill |
 | --- | --- |
@@ -32,18 +68,9 @@ When no pending recovery owns the next action, map the selected branch's `curren
 | `ideate` | **bw-ideate** |
 | `shape` | **bw-shape** |
 
-For `handoff-ready`, report `active_execution_handoff` and the next human decision, then stop
-without recommending a decision-phase capability. Any other stage value is unknown and must fail
-closed.
+For `handoff-ready`, report `active_execution_handoff` and the next human
+decision, then stop. Unknown stages fail closed.
 
-## Output contract
-
-Return a compact status block with:
-
-- current branch;
-- current stage;
-- blockers, including open conditions and invalid active baselines;
-- next human decision;
-- recommended skill, or `none` when routing fails closed or the branch is handoff-ready.
-
-Never produce artifacts and never choose a gate exit.
+Return current branch, current stage, blockers, next human decision, and exactly
+one recommended skill or `none`. Never produce artifacts. Never choose a gate exit. Lifecycle contract:
+`../_bw-shared/idea-concept-solution-lifecycle.md`.

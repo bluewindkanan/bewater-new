@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from bw import gate_scan, io, paths, schema
 
 _DS = {
@@ -18,17 +20,16 @@ def _mk(root, rel, kind, stage, status="final", dual=None, locked=False, signoff
     p.parent.mkdir(parents=True, exist_ok=True)
     meta = schema.ArtifactMeta(
         artifact_id=rel_path.stem,
+        revision=1,
         kind=kind,
         stage=stage,
-        status=status,
-        hash="x",
+        document_status=status,
+        validation_status="unvalidated",
+        branch_id="BR-001",
         locked=locked,
-        validated_by="",
-        validated_at="",
         signoffs=signoffs or [],
         dual_sided=dual,
         derived_from=[],
-        last_validated_against=[],
         created_at="d",
         updated_at="d",
     )
@@ -37,6 +38,8 @@ def _mk(root, rel, kind, stage, status="final", dual=None, locked=False, signoff
 
 def _complete(root, subject=None, oas=2, hyps=2, achilles=True):
     """Build a fully-G1-complete project (every mechanical criterion green)."""
+    if subject is None:
+        subject = "BR-001"
     _mk(root, "artifacts/immersion/charter.md", "charter", "immersion", dual=_DS)
     _mk(
         root,
@@ -58,7 +61,7 @@ def _complete(root, subject=None, oas=2, hyps=2, achilles=True):
         _mk(
             root,
             f"artifacts/define/oa{i}.md",
-            "opportunity-area",
+            "opportunity",
             "define",
         )
     from bw import ledger_ops
@@ -69,12 +72,14 @@ def _complete(root, subject=None, oas=2, hyps=2, achilles=True):
         category="consumer",
         impact="high" if achilles else "low",
         uncertainty="high" if achilles else "low",
-        evidence_level="L1",
-        validation_status="open",
-        evidence_ref="",
+        evidence_level="L4" if achilles else "L1",
+        validation_status="supported" if achilles else "untested",
+        status="active",
+        evidence_refs=[],
         derived_from=[],
         affects=[],
-        branch="sol-01",
+        branch_id=subject,
+        l4_obligation_status="closed" if achilles else "open",
     )
     ledger_ops.add(root, payload)
     return subject
@@ -175,12 +180,12 @@ def test_hypothesis_single_sided_blocks(tmp_project):
                "magic": {"consumer_value_proposition": "", "consumer_target": "t"}}
     _mk(tmp_project, "artifacts/discover/hyp2.md", "directional-hypothesis", "discover", dual=partial)
     _mk(tmp_project, "artifacts/define/strategy.md", "strategy", "define", locked=True)
-    _mk(tmp_project, "artifacts/define/oa1.md", "opportunity-area", "define")
-    _mk(tmp_project, "artifacts/define/oa2.md", "opportunity-area", "define")
+    _mk(tmp_project, "artifacts/define/oa1.md", "opportunity", "define")
+    _mk(tmp_project, "artifacts/define/oa2.md", "opportunity", "define")
     from bw import ledger_ops
     ledger_ops.add(tmp_project, dict(statement="ach", layer="concept", category="consumer",
-        impact="high", uncertainty="high", evidence_level="L1", validation_status="open",
-        evidence_ref="", derived_from=[], affects=[], branch="sol-01"))
+        impact="high", uncertainty="high", evidence_level="L1", validation_status="untested",
+        evidence_refs=[], derived_from=[], affects=[], branch_id="sol-01"))
     r = gate_scan.scan(tmp_project, "G1", subject="sol-01")
     hyp = next(c for c in r.criteria if c.name == "directional-hypotheses")
     assert not hyp.passed and hyp.blocking
@@ -203,6 +208,27 @@ def test_insights_mixed_signoff_blocks(tmp_project):
     ins = next(c for c in r.criteria if c.name == "insights")
     assert not ins.passed and ins.blocking
     assert "go" not in r.exit_allowed
+
+
+@pytest.mark.parametrize(
+    "signoffs",
+    [
+        [{"who": "u", "role": "lead", "what": "F/P/E/T", "at": "d"}],
+        [{"who": "u", "role": "lead", "type": "fpet", "at": "d"}],
+        [
+            {"who": "u", "role": "lead", "what": "Fresh", "at": "d"},
+            {"who": "u", "role": "lead", "what": "Potent", "at": "d"},
+            {"who": "u", "role": "lead", "what": "Energizing", "at": "d"},
+            {"who": "u", "role": "lead", "what": "Truth", "at": "d"},
+        ],
+    ],
+)
+def test_insights_accept_flexible_fpet_signoffs(tmp_project, signoffs):
+    _complete(tmp_project, subject="sol-01")
+    _mk(tmp_project, "artifacts/discover/insights.md", "insights", "discover", signoffs=signoffs)
+    r = gate_scan.scan(tmp_project, "G1", subject="sol-01")
+    ins = next(c for c in r.criteria if c.name == "insights")
+    assert ins.passed
 
 
 # --- strategy -------------------------------------------------------------
@@ -228,7 +254,7 @@ def test_strategy_missing_blocks(tmp_project):
 def test_too_few_opportunity_areas_blocks(tmp_project):
     _complete(tmp_project, subject="sol-01", oas=1)
     r = gate_scan.scan(tmp_project, "G1", subject="sol-01")
-    oa = next(c for c in r.criteria if c.name in ("opportunity-areas", "gate-criteria-incomplete"))
+    oa = next(c for c in r.criteria if c.name == "opportunity-areas")
     assert not oa.passed and oa.blocking
 
 
@@ -255,12 +281,12 @@ def test_achilles_scoped_to_subject_branch(tmp_project):
     for i in (1, 2):
         _mk(tmp_project, f"artifacts/discover/hyp{i}.md", "directional-hypothesis", "discover", dual=_DS)
     _mk(tmp_project, "artifacts/define/strategy.md", "strategy", "define", locked=True)
-    _mk(tmp_project, "artifacts/define/oa1.md", "opportunity-area", "define")
-    _mk(tmp_project, "artifacts/define/oa2.md", "opportunity-area", "define")
+    _mk(tmp_project, "artifacts/define/oa1.md", "opportunity", "define")
+    _mk(tmp_project, "artifacts/define/oa2.md", "opportunity", "define")
     from bw import ledger_ops
     ledger_ops.add(tmp_project, dict(statement="ach", layer="concept", category="consumer",
-        impact="high", uncertainty="high", evidence_level="L1", validation_status="open",
-        evidence_ref="", derived_from=[], affects=[], branch="sol-02"))
+        impact="high", uncertainty="high", evidence_level="L1", validation_status="untested",
+        evidence_refs=[], derived_from=[], affects=[], branch_id="sol-02"))
     r = gate_scan.scan(tmp_project, "G1", subject="sol-01")
     aq = next(c for c in r.criteria if c.name == "achilles-quadrant")
     assert not aq.passed and aq.blocking
@@ -276,8 +302,8 @@ def test_achilles_on_subject_branch_passes(tmp_project):
 def test_excludes_killed_assumptions(tmp_project):
     from bw import ledger_ops
     a = ledger_ops.add(tmp_project, dict(statement="k", layer="concept", category="consumer",
-        impact="high", uncertainty="high", evidence_level="L1", validation_status="open",
-        evidence_ref="", derived_from=[], affects=[], branch="sol-01"))
+        impact="high", uncertainty="high", evidence_level="L1", validation_status="untested",
+        evidence_refs=[], derived_from=[], affects=[], branch_id="sol-01"))
     ledger_ops.update(tmp_project, a.id, {"status": "killed"})
     r = gate_scan.scan(tmp_project, "G1", subject="sol-01")
     aq = next(c for c in r.criteria if c.name == "achilles-quadrant")
@@ -288,8 +314,8 @@ def test_excludes_killed_assumptions(tmp_project):
 def test_excludes_merged_assumptions(tmp_project):
     from bw import ledger_ops
     a = ledger_ops.add(tmp_project, dict(statement="k", layer="concept", category="consumer",
-        impact="high", uncertainty="high", evidence_level="L1", validation_status="open",
-        evidence_ref="", derived_from=[], affects=[], branch="sol-01"))
+        impact="high", uncertainty="high", evidence_level="L1", validation_status="untested",
+        evidence_refs=[], derived_from=[], affects=[], branch_id="sol-01"))
     ledger_ops.update(tmp_project, a.id, {"status": "merged"})
     r = gate_scan.scan(tmp_project, "G1", subject="sol-01")
     aq = next(c for c in r.criteria if c.name == "achilles-quadrant")
@@ -304,9 +330,16 @@ def test_subject_none_uses_all_active(tmp_project):
     assert aq.note and "all active" in aq.note
 
 
-# --- extensibility / G2 not implemented ----------------------------------
+# --- G2 -------------------------------------------------------------------
+
+def test_g2_blocks_when_required_artifacts_are_missing(tmp_project):
+    r = gate_scan.scan(tmp_project, "G2", subject=None)
+    criteria = {c.name: c for c in r.criteria}
+    assert not criteria["solutions"].passed
+    assert not criteria["investment-narrative"].passed
+    assert "go" not in r.exit_allowed
+
 
 def test_unknown_gate_raises(tmp_project):
-    import pytest
     with pytest.raises(NotImplementedError):
-        gate_scan.scan(tmp_project, "G2", subject=None)
+        gate_scan.scan(tmp_project, "G3", subject=None)

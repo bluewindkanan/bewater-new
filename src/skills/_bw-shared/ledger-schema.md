@@ -1,6 +1,6 @@
 ---
 contract_id: bw-ledger-schema
-contract_version: 3
+contract_version: 4
 ---
 
 # BeWater State Schema (authoritative)
@@ -48,7 +48,7 @@ accountable person is missing or ambiguous.
 
 ## ledger.yaml (assumption record)
 record_revision, statement, branch_id, layer{root,strategy,opportunity,
-concept,feature}, category{consumer,commercial,technical,distribution,
+concept,solution,feature}, category{consumer,commercial,technical,distribution,
 regulatory}, side{money,magic,both}, impact, uncertainty, evidence_level{L1–L6},
 validation_status{untested,testing,supported,falsified,inconclusive},
 status{active,killed,merged}, evidence_refs[], derived_from[], supersedes_ref,
@@ -56,7 +56,10 @@ risk_history[], l4_obligation_status, history[]. `is_achilles_heel` =
 impact=high AND uncertainty=high (derived). An Achilles Heel raises a durable
 L4 obligation that survives lowering impact/uncertainty; it closes only with
 L4+ validation or evidence-backed human signoff. ledger.yaml also carries the
-assumption `next_id` (canonical source for A-NNN).
+assumption `next_id` (canonical source for A-NNN). Concept assumptions carry a
+validated `source_concept_id` and derive from an exact Concept Portfolio
+revision. Solution assumptions derive from an exact Solution revision. Never
+copy or relayer a Concept assumption when shaping a Solution.
 
 ## conditions.yaml (condition record)
 record_revision, origin_decision_id, branch_id, statement, owner, due_at,
@@ -77,6 +80,11 @@ readiness. Artifact files are append-only revisions in the flat output dir:
 `ART-001-r3-solution.md` supersedes `ART-001-r2-solution.md`. The resolver
 requires exactly one head per revision chain; a duplicate, missing
 predecessor, cycle, or two heads is corruption.
+
+Artifact-specific canonical frontmatter is preserved in addition to this shared
+envelope. Opportunity, Idea Pool, Concept Portfolio, and Solution fields are
+defined by `idea-concept-solution-lifecycle.md`; writers and readers must not
+silently drop them.
 
 ## evidence.yaml (evidence record)
 Evidence is a structured state record — a source-bounded claim plus provenance — in the same

@@ -38,7 +38,7 @@ def test_validate_skill_passes_well_formed_skill(tmp_path: Path):
 
 
 def test_skill_dir_path():
-    assert skill_dir(Path("/r"), "bw-start") == Path("/r/.claude/skills/bw-start")
+    assert skill_dir(Path("/r"), "bw-start") == Path("/r/src/skills/bw-start")
 
 
 @pytest.mark.parametrize("bad_fm", [

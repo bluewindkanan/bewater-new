@@ -4,9 +4,11 @@ from bw import hashing, io, schema
 
 def _write(root, rel, aid, body, deps=None):
     p = root / rel; p.parent.mkdir(parents=True, exist_ok=True)
-    meta = schema.ArtifactMeta(artifact_id=aid, kind="insights", stage="discover",
-        status="final", hash="", locked=False, validated_by="", validated_at="",
-        signoffs=[], dual_sided=None, derived_from=[], last_validated_against=deps or [], created_at="d", updated_at="d")
+    meta = schema.ArtifactMeta(artifact_id=aid, kind="insights", stage="define",
+        revision=1, document_status="final", validation_status="unvalidated",
+        branch_id="BR-001", locked=False, signoffs=[], dual_sided=None,
+        derived_from=[], last_validated_against=deps or [], created_at="d", updated_at="d",
+        extra={"hash": ""})
     io.write_artifact(p, meta, body); return p
 
 

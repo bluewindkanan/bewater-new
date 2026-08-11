@@ -24,14 +24,13 @@ from .errors import ValidationError
 _ID_RE = re.compile(r"^A-(\d+)$")
 
 _DEFAULTS = {
-    "validation_status": "open",
+    "validation_status": "untested",
     "evidence_level": "L1",
     "status": "active",
+    "evidence_refs": [],
     "derived_from": [],
     "affects": [],
 }
-
-
 def _existing_ids(ledger: schema.Ledger) -> set[str]:
     return set(ledger.assumptions.keys())
 
@@ -79,6 +78,7 @@ def add(root: Path, fields: dict) -> schema.Assumption:
 
     ledger.assumptions[new_id] = assumption
     ledger.next_id = _max_suffix(ledger) + 1
+    ledger.revision += 1
     io.save_ledger(root, ledger)
     return assumption
 
@@ -103,9 +103,17 @@ def update(root: Path, id: str, changes: dict) -> schema.Assumption:
         if new_id in ledger.assumptions:
             raise ValidationError(f"update: id {new_id!r} already exists in ledger")
 
+    valid_keys = set(target.to_dict())
+    unknown = set(changes) - valid_keys
+    if unknown:
+        raise ValidationError(f"update: unknown field(s): {', '.join(sorted(unknown))}")
+
+    previous = target.to_dict()
+    previous.pop("history", None)
     merged = target.to_dict()
     merged.update(changes)
-    valid_keys = set(target.to_dict().keys())
+    merged["record_revision"] = target.record_revision + 1
+    merged["history"] = [*target.history, previous]
     rebuilt = schema.Assumption.from_dict({k: v for k, v in merged.items() if k in valid_keys})
     rebuilt.check_invariants()
 
@@ -113,6 +121,7 @@ def update(root: Path, id: str, changes: dict) -> schema.Assumption:
     if rebuilt.id != id:
         del ledger.assumptions[id]
     ledger.assumptions[rebuilt.id] = rebuilt
+    ledger.revision += 1
     io.save_ledger(root, ledger)
     return rebuilt
 
@@ -139,12 +148,39 @@ def _neighbors(node: schema.Assumption, direction: str,
                   that lists this id in its derived_from, plus what this id
                   lists in affects).
     """
+    def assumption_id(ref: str) -> str | None:
+        match = re.match(r"^assumption:(A-\d{3})@([1-9]\d*)$", ref)
+        if match is not None:
+            assumption = by_id.get(match.group(1))
+            if assumption is None or assumption.record_revision != int(match.group(2)):
+                return ref
+            return match.group(1)
+        if re.match(
+            r"^(?:artifact:[^@]+|evidence:E-\d{3}|experiment:EXP-\d{3})@[1-9]\d*$",
+            ref,
+        ):
+            return None
+        return ref
+
+    def reverse_assumption_id(ref: str) -> str | None:
+        match = re.match(r"^assumption:(A-\d{3})@[1-9]\d*$", ref)
+        if match is not None:
+            return match.group(1) if match.group(1) in by_id else ref
+        return assumption_id(ref)
+
     if direction == "upstream":
-        return list(node.derived_from)
+        return [resolved for ref in node.derived_from if (resolved := assumption_id(ref)) is not None]
     # downstream
-    out = list(node.affects)
+    out = [resolved for ref in node.affects if (resolved := assumption_id(ref)) is not None]
     for cand in by_id.values():
-        if node.id in cand.derived_from and cand.id not in out:
+        upstream_ids: set[str] = set()
+        for ref in cand.derived_from:
+            resolved = reverse_assumption_id(ref)
+            if resolved is not None and resolved not in by_id:
+                raise ValidationError(f"dangling reference: {ref}")
+            if resolved is not None:
+                upstream_ids.add(resolved)
+        if node.id in upstream_ids and cand.id not in out:
             out.append(cand.id)
     return out
 
@@ -206,8 +242,9 @@ def trace(root: Path, id: str, direction: str = "upstream") -> list[str]:
 # --- Task 8: baseline + backtrack ---
 
 _LAYER_LOOP = {
-    schema.Layer.feature: ("small", "reframe"),
-    schema.Layer.concept: ("small", "reframe"),
+    schema.Layer.feature: ("small", "Shape"),
+    schema.Layer.solution: ("small", "Shape"),
+    schema.Layer.concept: ("small", "Ideate"),
     schema.Layer.opportunity: ("large", "Define"),
     schema.Layer.strategy: ("large", "Define"),
     schema.Layer.root: ("large", "Discover"),
@@ -218,10 +255,10 @@ _LAYER_LOOP = {
 class BacktrackResult:
     """Routing decision returned by :func:`backtrack`.
 
-    - ``loop_type``: "small" (re-pass reframe) or "large" (re-pass an upstream
+    - ``loop_type``: "small" (local stage loop) or "large" (re-pass an upstream
       stage gate).
-    - ``depth_target``: the stage the flow should route to — "reframe" for a
-      small loop; "Discover" / "Define" for a large loop.
+    - ``depth_target``: the stage the flow should route to — "Ideate" / "Shape"
+      for a small loop; "Discover" / "Define" for a large loop.
     - ``affected_ids``: the downstream lineage of the falsified assumption
       (these artifacts become stale at read time via the hash mechanism).
     - ``must_repass_gate``: the original gate label that must be re-passed when
@@ -272,8 +309,14 @@ def _load_baseline_snapshot(root: Path, label: str | None = None) -> tuple[dict 
                 return data.get("snapshot"), gate
         return None, None
 
-    # Return the last one (latest by sort order)
-    gate, p = candidates[-1]
+    def gate_sort_key(candidate: tuple[str, Path]) -> tuple[int, int, str]:
+        gate_label = candidate[0]
+        match = re.match(r"^G([1-9]\d*)$", gate_label)
+        if match is None:
+            return (1, 0, gate_label)
+        return (0, int(match.group(1)), gate_label)
+
+    gate, p = sorted(candidates, key=gate_sort_key)[-1]
     data = yaml.safe_load(p.read_text()) or {}
     return data.get("snapshot"), gate
 
@@ -333,8 +376,9 @@ def backtrack(root: Path, falsified_id: str) -> BacktrackResult:
     """Route the flow to the right upstream stage for a falsified assumption.
 
     The depth of the loop is decided by the failed assumption's ``layer``:
-    ``feature|concept`` -> small loop (``reframe``); ``opportunity|strategy`` ->
-    large loop (``Define``); ``root`` -> large loop (``Discover``).
+    ``concept`` -> small loop to Ideate; ``solution|feature`` -> small loop to
+    Shape; ``opportunity|strategy`` -> large loop to Define; ``root`` -> large
+    loop to Discover.
 
     ``affected_ids`` is the downstream lineage via :func:`trace`.
 

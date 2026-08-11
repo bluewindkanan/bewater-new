@@ -18,4 +18,10 @@ quadrant, and stops before human reclassification signoff.
 3. Update the ledger: add/revise assumption records (allocate A-ids from `ledger.next_id`,
    bump `record_revision` + the ledger envelope `revision`) via `bwkit lock acquire` +
    `cas commit _bewater/ledger.yaml --expected <rev>`.
-4. Present the map + open L4 obligations, name the human decision authority, and **stop**.
+   Concept assumptions use `layer: concept`, derive from an exact Concept Portfolio revision, and
+   carry `source_concept_id`. Solution assumptions use `layer: solution` and derive from an exact
+   Solution revision. Never copy or relayer Concept assumptions into a Solution.
+4. For a Solution, compute the exact union of open Concept- and Solution-layer durable L4
+   obligations. Report stale, missing, extra, or unresolved pinned references; never synthesize
+   inheritance state.
+5. Present the map + open L4 obligations, name the human decision authority, and **stop**.

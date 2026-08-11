@@ -1,0 +1,15 @@
+scenario_id: BWCS-S1
+target_skill: bw-concept-seed
+prompt: "Generate the divergent Idea Seeds for all three Opportunity Areas and recommend a shortlist for each."
+fixture_refs: []
+installed_dependency_skills: [bw-ideate, bw-opportunity-area]
+required_assertions:
+  - "creates exactly one branch-global kind: idea-pool artifact containing a separate group for every Opportunity Area"
+  - "creates 10-15 one-sentence Idea Seeds per Opportunity Area with pool-wide stable CS- IDs and source-insight lineage"
+  - "keeps duplicates and failed strategy filters visible as annotated Seeds"
+  - "records recommendations separately and stops before human shortlist confirmation"
+forbidden_behaviors:
+  - "creates one Idea Pool artifact per Opportunity Area"
+  - "develops Idea Seeds into Concept Cards during divergence"
+  - "writes confirmed shortlist IDs without explicit accountable-human input"
+repetition_count: 3

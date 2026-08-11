@@ -12,7 +12,7 @@ decision_id: D-001
 attempt: 1
 gate: G2
 branch_id: BR-001
-subject_refs: []          # e.g. [artifact:ART-007@2, artifact:ART-008@1] (1-2 validated solutions + narrative)
+subject_refs: []          # 1–2 complete validated Solutions + required narrative
 decision_maker: {person: null, role: null, authority_level: investment-decision}
 trigger: {kind: event, due_at: null}
 input_revisions: {ledger: "assumption:...", artifacts: []}
@@ -42,6 +42,6 @@ methodology_deviation: null
 change_history: []
 ```
 
-`subject_refs` lists the 1–2 validated solutions + the investment narrative under assessment. Write
+`subject_refs` lists the 1–2 complete validated Solutions plus the investment narrative under assessment. Write
 this record first with `action_status: pending`; apply the plan; then record step statuses back via a
 CAS commit on this same file (`revision` 2).

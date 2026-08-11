@@ -14,7 +14,7 @@ branch_id: BR-001
 status: active
 source_g2_decision: gate:D-001
 baseline_ref: baseline:B-001
-validated_solutions: []      # every validated solution in the G2 subject_refs
+validated_solutions: []      # every complete validated Solution in the G2 subject_refs
 investment_narrative_ref: artifact:ART-008@1
 financial_case: ""
 open_assumptions_to_monitor: []   # observations to watch during execution

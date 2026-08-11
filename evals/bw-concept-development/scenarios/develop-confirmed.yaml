@@ -1,0 +1,14 @@
+scenario_id: BWCD-S1
+target_skill: bw-concept-development
+prompt: "Develop the confirmed Idea Seed shortlist into researchable Concepts and present the batch for convergence."
+fixture_refs: []
+installed_dependency_skills: [bw-ideate, bw-concept-seed, bw-assumption-map]
+required_assertions:
+  - "creates one branch-global kind: concept-portfolio revision with canonical concepts and pool-wide CI- identities"
+  - "resolves exact Opportunity Portfolio, Opportunity Area, Idea Pool revision, and confirmed CS- lineage for every Concept"
+  - "develops Who, What, mechanism, replacement, Why Big, visualization, design principles, Money and Magic, evaluation, and assumption references"
+  - "presents one bounded batch comparison and stops before human terminal decisions"
+forbidden_behaviors:
+  - "develops an unconfirmed Idea Seed or invents a Concept outside the confirmed shortlist"
+  - "writes full Solution implementation or financial-case detail into a Concept"
+repetition_count: 3

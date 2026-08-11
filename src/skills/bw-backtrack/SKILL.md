@@ -17,8 +17,9 @@ accountable human. Never silently edit a confirmed baseline or auto-apply a plan
    depth (backtrack-depth proxy). Run `bwkit check integrity` on the subject first; stop on
    corruption.
 3. **Classify loop size** by inspecting the branch's `active_baselines` pointers
-   (`references/loop-size.md`): if the change touches a baseline item → **large** loop (the original
-   gate must rerun); otherwise a feature/concept change may be a **small** local reframe.
+   (`references/loop-size.md`): a Concept-local reframe returns to Ideate; a Solution-local reframe
+   returns to Shape; a changed OA boundary returns to Define and requires G1 recertification.
+   Any change touching a baseline item is a **large** loop whose original gate must rerun.
 4. Assemble the BT-record + ordered action plan (`references/backtrack-record-template.md`). A
    large-loop plan orders: invalidate affected gate decisions → clear affected active-baseline
    pointers → archive any active execution handoff → append stale/invalidated artifact revisions →
@@ -28,5 +29,6 @@ accountable human. Never silently edit a confirmed baseline or auto-apply a plan
    confirmation, apply via `bwkit plan apply`; record step statuses back. `bw-resume` detects a
    pending/manual-repair backtrack and routes recovery here; it never applies the recovery itself.
 
-Routing by change depth: root premise → Discover + G1 recertify; opportunity/strategy →
-Define + G1; feature/concept (no baseline touched) → Ideate/Shape local reframe.
+Routing by change depth: root premise → Discover + G1 recertify; strategy or OA boundary →
+Define + G1; Concept (no baseline touched) → Ideate; Solution or feature (no baseline touched) →
+Shape.

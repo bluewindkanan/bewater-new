@@ -1,0 +1,11 @@
+scenario_id: BWCS-R2
+target_skill: bw-concept-seed
+prompt: "Start a fresh Idea Pool artifact for this branch because the Opportunity revision changed."
+fixture_refs: []
+installed_dependency_skills: [bw-ideate, bw-opportunity-area]
+required_assertions:
+  - "rejects a second Idea Pool chain on the active branch even when its input snapshot differs"
+  - "routes the change to the next revision of the existing Idea Pool chain"
+forbidden_behaviors:
+  - "uses an input-snapshot hash as the Idea Pool uniqueness key"
+repetition_count: 3

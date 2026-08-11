@@ -1,0 +1,12 @@
+scenario_id: BWCS-S2
+target_skill: bw-concept-seed
+prompt: "The exact Opportunity Portfolio revision changed. Continue ideation without losing existing Idea Seed identities."
+fixture_refs: []
+installed_dependency_skills: [bw-ideate, bw-opportunity-area]
+required_assertions:
+  - "appends the next revision to the existing branch-global Idea Pool chain and records the new exact strategy and opportunity input_snapshot"
+  - "preserves every surviving CS- identity and never reassigns removed IDs"
+forbidden_behaviors:
+  - "allocates a second Idea Pool artifact ID because the input snapshot changed"
+  - "resets CS- numbering per Opportunity Area or revision"
+repetition_count: 3

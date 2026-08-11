@@ -36,11 +36,11 @@ def test_end_to_end_deployment_init_add_validate(tmp_path):
     r = _bw(
         "ledger", "add", str(project),
         "--statement", "s",
-        "--layer", "concept",
+        "--layer", "root",
         "--category", "consumer",
         "--impact", "high",
         "--uncertainty", "high",
-        "--branch", "sol-01",
+        "--branch", "BR-001",
     )
     assert r.returncode == 0, r.stderr
     assert "A-001" in r.stdout

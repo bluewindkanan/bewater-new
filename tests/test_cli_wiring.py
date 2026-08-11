@@ -1,8 +1,7 @@
 """CLI wiring tests: exercise each subcommand handler via main([...]).
 
 These drive the argparse glue directly (fast, deterministic) to cover the
-branch logic — success paths, validation-issue exit codes, and the
-gate-scan NotImplementedError -> exit 2 path. End-to-end subprocess coverage
+branch logic — success paths and validation-issue exit codes. End-to-end subprocess coverage
 lives in test_smoke.py.
 """
 from __future__ import annotations
@@ -14,12 +13,12 @@ import pytest
 from bw import cli, ledger_ops
 
 
-def _add(root: Path, statement="s", branch="sol-01", status="active") -> str:
+def _add(root: Path, statement="s", branch="BR-001", status="active", layer="root") -> str:
     a = ledger_ops.add(root, {
-        "statement": statement, "layer": "concept", "category": "consumer",
+        "statement": statement, "layer": layer, "category": "consumer",
         "impact": "high", "uncertainty": "high", "evidence_level": "L1",
-        "validation_status": "open", "status": status, "evidence_ref": "",
-        "derived_from": [], "affects": [], "branch": branch,
+        "validation_status": "untested", "status": status, "evidence_refs": [],
+        "derived_from": [], "affects": [], "branch_id": branch,
     })
     return a.id
 
@@ -68,12 +67,12 @@ def test_ledger_validate_unknown_id(tmp_project, capsys):
 # --- trace / backtrack / baseline ---
 
 def test_ledger_trace_upstream_and_downstream(tmp_project, capsys):
-    a1 = _add(tmp_project, statement="root", branch="sol-01")
+    a1 = _add(tmp_project, statement="root", branch="BR-001")
     a2 = ledger_ops.add(tmp_project, {
         "statement": "child", "layer": "feature", "category": "consumer",
         "impact": "low", "uncertainty": "low", "evidence_level": "L1",
-        "validation_status": "open", "status": "active", "evidence_ref": "",
-        "derived_from": [a1], "affects": [], "branch": "sol-01",
+        "validation_status": "untested", "status": "active", "evidence_refs": [],
+        "derived_from": [f"assumption:{a1}@1"], "affects": [], "branch_id": "BR-001",
     }).id
 
     assert cli.main(["ledger", "trace", str(tmp_project), a2, "--direction", "upstream"]) == 0
@@ -84,7 +83,7 @@ def test_ledger_trace_upstream_and_downstream(tmp_project, capsys):
 
 
 def test_ledger_trace_no_lineage(tmp_project, capsys):
-    aid = _add(tmp_project, statement="solo", branch="sol-01")
+    aid = _add(tmp_project, statement="solo", branch="BR-001")
     assert cli.main(["ledger", "trace", str(tmp_project), aid, "--direction", "upstream"]) == 0
     assert "no upstream lineage" in capsys.readouterr().out
 
@@ -93,19 +92,19 @@ def test_ledger_trace_dangling(tmp_project, capsys):
     _add(tmp_project)
     from bw import io
     ledger = io.load_ledger(tmp_project)
-    ledger.assumptions["A-001"].derived_from = ["A-999"]
+    ledger.assumptions["A-001"].derived_from = ["assumption:A-999@1"]
     io.save_ledger(tmp_project, ledger)
     rc = cli.main(["ledger", "trace", str(tmp_project), "A-001", "--direction", "upstream"])
     assert rc == 1
 
 
 def test_ledger_backtrack_small_loop(tmp_project, capsys):
-    aid = _add(tmp_project)
+    aid = _add(tmp_project, layer="concept")
     rc = cli.main(["ledger", "backtrack", str(tmp_project), aid])
     assert rc == 0
     out = capsys.readouterr().out
     assert "small" in out
-    assert "reframe" in out
+    assert "Ideate" in out
 
 
 def test_ledger_backtrack_unknown_id(tmp_project, capsys):
@@ -134,7 +133,7 @@ def test_validate_reports_issues(tmp_project, capsys):
     _add(tmp_project)
     from bw import io
     ledger = io.load_ledger(tmp_project)
-    ledger.assumptions["A-001"].affects = ["A-999"]
+    ledger.assumptions["A-001"].affects = ["assumption:A-999@1"]
     io.save_ledger(tmp_project, ledger)
     rc = cli.main(["validate", str(tmp_project)])
     assert rc == 1
@@ -149,10 +148,12 @@ def test_gate_scan_g1_blocks_thin(tmp_project, capsys):
     assert rc == 1
 
 
-def test_gate_scan_g2_not_implemented_exits_2(tmp_project, capsys):
+def test_gate_scan_g2_blocks_when_required_artifacts_are_missing(tmp_project, capsys):
     rc = cli.main(["gate-scan", "G2", str(tmp_project)])
-    assert rc == 2
-    assert "not yet implemented" in capsys.readouterr().out
+    assert rc == 1
+    out = capsys.readouterr().out
+    assert "solutions" in out
+    assert "investment-narrative" in out
 
 
 # --- hash ---
@@ -160,7 +161,10 @@ def test_gate_scan_g2_not_implemented_exits_2(tmp_project, capsys):
 def test_hash_artifact(tmp_project, tmp_path, capsys):
     art = tmp_project / "_bewater-output" / "x.md"
     art.parent.mkdir(parents=True, exist_ok=True)
-    art.write_text("---\nartifact_id: x\nkind: research\nstage: discover\nstatus: draft\nhash: ''\n---\nbody")
+    art.write_text(
+        "---\nartifact_id: x\nkind: research\nstage: discover\nrevision: 1\n"
+        "document_status: draft\nvalidation_status: unvalidated\nhash: ''\n---\nbody"
+    )
     assert cli.main(["hash", str(art)]) == 0
     assert "hash=" in capsys.readouterr().out
 
@@ -170,7 +174,8 @@ def test_hash_stale(tmp_project, capsys):
     dep.parent.mkdir(parents=True, exist_ok=True)
     dep.write_text(
         "---\n"
-        "artifact_id: dep\nkind: research\nstage: discover\nstatus: draft\nhash: ''\n"
+        "artifact_id: dep\nkind: research\nstage: discover\nrevision: 1\n"
+        "document_status: draft\nvalidation_status: unvalidated\nhash: ''\n"
         "last_validated_against:\n  - {id: gone, hash: old}\n"
         "---\nbody"
     )
@@ -184,12 +189,14 @@ def test_hash_refresh_deps_captures_new_hash(tmp_project, capsys):
     arts.mkdir(parents=True, exist_ok=True)
     upstream = arts / "insights.md"
     upstream.write_text(
-        "---\nartifact_id: INS-1\nkind: research\nstage: discover\nstatus: final\nhash: ''\n---\nubody"
+        "---\nartifact_id: INS-1\nkind: research\nstage: discover\nrevision: 1\n"
+        "document_status: final\nvalidation_status: unvalidated\nhash: ''\n---\nubody"
     )
     dep = arts / "hyp.md"
     dep.write_text(
         "---\n"
-        "artifact_id: HYP-1\nkind: research\nstage: discover\nstatus: final\nhash: ''\n"
+        "artifact_id: HYP-1\nkind: research\nstage: discover\nrevision: 1\n"
+        "document_status: final\nvalidation_status: unvalidated\nhash: ''\n"
         "last_validated_against:\n  - {id: INS-1, hash: stale-old}\n"
         "---\nhbody"
     )
@@ -205,7 +212,10 @@ def test_hash_refresh_deps_captures_new_hash(tmp_project, capsys):
 def test_hash_stale_and_refresh_deps_mutually_exclusive(tmp_project):
     art = tmp_project / "_bewater-output" / "x.md"
     art.parent.mkdir(parents=True, exist_ok=True)
-    art.write_text("---\nartifact_id: x\nkind: research\nstage: discover\nstatus: draft\nhash: ''\n---\nbody")
+    art.write_text(
+        "---\nartifact_id: x\nkind: research\nstage: discover\nrevision: 1\n"
+        "document_status: draft\nvalidation_status: unvalidated\nhash: ''\n---\nbody"
+    )
     with pytest.raises(SystemExit) as exc:
         cli.main(["hash", str(art), "--stale", "--refresh-deps"])
     assert exc.value.code == 2

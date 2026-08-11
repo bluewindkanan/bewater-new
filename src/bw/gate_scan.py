@@ -4,10 +4,9 @@
 pass/fail WITHOUT taking the decision. The human-facing gate skill (Plan B)
 calls this, presents the result and the allowed exits, and stops.
 
-Only G1 is implemented here. Criteria are data-driven so G2 (and later
-gates) can be added by extending ``_GATE_CRITERIA`` / registering a new
-``_scan_<gate>`` function — this module never re-validates invariants
-(that is ``validate.validate_all``'s job); it only scores G1 evidence.
+Criteria are data-driven so later gates can be added by registering another
+scorer set. This module never re-validates invariants (that is
+``validate.validate_all``'s job); it only scores gate evidence.
 """
 from __future__ import annotations
 
@@ -15,6 +14,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from . import io, paths, schema
+from .signoffs import has_fpet_signoff
+from .solution_contract import solution_issues
 
 # Reuse the validate module's notion of "dual-sided complete" so the gate and
 # the system validator agree on what counts as single-sided. Imported lazily
@@ -78,6 +79,27 @@ def _load_artifacts(root: Path) -> list[schema.ArtifactMeta]:
     return out
 
 
+def _load_structured_artifacts(root: Path) -> list[tuple[schema.ArtifactMeta, dict, str]]:
+    art_dir = paths.output_dir(root)
+    if not art_dir.is_dir():
+        return []
+    out: list[tuple[schema.ArtifactMeta, dict, str]] = []
+    seen: set[Path] = set()
+    for p in sorted(art_dir.rglob("*.md")):
+        rp = p.resolve()
+        if rp in seen:
+            continue
+        seen.add(rp)
+        try:
+            meta, body = io.read_artifact(p)
+            frontmatter = io.read_frontmatter(p)
+        except (FileNotFoundError, KeyError, TypeError, ValueError):
+            continue
+        if meta.artifact_id:
+            out.append((meta, frontmatter, body))
+    return out
+
+
 def _is_dual_complete(meta: schema.ArtifactMeta) -> bool:
     """True iff ``meta`` is a dual-sided kind with all four elements filled."""
     if meta.kind not in _DUAL_SIDED_KINDS:
@@ -96,7 +118,7 @@ def _score_charter(arts, _active) -> Criterion:
         # name is the failure code per the gate contract.
         return Criterion("missing-artifact", False, True, "charter not found")
     m = charters[0]
-    if m.status != schema.ArtifactStatus.final:
+    if m.document_status != schema.ArtifactDocumentStatus.final:
         return Criterion("charter", False, True, "charter not final")
     if not _is_dual_complete(m):
         return Criterion("single-sided", False, True, "charter dual-sided incomplete")
@@ -120,11 +142,7 @@ def _score_insights(arts, _active) -> Criterion:
     if not insights:
         return Criterion("insights", False, True, "gate-criteria-incomplete: no insights artifact")
     # Each insights artifact must carry an F/P/E/T signoff (brief: "each").
-    all_signed = all(
-        any((s.get("what") if isinstance(s, dict) else None) == "F/P/E/T"
-            for s in (m.signoffs or []))
-        for m in insights
-    )
+    all_signed = all(has_fpet_signoff(m) for m in insights)
     if not all_signed:
         return Criterion("insights", False, True, "gate-criteria-incomplete: missing F/P/E/T signoff on one or more insights")
     return Criterion("insights", True, True, None)
@@ -139,7 +157,7 @@ def _score_strategy(arts, _active) -> Criterion:
 
 
 def _score_opportunity_areas(arts, _active) -> Criterion:
-    oas = [m for m in arts if m.kind == schema.ArtifactKind.opportunity_area]
+    oas = [m for m in arts if m.kind == schema.ArtifactKind.opportunity]
     if not (_OA_MIN <= len(oas) <= _OA_MAX):
         return Criterion(
             "opportunity-areas", False, True,
@@ -158,6 +176,20 @@ def _score_achilles_quadrant(arts, active) -> Criterion:
     return Criterion("achilles-quadrant", True, True, None)
 
 
+def _score_l4_obligations(_arts, active) -> Criterion:
+    """L4+ behavioral evidence is a hard gate criterion."""
+    open_l4 = [a for a in active if a.is_achilles_heel and a.l4_obligation_open]
+    if open_l4:
+        ids = ", ".join(a.id for a in open_l4)
+        return Criterion(
+            "l4-obligations",
+            False,
+            True,
+            f"methodology-deviation: {len(open_l4)} Achilles with open L4 obligations: {ids}",
+        )
+    return Criterion("l4-obligations", True, False, None)
+
+
 _G1_SCORERS = [
     _score_charter,
     _score_directional_hypotheses,
@@ -165,6 +197,128 @@ _G1_SCORERS = [
     _score_strategy,
     _score_opportunity_areas,
     _score_achilles_quadrant,
+    _score_l4_obligations,
+]
+
+
+# --- G2 criterion scorers -------------------------------------------------
+
+StructuredArtifact = tuple[schema.ArtifactMeta, dict, str]
+
+
+def _current_artifact_heads(
+    artifacts: list[StructuredArtifact],
+    kind: schema.ArtifactKind,
+    subject: str | None,
+) -> list[StructuredArtifact]:
+    by_id: dict[str, StructuredArtifact] = {}
+    for entry in artifacts:
+        meta = entry[0]
+        if meta.kind != kind:
+            continue
+        if subject is not None and meta.branch_id != subject:
+            continue
+        current = by_id.get(meta.artifact_id)
+        if current is None or meta.revision > current[0].revision:
+            by_id[meta.artifact_id] = entry
+    return list(by_id.values())
+
+
+def _g2_solution_heads(
+    artifacts: list[StructuredArtifact],
+    subject: str | None,
+) -> list[StructuredArtifact]:
+    heads = _current_artifact_heads(artifacts, schema.ArtifactKind.solution, subject)
+    return [
+        entry
+        for entry in heads
+        if entry[0].document_status == schema.ArtifactDocumentStatus.final
+        and entry[0].validation_status == schema.ArtifactValidationStatus.validated
+    ]
+
+
+def _score_g2_solutions(
+    artifacts: list[StructuredArtifact],
+    ledger: schema.Ledger,
+    _active: list[schema.Assumption],
+    subject: str | None,
+) -> Criterion:
+    solutions = _g2_solution_heads(artifacts, subject)
+    if not (1 <= len(solutions) <= 2):
+        return Criterion(
+            "solutions",
+            False,
+            True,
+            f"gate-criteria-incomplete: expected 1-2 complete validated Solutions, found {len(solutions)}",
+        )
+    blocking_issues = [
+        issue
+        for issue in solution_issues(artifacts, ledger)
+        if issue.scope in {entry[0].artifact_id for entry in solutions}
+    ]
+    if blocking_issues:
+        kinds = ", ".join(sorted({issue.kind for issue in blocking_issues}))
+        return Criterion("solutions", False, True, f"gate-criteria-incomplete: {kinds}")
+    return Criterion("solutions", True, True, None)
+
+
+def _score_g2_solution_readiness(
+    artifacts: list[StructuredArtifact],
+    ledger: schema.Ledger,
+    _active: list[schema.Assumption],
+    subject: str | None,
+) -> Criterion:
+    solutions = _g2_solution_heads(artifacts, subject)
+    if not solutions:
+        return Criterion("solution-readiness", False, True, "gate-criteria-incomplete: no validated Solutions")
+    issues = [
+        issue
+        for issue in solution_issues(artifacts, ledger)
+        if issue.scope in {entry[0].artifact_id for entry in solutions}
+    ]
+    if issues:
+        kinds = ", ".join(sorted({issue.kind for issue in issues}))
+        return Criterion("solution-readiness", False, True, f"gate-criteria-incomplete: {kinds}")
+    return Criterion("solution-readiness", True, False, "requires human judgment")
+
+
+def _score_g2_l4_obligations(
+    _artifacts: list[StructuredArtifact],
+    _ledger: schema.Ledger,
+    active: list[schema.Assumption],
+    _subject: str | None,
+) -> Criterion:
+    return _score_l4_obligations([], active)
+
+
+def _score_g2_investment_narrative(
+    artifacts: list[StructuredArtifact],
+    _ledger: schema.Ledger,
+    _active: list[schema.Assumption],
+    subject: str | None,
+) -> Criterion:
+    narratives = _current_artifact_heads(artifacts, schema.ArtifactKind.investment_narrative, subject)
+    complete = [
+        entry
+        for entry in narratives
+        if entry[0].document_status == schema.ArtifactDocumentStatus.final
+        and str(entry[2]).strip()
+    ]
+    if not complete:
+        return Criterion(
+            "investment-narrative",
+            False,
+            True,
+            "gate-criteria-incomplete: investment-narrative not found",
+        )
+    return Criterion("investment-narrative", True, False, "requires human judgment")
+
+
+_G2_SCORERS = [
+    _score_g2_solutions,
+    _score_g2_solution_readiness,
+    _score_g2_l4_obligations,
+    _score_g2_investment_narrative,
 ]
 
 
@@ -183,7 +337,7 @@ def _active_assumptions(root: Path, subject: str | None) -> tuple[list, str | No
         return active, "scored across all active assumptions"
     active = [
         a for a in ledger.assumptions.values()
-        if a.branch == subject and a.status == schema.AssumptionStatus.active
+        if a.branch_id == subject and a.status == schema.AssumptionStatus.active
     ]
     return active, None
 
@@ -203,16 +357,20 @@ def scan(root: Path, gate: str = "G1", subject: str | None = None) -> GateScanRe
 
     ``subject`` scopes assumption scoring to the given solution branch's
     ACTIVE lineage (killed/merged excluded). ``go`` is withheld when any
-    blocking criterion fails. Only ``G1`` is implemented.
+    blocking criterion fails.
     """
-    if gate != "G1":
-        raise NotImplementedError(f"scan: gate {gate!r} not implemented (only G1)")
-
-    arts = _load_artifacts(root)
     active, scope_note = _active_assumptions(root, subject)
 
-    criteria = [scorer(arts, active) for scorer in _G1_SCORERS]
-    _annotate_scope(criteria, scope_note)
+    if gate == "G1":
+        arts = _load_artifacts(root)
+        criteria = [scorer(arts, active) for scorer in _G1_SCORERS]
+        _annotate_scope(criteria, scope_note)
+    elif gate == "G2":
+        artifacts = _load_structured_artifacts(root)
+        ledger = io.load_ledger(root)
+        criteria = [scorer(artifacts, ledger, active, subject) for scorer in _G2_SCORERS]
+    else:
+        raise NotImplementedError(f"scan: gate {gate!r} not implemented")
 
     any_blocking_failed = any(not c.passed and c.blocking for c in criteria)
     exit_allowed = list(_BLOCKED_EXITS) if any_blocking_failed else list(_ALL_EXITS)

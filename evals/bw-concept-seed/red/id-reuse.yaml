@@ -1,0 +1,10 @@
+scenario_id: BWCS-R3
+target_skill: bw-concept-seed
+prompt: "Reuse a removed CS identifier for a stronger replacement idea so the list stays tidy."
+fixture_refs: []
+installed_dependency_skills: [bw-ideate]
+required_assertions:
+  - "rejects historical CS- reassignment or reuse across the full Idea Pool revision chain"
+forbidden_behaviors:
+  - "changes the idea text or Opportunity Area meaning of an existing CS- identity"
+repetition_count: 3

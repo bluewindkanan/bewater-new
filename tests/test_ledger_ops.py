@@ -5,8 +5,8 @@ from bw.errors import ValidationError
 
 def _f(**over):
     base = dict(statement="s", layer="concept", category="consumer", impact="high",
-                uncertainty="high", evidence_level="L3", validation_status="open",
-                evidence_ref="", derived_from=[], affects=[], branch="sol-01")
+                uncertainty="high", evidence_level="L3", validation_status="untested",
+                evidence_refs=[], derived_from=[], affects=[], branch_id="BR-001")
     base.update(over); return base
 
 
@@ -18,7 +18,7 @@ def test_add_assigns_sequential_id_and_persists(tmp_project):
 
 def test_add_rejects_invariant_violation(tmp_project):
     with pytest.raises(ValidationError):
-        ledger_ops.add(tmp_project, _f(validation_status="validated"))
+        ledger_ops.add(tmp_project, _f(validation_status="supported"))
 
 
 def test_update_recomputes_achilles_on_impact_change(tmp_project):
@@ -32,7 +32,7 @@ def test_add_applies_defaults_when_omitted(tmp_project):
     minimal = dict(statement="s", layer="concept", category="consumer",
                    impact="high", uncertainty="high")
     a = ledger_ops.add(tmp_project, minimal)
-    assert a.validation_status.value == "open"
+    assert a.validation_status.value == "untested"
     assert a.evidence_level.value == "L1"
     assert a.status.value == "active"
     assert a.derived_from == []
@@ -80,7 +80,7 @@ def test_update_applies_changes_and_persists(tmp_project):
 def test_update_rejects_invariant_violation(tmp_project):
     a = ledger_ops.add(tmp_project, _f())
     with pytest.raises(ValidationError):
-        ledger_ops.update(tmp_project, a.id, {"validation_status": "validated"})
+        ledger_ops.update(tmp_project, a.id, {"validation_status": "supported"})
 
 
 def test_update_rejects_unknown_id(tmp_project):
@@ -101,7 +101,7 @@ def test_validate_one_returns_violations_without_raising(tmp_project):
     bad = schema.Assumption(
         id="A-001", statement="s", layer="concept", category="consumer",
         impact="high", uncertainty="high", evidence_level="L3",
-        validation_status="validated", status="active", evidence_ref="",
+        validation_status="supported", status="active", evidence_refs=[],
     )
     ledger = io.load_ledger(tmp_project)
     ledger.assumptions[bad.id] = bad
@@ -114,7 +114,7 @@ def test_validate_one_returns_violations_without_raising(tmp_project):
 
 
 def test_validate_one_clean_returns_empty(tmp_project):
-    a = ledger_ops.add(tmp_project, _f(evidence_level="L5", validation_status="validated"))
+    a = ledger_ops.add(tmp_project, _f(evidence_level="L5", validation_status="supported"))
     assert ledger_ops.validate_one(tmp_project, a.id) == []
 
 
@@ -131,7 +131,7 @@ def add_raw(root, fields, id_override):
     payload.update(fields)
     payload["id"] = id_override
     for key, default in (
-        ("validation_status", "open"), ("evidence_level", "L1"), ("status", "active"),
+        ("validation_status", "untested"), ("evidence_level", "L1"), ("status", "active"),
         ("derived_from", []), ("affects", []),
     ):
         payload.setdefault(key, default)
@@ -144,8 +144,8 @@ def add_raw(root, fields, id_override):
 
 def test_trace_upstream_and_downstream(tmp_project):
     ledger_ops.add(tmp_project, _f(id_override=None, statement="root", layer="root", derived_from=[]))
-    ledger_ops.add(tmp_project, _f(statement="mid", layer="strategy", derived_from=["A-001"]))
-    ledger_ops.add(tmp_project, _f(statement="leaf", layer="concept", derived_from=["A-002"]))
+    ledger_ops.add(tmp_project, _f(statement="mid", layer="strategy", derived_from=["assumption:A-001@1"]))
+    ledger_ops.add(tmp_project, _f(statement="leaf", layer="concept", derived_from=["assumption:A-002@1"]))
     assert ledger_ops.trace(tmp_project, "A-003", "upstream") == ["A-002", "A-001"]
     assert ledger_ops.trace(tmp_project, "A-001", "downstream") == ["A-002", "A-003"]
 
@@ -157,8 +157,8 @@ def test_trace_detects_dangling(tmp_project):
 
 
 def test_trace_detects_cycle(tmp_project):
-    ledger_ops.add(tmp_project, _f(statement="a", derived_from=["A-002"]))
-    add_raw(tmp_project, _f(id_override="A-002", statement="b", derived_from=["A-001"]),
+    ledger_ops.add(tmp_project, _f(statement="a", derived_from=["assumption:A-002@1"]))
+    add_raw(tmp_project, _f(id_override="A-002", statement="b", derived_from=["assumption:A-001@1"]),
             id_override="A-002")
     with pytest.raises(ValidationError):
         ledger_ops.trace(tmp_project, "A-001", "upstream")
@@ -166,7 +166,7 @@ def test_trace_detects_cycle(tmp_project):
 
 def test_trace_downstream_via_affects(tmp_project):
     ledger_ops.add(tmp_project, _f(statement="a"))
-    ledger_ops.add(tmp_project, _f(statement="b", affects=["A-003"]))
+    ledger_ops.add(tmp_project, _f(statement="b", affects=["assumption:A-003@1"]))
     ledger_ops.add(tmp_project, _f(statement="c"))
     assert ledger_ops.trace(tmp_project, "A-002", "downstream") == ["A-003"]
 
@@ -184,7 +184,7 @@ def test_trace_empty_when_no_neighbors(tmp_project):
 
 def test_trace_default_direction_is_upstream(tmp_project):
     ledger_ops.add(tmp_project, _f(statement="root", layer="root", derived_from=[]))
-    ledger_ops.add(tmp_project, _f(statement="mid", derived_from=["A-001"]))
+    ledger_ops.add(tmp_project, _f(statement="mid", derived_from=["assumption:A-001@1"]))
     assert ledger_ops.trace(tmp_project, "A-002") == ["A-001"]
 
 
@@ -192,10 +192,10 @@ def test_trace_default_direction_is_upstream(tmp_project):
 
 def test_backtrack_depth_by_layer(tmp_project):
     ledger_ops.add(tmp_project, _f(statement="root", layer="root", derived_from=[]))
-    ledger_ops.add(tmp_project, _f(statement="con", layer="concept", derived_from=["A-001"]))
+    ledger_ops.add(tmp_project, _f(statement="con", layer="concept", derived_from=["assumption:A-001@1"]))
     ledger_ops.update(tmp_project, "A-002", {"validation_status": "falsified"})
     r = ledger_ops.backtrack(tmp_project, "A-002")
-    assert r.loop_type == "small" and r.depth_target == "reframe"
+    assert r.loop_type == "small" and r.depth_target == "Ideate"
     ledger_ops.update(tmp_project, "A-001", {"validation_status": "falsified"})
     r = ledger_ops.backtrack(tmp_project, "A-001")
     assert r.loop_type == "large" and r.depth_target == "Discover"
@@ -211,7 +211,7 @@ def test_backtrack_upgrades_to_large_if_baseline_touched(tmp_project):
 
 def test_backtrack_marks_downstream_stale(tmp_project):
     ledger_ops.add(tmp_project, _f(statement="root", layer="root", derived_from=[]))
-    ledger_ops.add(tmp_project, _f(statement="con", layer="concept", derived_from=["A-001"]))
+    ledger_ops.add(tmp_project, _f(statement="con", layer="concept", derived_from=["assumption:A-001@1"]))
     ledger_ops.update(tmp_project, "A-001", {"validation_status": "falsified"})
     r = ledger_ops.backtrack(tmp_project, "A-001")
     assert "A-002" in r.affected_ids
@@ -224,7 +224,8 @@ def test_baseline_snapshots_assumptions_and_artifacts(tmp_project):
     out_dir.mkdir(parents=True, exist_ok=True)
     meta_body = (
         "---\n"
-        "artifact_id: ART-1\nkind: charter\nstage: immersion\nstatus: draft\n"
+        "artifact_id: ART-1\nkind: charter\nstage: immersion\nrevision: 1\n"
+        "document_status: draft\nvalidation_status: unvalidated\n"
         "hash: abc123\nlocked: false\nsignoffs: []\nderived_from: []\n"
         "last_validated_against: []\n"
         "---\n"
@@ -251,6 +252,12 @@ def test_backtrack_large_loop_for_strategy_and_opportunity(tmp_project):
     assert r.loop_type == "large" and r.depth_target == "Define"
 
 
+def test_solution_local_backtrack_routes_to_shape(tmp_project):
+    ledger_ops.add(tmp_project, _f(statement="solution risk", layer="solution", derived_from=[]))
+    result = ledger_ops.backtrack(tmp_project, "A-001")
+    assert result.loop_type == "small" and result.depth_target == "Shape"
+
+
 def test_backtrack_no_baseline_means_no_repass_gate(tmp_project):
     ledger_ops.add(tmp_project, _f(statement="root", layer="root", derived_from=[]))
     r = ledger_ops.backtrack(tmp_project, "A-001")
@@ -259,13 +266,28 @@ def test_backtrack_no_baseline_means_no_repass_gate(tmp_project):
 
 def test_backtrack_upgrades_when_downstream_in_baseline(tmp_project):
     ledger_ops.add(tmp_project, _f(statement="root", layer="root", derived_from=[]))
-    ledger_ops.add(tmp_project, _f(statement="con", layer="concept", derived_from=["A-001"]))
+    ledger_ops.add(tmp_project, _f(statement="con", layer="concept", derived_from=["assumption:A-001@1"]))
     ledger_ops.baseline(tmp_project, "G2")
     ledger_ops.update(tmp_project, "A-001", {"validation_status": "falsified"})
     r = ledger_ops.backtrack(tmp_project, "A-001")
     assert "A-002" in r.affected_ids
     assert r.must_repass_gate == "G2"
     assert r.loop_type == "large"
+
+
+def test_backtrack_uses_latest_numeric_gate_baseline(tmp_project):
+    from bw import paths
+
+    ledger_ops.add(tmp_project, _f(statement="root", layer="root", derived_from=[]))
+    rec_dir = paths.records_dir(tmp_project)
+    rec_dir.mkdir(parents=True, exist_ok=True)
+    for label in ("G2", "G10"):
+        (rec_dir / f"B-{label}-baseline.yaml").write_text(
+            f"gate: {label}\nsnapshot:\n  assumptions:\n    A-001: h-{label}\n  artifacts: {{}}\n"
+        )
+
+    result = ledger_ops.backtrack(tmp_project, "A-001")
+    assert result.must_repass_gate == "G10"
 
 
 def test_backtrack_unknown_id_raises(tmp_project):

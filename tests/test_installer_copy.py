@@ -38,6 +38,23 @@ def test_copy_deploys_all_skills_and_shared_with_markers(tmp_dest):
     assert shared.is_dir() and has_managed_marker(shared)
 
 
+def test_copy_deploys_frozen_concept_skills_and_prunes_superseded_managed_names(tmp_dest):
+    skills = tmp_dest / ".claude" / "skills"
+    superseded = ["bw-concept-card", "bw-idea-seed", "bw-notion-development"]
+    for name in superseded:
+        obsolete = skills / name
+        obsolete.mkdir(parents=True)
+        (obsolete / "SKILL.md").write_text("managed obsolete skill\n")
+        write_managed_marker(obsolete, version="0.1.0")
+
+    r = _run(tmp_dest, "--copy")
+
+    assert r.returncode == 0, r.stderr
+    assert (skills / "bw-concept-seed" / "SKILL.md").is_file()
+    assert (skills / "bw-concept-development" / "SKILL.md").is_file()
+    assert all(not (skills / name).exists() for name in superseded)
+
+
 def test_copy_deploys_runnable_bwkit(tmp_dest):
     assert _run(tmp_dest, "--copy").returncode == 0
     bwkit = tmp_dest / "_bewater" / "bwkit"
@@ -249,3 +266,31 @@ def test_copy_honors_skill_destination_override(tmp_dest):
     assert r.returncode == 0, r.stderr
     assert (skills_dest / "bw-immersion" / "SKILL.md").exists()
     assert (tmp_dest / "_bewater" / "bwkit" / "__main__.py").exists()
+
+
+def test_skills_only_copy_deploys_skills_without_touching_bewater_state(tmp_dest):
+    bewater = tmp_dest / "_bewater"
+    bwkit = bewater / "bwkit"
+    bwkit.mkdir(parents=True)
+    state = bewater / "config.yaml"
+    state.write_bytes(b"user state sentinel\n")
+    runtime = bwkit / "runtime-sentinel.py"
+    runtime.write_bytes(b"user runtime sentinel\n")
+
+    result = _run(tmp_dest, "--copy", "--skills-only")
+
+    assert result.returncode == 0, result.stderr
+    assert (tmp_dest / ".claude" / "skills" / "bw-project-charter" / "SKILL.md").exists()
+    assert has_managed_marker(tmp_dest / ".claude" / "skills" / "_bw-shared")
+    assert state.read_bytes() == b"user state sentinel\n"
+    assert runtime.read_bytes() == b"user runtime sentinel\n"
+
+
+def test_skills_only_can_deploy_one_named_skill_without_replacing_others(tmp_dest):
+    result = _run(tmp_dest, "--copy", "--skills-only", "--skill", "bw-project-charter")
+
+    assert result.returncode == 0, result.stderr
+    skills = tmp_dest / ".claude" / "skills"
+    assert (skills / "bw-project-charter" / "SKILL.md").exists()
+    assert not (skills / "bw-immersion").exists()
+    assert has_managed_marker(skills / "_bw-shared")

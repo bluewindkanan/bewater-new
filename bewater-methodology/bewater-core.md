@@ -5,7 +5,7 @@
 >
 > 这是一套**可预测的创新方法论**：通读 Part I 建立全貌；带项目时按 Part II 流程 + 模板照着做；遇术语查 §4。
 >
-> 版本 v1.3 · 2026-07 · 补 Discover（田野方法包 + 洞察生成三件套）、Shape（Solutions 三段式）、工作坊操作法（§10）；删案例库。方法论资产汇自 F212 + frog + 人本设计（IDEO）三条脉络，去品牌化呈现。
+> 版本 v1.4 · 2026-08 · 明确 Idea Seed → Concept → Solution 生命周期、完整 Solution 合同与证据门槛。方法论资产汇自 F212 + frog + 人本设计（IDEO）三条脉络，去品牌化呈现。
 >
 > v1.2 要点：水的隐喻只在概念层（§1–§2）点题，实操层（§3 起）一律用直白 Stage 名。
 
@@ -126,7 +126,7 @@ bewater 把"创新"当作**可被种子化、打磨、测试、验证、交付�
 | Immersion | 目标对齐 target alignment | 立项 / 章程 | — | — | 项目章程 |
 | Discover | 发现洞察 Discover insight | 发现 / Discovery | Discover | 客户探索 | 方向性假设 |
 | Define | 战略定义 Define strategy | 综合 / Synthesis | Define | — | 创新策略 + 机会域 |
-| Ideate | 探索概念 Ideate concept | 概念 / Notions | Develop（前半） | — | 概念组合 |
+| Ideate | 点子发散与概念发展 Ideate | 原始点子 → 概念 / Idea Seeds → Concepts | Develop（前半） | — | 点子池 + 概念组合 |
 | Shape | 方案定义 Shape solution | 方案 / Solutions | Develop（后半） | MVP / 假设验证 | 方案 + 商业案例 |
 | Design | 设计方案 Design solution | 设计 | Deliver（前半） | — | 方案规格 |
 | Build | 系统构建 build system | 构建 | Deliver（后半） | 敏捷构建 | 可发布系统 |
@@ -171,21 +171,22 @@ bewater 把"创新"当作**可被种子化、打磨、测试、验证、交付�
 
 ### 2.4 分流 Branch —— 广发散、窄收敛、多支并行
 
-一条河遇到地势会分叉成多条支流，再在下游汇聚。创新同样：在机会域里**广发散**出大量早期概念（10–15 个），让它们各自独立验证（多条支流 = 多个小赌注，对冲不确定性），再 kill / 合流 / 推进，**窄收敛**到少数方案。
+一条河遇到地势会分叉成多条支流，再在下游汇聚。创新同样：先在一个分支全局点子池里按机会域**广发散**原始点子（每域 10–15 个），再把人确认的点子发展成可研究的概念，最后**窄收敛**到少数完整方案。
 
 ```
-10–15 概念（广发散）
-   ↓ 每条支流独立做假设地图 + 实验（并行验证）
+一个分支全局 Idea Pool（每机会域 10–15 个一句话 Idea Seeds）
+   ↓ 人确认各机会域短名单
+一个分支全局 Concept Portfolio（发展为可研究的 CI- 概念）
 三种去向：
-   ├─ KILL（实验证伪，廉价砍）
-   ├─ 合流（多条概念汇聚成一个方案）
-   └─ 推进（评分卡高分，独立发展）
+   ├─ KILL（硬标准不通过，廉价砍）
+   ├─ 合流（多个概念汇聚成一个方案）
+   └─ 推进（评分高分，独立发展）
    ↓
-2–4 方案（并行发展）→ 收敛聚焦
+全局 2–4 选中概念 → 交 Shape 收敛到 1–2 方案
 ```
 
 - **目的**：用多个小赌注替代一个大赌注，对冲不确定性。
-- **纪律**：广发散是手段，窄收敛才是纪律（10–15 → 5 → 2–4 → 通常 1 个主推），不是无限分支。
+- **纪律**：广发散是手段，窄收敛才是纪律（10–15 原始点子/机会域 → 发展概念 → 2–4 人选概念 → 1–2 独立方案），不是无限分支。
 
 ### 2.5 成势 Momentum —— 归纳 + 消除法，汇聚成势
 
@@ -276,7 +277,7 @@ bewater 把"创新"当作**可被种子化、打磨、测试、验证、交付�
 ### 3.4 发散与收敛 + 分支组合
 
 - **每 Stage 都是"先发散、再收敛"**（双面节奏）：广收集 → 炼成结论。**收敛 = 选择 = 灵魂**。
-- **分支组合（Ideate → Shape 的空间结构）**：每个机会域广发散 → 10–15 概念 → 各自独立挂假设子集、并行验证 → 三去向（KILL / 合流 / 推进）→ 2–4 方案 → G2 收敛到 1–2 个。见 §2.4。
+- **分支组合（Ideate → Shape 的空间结构）**：每个机会域广发散 → 10–15 种子 → 淘汰制确认（拿不准**默认留**，只切明显死/重复/离策略的；confirmed 浮动 ~5–8/机会域，无 3–5 上限）→ **全部**确认种子发展成正式概念（无数量上限，各自独立挂假设子集、并行评估）→ 三去向（KILL / 合流 / 推进）→ 全局 2–4 选中 → G2 收敛到 1–2 个。收敛的硬刀只在富信息概念层、不在一句话种子层——避免把"看着平庸、发展后其实很妙"的种子在发育前误杀。见 §2.4。
 
 ### 3.5 双面性与双重学习环
 
@@ -306,8 +307,8 @@ bewater 把"创新"当作**可被种子化、打磨、测试、验证、交付�
 
 **流程术语**
 - **Immersion（目标对齐 target alignment）**｜Start 模块。内外对齐命题、范围、约束，播下初始假设。｜不是走形式 kickoff。｜前置。
-- **Discover（发现洞察 Discover insight）**｜Strategy 模块。用 4C 深度探索，产出事实、洞察、方向性假设。｜不是漫无目的调研，是有学习计划的定向探索。
-- **Define（战略定义 Define strategy）**｜Strategy 模块。把洞察炼成创新策略和机会域的"分流闸"。｜不是总结报告，是做战略选择。枢纽。
+- **Discover（探索发现 Discover）**｜Strategy 模块。用 4C 深度探索，产出研究证据（4C 覆盖度、可见缺口）。｜不是漫无目的调研，是有学习计划的定向探索。
+- **Define（战略定义 Define strategy）**｜Strategy 模块。从研究证据提炼洞察（F/P/E/T），炼成创新策略和机会域。｜不是总结报告，是做战略选择。枢纽。
 - **Ideate（探索概念 Ideate concept）**｜Concept 模块。基于机会域生成大量早期概念，再用标准收敛。｜不是头脑风暴完就完，是有 8 条标准把关。
 - **Shape（方案定义 Shape solution）**｜Concept 模块。把选中概念发展成带商业案例的完整方案，"让人无法不投"。｜不是概念的简单细化。
 - **Design（设计方案 Design solution）**｜Realization 模块。把已验证方案展开成完整体验与架构规格。｜不是重新发明概念，是高保真展开。
@@ -320,11 +321,12 @@ bewater 把"创新"当作**可被种子化、打磨、测试、验证、交付�
 - **4C**｜Consumer / Company / Category / Channel（见 §3.6）。｜不是资料桶，是要回答的问题。
 - **Fact vs Insight**｜Fact = 观察；**Insight = "一句非显而易见的话，为问题投下新光、帮我们生成方案"**。｜不是 Fact / 常识 / 共识 / 猜测。逻辑顺序：facts → insights → hypotheses。
 - **Insight 四标准**｜Fresh（新鲜）/ Potent（有力）/ Energizing（激发）/ Truth（真实）。**F/P/E/T**。
-- **方向性假设（Strategic Hypothesis）**｜"对创新策略可能是什么的一个有依据的猜测"。｜不是最终策略，是待验证的猜测。｜Discover 末 → Define。
+- **方向性假设（Strategic Hypothesis）**｜"对创新策略可能是什么的一个有依据的猜测"。｜不是最终策略，是待验证的猜测。｜Define（从 insights 碰撞生成）。
 - **创新策略（Innovation Strategy）**｜"在增长空间中识别可赢机会的一组选择"。｜Define。
 - **策略陈述（Strategy Statement）**｜策略的"一句话把手"，代表核心选择。｜不是摘要，是锋刃（用来砍选择）。
 - **机会域（Opportunity Areas, OA）**｜连接策略和概念的桥梁；2–4 个离散创新方向。｜不是功能模块，是创新机会。
-- **概念（Notion）**｜早期、原始、provocative 的概念种子（"画之前的草图"）。｜不是方案、不是成品、不是保证（"允许错"）。｜Ideate。
+- **原始点子（Idea Seed）**｜发散阶段的一句话可能性，可以错、不完整、不可行。｜不是发展概念；血缘、聚类、策略过滤属于系统元数据。｜Ideate。
+- **概念（Concept）**｜足以形成理解、可信度、吸引力、差异化、争论与测试问题的早期可研究命题。｜指明创新往哪里走，但不是完整方案。｜Ideate。
 - **概念的海拔（altitude）**｜概念的粒度。判断标准：什么高度对预测试最有用。
 - **健康的焦虑（Healthy anxiety）**｜好概念应引发的焦虑感（够大吗？够大胆吗？搞得定吗？）。太安全 = 砍。
 - **方案（Solution）**｜sharply-defined 的双面概念，含商业案例 / 财务 / 设计 / 叙事。｜Shape。
@@ -336,6 +338,8 @@ bewater 把"创新"当作**可被种子化、打磨、测试、验证、交付�
 - **证据强度六级**｜L1 主观判断 → L2 二手/类比 → L3 自陈意图（问卷）→ L4 行为信号 → L5 真实付费 → L6 可重复结果。致命弱点须 L4+。
 - **投资叙事（Investment Narrative）**｜向决策层汇报的完整叙事，6 部分。｜Shape 交付物。
 - **商业案例（Business Case）**｜财务可行性论证，用有依据的假设。
+
+**来源优先级与 BeWater 适配**：原始 F212 培训材料与一手案例 > 由其派生的英文 BeWater 合同 > 当前技能、运行时、夹具与生成物。F212 有时从发散起就把候选称为 Concepts；BeWater 为避免一句话点子伪装成发展概念，明确区分 Idea Seed 与 Concept。F212 的 New Invention 路径保留为来源背景，但 BeWater 治理上不允许它绕过人收敛：超出已选概念边界的新发明返回 Ideate。
 - **五出口**｜门的五种决策结果：Go / Conditional Go / Recycle / Pivot / Kill。
 - **已验证基线**｜已被门确认的前提集合；小循环可自由迭代，触碰基线即升级大循环。
 - **学习计划（Learning Plan）**｜动态研究计划，每周迭代四问。
@@ -447,23 +451,25 @@ bewater 把"创新"当作**可被种子化、打磨、测试、验证、交付�
 
 ### 5.2 Concept · 概念创新
 
-#### 5.2.1 Ideate 探索概念 —— 在机会域里广发散，用标准窄收敛
+#### 5.2.1 Ideate 点子发散与概念发展 —— Idea Pool → Concept Portfolio → 收敛
 
-**定位**：Concept 模块。基于机会域发散大量早期概念，再用标准收敛。
+**定位**：Concept 模块。一个分支只有一条 `idea-pool` 修订链与一条 `concept-portfolio` 修订链。点子池按稳定 `OA-` ID 分组，人确认的 Idea Seeds 才能发展为 Concepts。
+
+**线性骨架 + 模块内有界循环**：Idea Seed → Concept → 评估 → 收敛；评估不通过时可 refine / pivot / split / merge（每概念最多 2 次 AI 修订提议），仍不通过则 `recycle-to-OA`。概念局部重构回 Ideate；若机会域边界本身错误，则回 Define 并重新过 G1。
 
 **关键活动 · 工具**：
-- **发散**：每个机会域用 brainstorm + "how might we"，用概念捕获模板（§9.7，8 字段）。
-- **评估**：跑 8 条标准（§9.7）+ 组合策展矩阵（§9.7 评分卡）。
+- **发散（bw-concept-seed）**：在一个 `idea-pool` 中覆盖全部机会域；每域 **10–15 个一句话 Idea Seeds**，`CS-` ID 池级唯一且跨修订永不复用。所有点子保留；AI 推荐，人确认。
+- **发展 + 评估（bw-concept-development）**：**仅消费人确认的 Seeds**，在一个 `concept-portfolio` 中发展 `CI-` Concepts，保留精确 Opportunity/OA/Pool/Seed 血缘，跑硬标准与软标准，产出有界修订提议。
 
-**产出**：10–15 个概念（名称 + 一句话）→ 选 5 个填完整模板 → 收敛到 2–4 个。
+**产出**：一个 Idea Pool（每机会域 10–15 Seeds）→ 一个 Concept Portfolio → 全局 **2–4 个**人选 Concepts。
 
-**交接**：**概念组合（2–4 个）**（传给 Shape）。全部概念存档可回溯。
+**交接**：`concept-portfolio` 的精确修订及其中 2–4 个 `selected_concept_ids`。全部 Seeds、Concepts 与修订可回溯。
 
-**判断标准**：≥3 个能 5 词以内表达；≥2 个引发健康焦虑；全部过策略陈述过滤器。
+**判断标准**：硬标准覆盖精确血缘、张力、独特机制、Who/What/How/What it replaces/Why Big、策略适配、预测试海拔和概念假设；软标准覆盖理解、可信、吸引、差异化、命名、可视化、设计原则、Money/Magic、海拔与健康焦虑。最终 2–4 个。
 
-**人机分工**：AI 发散 20–30 概念 / 填卡 / 跑 8 标准 / 起强名｜人收敛选择、感知健康焦虑、定海拔。
+**人机分工**：AI 发散种子 / 发展概念 / 跑硬软标准 / 起强名 / 推荐修订动作｜人确认种子短名单、收敛选择（select / revise / merge / kill）、感知健康焦虑、定海拔。
 
-> 概念收敛检查点（Ideate → Shape，轻量自评，不设大门）：≥3 个 5 词表达、≥2 个引发健康焦虑、全部过策略陈述过滤器。
+> 概念收敛检查点（Ideate → Shape，轻量就绪检查，不设大门）：概念组合含 2–4 个选中概念、硬标准全过、≥2 个引发健康焦虑、全部过策略陈述过滤器。
 
 ---
 
@@ -472,16 +478,17 @@ bewater 把"创新"当作**可被种子化、打磨、测试、验证、交付�
 **定位**：Concept 模块。把选中概念发展成带商业案例的完整方案。
 
 **关键活动 · 工具**：
-- **概念 → 方案五路径**：线性细化 / 转向（Pivoting）/ **合流**（合并多概念）/ 新发明 / 范围扩展。
+- **概念 → 方案四路径**：线性细化 / 转向（Pivoting）/ **合流**（Hybridize）/ 范围扩展。超出已选概念边界的新发明返回 Ideate，不能绕过人收敛。
 - **优化两种模式**：现有业务（测概念，2–3 周）/ 新业务（测假设，~6 周 3 周期）。
 - **假设驱动实验 4 步**（§9.8）：识别 → 聚焦致命弱点 → 真实行为测试 → 必要时重复。实验菜单见 §9.9。
-- **叙事**：投资叙事 6 部分（§9.10）+ 财务案例（§9.10）。
+- **完整方案**：规范前置数据包含 Definition/Dimensions、How It Works、How To Implement、How It Makes Money、Validation 五个区块；正文只是确定性投影。
+- **叙事**：完整 validated Solution 之外再包投资叙事 6 部分（§9.10）；叙事不能替方案补缺。
 
-**产出**：优化计划 + 实验 findings → **方案 + 商业案例 + 投资叙事**（+ 原型）。
+**产出**：1–2 条独立 Solution 修订链 + 实验 findings + 投资叙事（+ 原型）。
 
 **交接**：**方案 + 投资叙事**（给 G2 决策层 / Design）。
 
-**判断标准**：方案三件事——**聚焦 / 详尽 / 有说服力**（Focused / Detailed / Persuasive）；"让人无法不投"。
+**判断标准**：方案三件事——**聚焦 / 详尽 / 有说服力**（Focused / Detailed / Persuasive）。未验证版本的每个缺项必须有精确 content gap；validated 版本不得有 content gaps，财务假设须有来源，且全部 Concept + Solution 层致命弱点都有 L4+ 行为证据。
 
 **人机分工**：AI 假设地图 / 实验设计 / 二手实验执行 / 财务建模｜人一手实验、Kill / Proceed 决策。
 
@@ -585,16 +592,17 @@ bewater 把"创新"当作**可被种子化、打磨、测试、验证、交付�
 - [ ] 洞察经人签署过 F/P/E/T
 - [ ] 方向性假设收口 2–5 条，双面结构完整
 - [ ] 策略陈述锁定，通过"是刀不是摘要"检测（反例：术语堆砌 / 重述简报）
-- [ ] 机会域 2–4 个，互不重叠，各自能孵出多个概念
+- [ ] 一个当前 Opportunity Portfolio 的 `opportunity_areas[]` 含 2–4 个稳定 `OA-` 条目，互不重叠，各自能孵出多个概念
 - [ ] 假设账本完成初始盘点，致命弱点象限已识别（不要求已验证）
 - [ ] Money + Magic 双面初判成立
 
-**概念收敛检查点**（Ideate → Shape，轻量自评，不设大门）
-- [ ] ≥3 个概念 5 词以内表达；≥2 个引发健康焦虑（人工判断项）
-- [ ] 全部通过策略陈述过滤器
+**概念收敛检查点**（Ideate → Shape，轻量就绪检查，不设大门）
+- [ ] 概念组合含 2–4 个选中概念，硬标准全过
+- [ ] ≥2 个引发健康焦虑（人工判断项）；全部通过策略陈述过滤器
 
 **G2 概念门**（Shape → Design）｜决策人：投资决策级（最高层级）｜**全流程最重**
-- [ ] 方案达到 validated 状态
+- [ ] 1–2 个完整方案达到 validated 状态；五个规范区块齐备、正文投影一致、无 content gaps
+- [ ] 每个方案 Focused / Detailed / Persuasive，且来源概念血缘精确
 - [ ] **致命弱点全部有验证结论，证据强度 ≥ L4 真实行为级**（自陈意愿不算数）
 - [ ] 财务案例每条假设挂证据（标来源与逻辑）
 - [ ] 投资叙事 6 部分齐备；双面成立
@@ -706,7 +714,7 @@ bewater 把"创新"当作**可被种子化、打磨、测试、验证、交付�
 | Immersion 目标对齐 | 起草章程、整理干系人输入 | 锁定命题与成功标准 |
 | Discover 发现洞察 | 桌面研究、聚类、fact→insight 候选、访谈大纲 | 真人访谈（共情）、判断哪条 insight 够 F/P/E/T |
 | Define 战略定义 | 洞察碰撞生成假设、4C 填充、策略陈述候选 | 选哪个策略 |
-| Ideate 探索概念 | 发散 20–30 概念、填卡、跑 8 标准、起强名 | 收敛选择、感知健康焦虑、定海拔 |
+| Ideate 探索概念 | 发散 10–15 种子/机会域、发展概念、跑硬软标准、起强名、推荐修订动作 | 确认种子短名单、收敛选择（select/revise/merge/kill）、感知健康焦虑、定海拔 |
 | Shape 方案定义 | 假设地图、实验设计、二手实验执行、财务建模 | 一手实验、Kill / Proceed 决策 |
 | Design 设计方案 | 原型生成、规格起草、Spec↔方案偏离检测 | 体验与架构品味、基线越界裁决 |
 | Build 系统构建 | 编码加速、测试生成、文档起草 | 工程判断、发布拍板 |
@@ -767,10 +775,14 @@ bewater 把"创新"当作**可被种子化、打磨、测试、验证、交付�
 - 4 种切法：按消费者原型 / 业务支柱 / 消费者需求 / 旅程阶段。
 - 要点：2–4 个；互不重叠；是机会不是功能模块；每个能 spawn 多个概念。
 
-**9.7 概念捕获卡（8 字段）+ 8 条标准 + 评分卡**
-- 概念卡 8 字段：① 概念名（强占位名）② 消费者洞察 ③ 商业洞察 ④ What ⑤ Who ⑥ Why big ⑦ 一句话描述（≤5 词）⑧ 速写草图。
-- 8 条标准：① 清晰 insight+tension ② 简单新产品独特解决 ③ who/what/does/replaces/why big ④ 5 词以内 ⑤ 足够具体 ⑥ 强名 ⑦ 对的可视化 ⑧ 设计原则。
-- 组合策展矩阵：Money（策略对齐/规模/速度/风险/ROI）∩ Magic（未满足需求/颠覆/分层/可重复/达尔文）。砍掉"只有意思"的。
+**9.7 Idea Seed → Concept 生命周期**
+- **机会组合（一个 `opportunity`）**：规范 `opportunity_areas[]` 中每项有稳定 `OA-` ID；标题不是权威血缘。G1 数条目，不数文件。
+- **点子池（每分支一个 `idea-pool`）**：按 OA 分组，每域发散 10–15 个 Idea Seeds。每个 Seed 的唯一必填人读内容是一句话 `idea`；来源洞察、聚类和策略过滤是元数据。`CS-` ID 全池唯一、跨修订永不重派或复用。输入变化修订原链，不新建第二个池。
+- **概念组合（每分支一个 `concept-portfolio`）**：仅消费人确认 Seeds，发展为 `CI-` Concepts。每个 Concept 包含名称、≤5 词精炼描述、消费者/商业洞察、定义、Who、机制级 How、替代什么、Why Big、可视化、设计原则、Money/Magic、评估与假设引用，并固定精确 Opportunity/OA/Pool/Seed 血缘。
+- **硬标准**（全过才能进人收敛）：精确 lineage / 一条未解决张力 / 机制独特 / Who-What-How-What it replaces-Why Big 完整 / 策略适配 / 可预测试海拔 / 概念级假设。
+- **软标准**（可见但不阻塞）：理解 / 可信 / 吸引 / 差异化 / 命名 / 可视化 / 设计原则 / Money∩Magic / 海拔 / 健康焦虑。
+- **有界修订**：每评估产出一条修订提议（refine / pivot / split / merge / kill / recycle-to-OA），每概念最多 2 次 AI 修订；超限则 recycle-to-OA 交 bw-backtrack。`selected / killed / merged` 只能人记录。
+- 数量合约：每机会域 10–15 Seeds → 一个 Concept Portfolio → 全局 2–4 人选 Concepts。
 
 **9.8 假设地图 + 致命弱点**
 - 假设分类：Consumer / Commercial / Technical / Distribution / Regulatory。
@@ -791,13 +803,16 @@ bewater 把"创新"当作**可被种子化、打磨、测试、验证、交付�
 
 > 原则：**Keep it simple + Define metrics**。实验前先定成功指标 + 基准，否则无法判 kill/proceed。
 
-**9.10 投资叙事 + Solutions 三段式 + 假设披露**
-- **Solutions 三段式**（方案定义内核）：
-  - **How It Works**：步骤走查（如 Discover→Select→Order→Pay），每步标 Consumer Benefit / Operational Benefit / Strategic Rationale 三类收益。
-  - **How To Implement（实施路径）**：分阶段甘特（Exploratory→Product Design→Ops→Business Rules→Development→Pilot→Roll Out→Marketing），每阶段写 **OBJECTIVE + Jobs To Be Done**。
-  - **How It Makes Money（商业案例）**：收入流拆解 + 年度收入预测（Base / Aggressive case）。
+**9.10 完整 Solution + 投资叙事 + 假设披露**
+- **Solution 五个规范区块**：
+  - **Definition / Dimensions**：名称、精炼主张、What、Who、Money/Magic，以及市场路径、制胜权、平台、业务来源、产品/服务设计、技术、信服理由、品牌和消费者体验。
+  - **How It Works**：端到端步骤；每步含动作/状态变化、消费者收益、运营收益、战略依据、适用时的法律监管依据、证据与设计/原型引用。
+  - **How To Implement**：阶段、时间、目标、Jobs To Be Done、能力资产、责任角色、依赖、风险、开放问题、试点与推广逻辑。
+  - **How It Makes Money**：收入流、定价/量、采纳/留存/频次、开发/运营成本、Base/Aggressive 场景、收入/利润/收益/投资/回收期、假设来源、敏感性与模型缺口。
+  - **Validation**：消费者渴望、商业价值、可行性/实施、Concept + Solution 假设、致命弱点、实验、证据、无效主张。
+- **规范前置数据唯一权威**：Markdown 正文由同一个确定性 renderer 生成；不从标题反推完整度。未验证缺项必须列精确 `content_gaps`；确不适用须列精确 `applicability_exceptions` 与理由。
 - **假设逐条披露**：商业案例每个假设标来源/逻辑并单列——客单价 / 客流 / 采纳率 / 渗透率 / 留存 / CAC / 成本 / 逐年盈亏 / 盈利时间点（参考：项目数可参照众筹同类、成功率参照行业 ~36%）。
-- **投资叙事 6 部分**（向决策层汇报的外壳）：① Brief ② Opportunity ③ Solution ④ Why big ⑤ Financial Case ⑥ Roadmap——把三段式装进叙事。
+- **投资叙事 6 部分**（向决策层汇报的外壳）：① Brief ② Opportunity ③ Solution ④ Why big ⑤ Financial Case ⑥ Roadmap——包装完整 validated Solution，不代替它。
 - 要点：方案三件事——聚焦 / 详尽 / 有说服力；目标"让人无法不投"。
 
 ### 执行段模板
@@ -871,8 +886,8 @@ bewater 把"创新"当作**可被种子化、打磨、测试、验证、交付�
 1. **Immersion 目标对齐**：一句话 who/what/how/why → 项目章程 + 3 条初始假设。
 2. **Discover 发现洞察**：4C 扫一遍 + 3–5 个真人访谈（田野方法包 + 洞察透镜）→ 3 条过 F/P/E/T 的洞察 → 方向性假设。
 3. **Define 战略定义**：洞察 → 1 条创新策略 + 策略陈述 + 2–3 机会域。（🚪 G1）
-4. **Ideate 探索概念**：每机会域发散 3–5 概念 → 跑 8 标准 → 收敛到 5。
-5. **Shape 方案定义**：选 1–2 个 → 假设地图 + 致命弱点 → 最便宜的真实行为实验 → 投资叙事。（🚪 G2）
+4. **Ideate 点子与概念**：一个 Idea Pool 中每机会域发散 10–15 个一句话 Seeds → 人确认短名单 → 一个 Concept Portfolio 中发展并评估 Concepts → 人选 2–4 个。
+5. **Shape 方案定义**：从精确选中 Concepts 形成 1–2 个完整 Solutions → 补齐五区块 → 致命弱点 L4+ 实验 → 人验证 → 投资叙事。（🚪 G2）
 6. **Design 设计方案**：方案 → 体验规格 + 架构规格 + 实施计划（守基线）。
 7. **Build 系统构建**：敏捷构建 → 可发布系统 + 发布包。（🚪 G3）
 8. **Launch 部署发布**：GTM 执行 + 双看板监控 → 上线报告。
@@ -885,10 +900,10 @@ bewater 把"创新"当作**可被种子化、打磨、测试、验证、交付�
 - [ ] 洞察提炼 F/P/E/T（§9.3）
 - [ ] 方向性假设 By/We can/Resulting in（§9.4）
 - [ ] 创新策略 + 策略陈述 + 机会域（§9.5/9.6）→ 🚪 G1
-- [ ] 概念卡 8 字段 + 8 标准 + 评分卡（§9.7）
+- [ ] 一个 Idea Pool（10–15 Seeds/机会域）+ 一个 Concept Portfolio（2–4 人选 Concepts）+ 精确血缘 + 硬软标准（§9.7）
 - [ ] 假设地图 + 致命弱点（§9.8）
 - [ ] 实验菜单 + 成功指标（§9.9）
-- [ ] 投资叙事 + 财务案例（§9.10）→ 🚪 G2
+- [ ] 1–2 个完整 validated Solutions + L4+ 致命弱点证据 + 投资叙事（§9.10）→ 🚪 G2
 - [ ] 方案规格 + ADR（§9.11）
 - [ ] 发布门清单（§9.12）→ 🚪 G3
 - [ ] GTM（§9.13）

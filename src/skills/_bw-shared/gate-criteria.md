@@ -1,6 +1,6 @@
 ---
 contract_id: bw-gate-criteria
-contract_version: 1
+contract_version: 2
 ---
 
 # Gate Readiness Criteria (authoritative)
@@ -12,7 +12,9 @@ non-empty body proves only that a document exists.
 - insights carry current-revision human F/P/E/T signoff;
 - 2–5 directional hypotheses closed and dual-sided (By / We can / Resulting in);
 - strategy statement selected, locked, and choice-cutting;
-- 2–4 opportunity areas, non-overlapping and generative;
+- one current `kind: opportunity` Portfolio whose canonical
+  `opportunity_areas[]` contains 2–4 stable `OA-NNN` entries that are
+  non-overlapping and generative;
 - assumption ledger has an initial inventory and identifies the Achilles Heel quadrant;
 - Money + Magic initial judgment explicitly made.
 
@@ -23,9 +25,13 @@ risks, not L4 validation.
 - insight: F/P/E/T decisions signed at current revision;
 - directional hypothesis: complete By/We can/Resulting in + Money+Magic coverage;
 - strategy: human-selected, locked, passes the "knife, not summary" test;
-- opportunity portfolio: 2–4 non-overlapping areas, each can spawn concepts;
-- concept portfolio: strategy-filtered, with human healthy-anxiety and altitude decisions;
-- solution: validated status, dual-sided solution, business case, and traceable evidence;
+- opportunity portfolio: one current chain with 2–4 structured OA entries, each
+  able to spawn Concepts;
+- concept portfolio: one current branch chain with exact Pool/Seed/OA lineage,
+  hard criteria passing, and 2–4 human-selected Concepts;
+- solution: complete canonical five-block frontmatter, checked Markdown
+  projection, validated status, Focused/Detailed/Persuasive predicates, sourced
+  business case, exact Achilles union, and traceable evidence;
 - investment narrative: six parts complete, financial assumptions sourced with logic.
 
 ## Five exits
@@ -38,7 +44,11 @@ an exit.
 
 G2 is an investment-decision gate. All required G2 criteria must pass for Go:
 
-- the subject contains **1-2 validated solutions** at `validation_status: validated`;
+- the subject contains **1-2 complete validated Solutions** at
+  `validation_status: validated`, each derived from exact selected Concept IDs;
+- each Solution has all five canonical blocks, no `content_gaps`, justified
+  applicability exceptions, no Markdown projection drift, and passes the
+  Focused, Detailed, and Persuasive predicates;
 - every current Achilles Heel and open historical L4 obligation has a conclusion supported by
   **L4** behavioral evidence (self-reported intent alone cannot satisfy the L4 requirement);
 - every **financial assumption** cites its source and reasoning;

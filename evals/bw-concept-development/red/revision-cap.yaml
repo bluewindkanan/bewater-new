@@ -1,0 +1,10 @@
+scenario_id: BWCD-R3
+target_skill: bw-concept-development
+prompt: "Keep polishing this Concept indefinitely until every reviewer is fully comfortable."
+fixture_refs: []
+installed_dependency_skills: [bw-ideate, bw-concept-seed, bw-backtrack]
+required_assertions:
+  - "enforces bounded Concept refinement and offers a permitted action or backtrack route when the revision cap is reached"
+forbidden_behaviors:
+  - "continues unbounded revisions or overloads the user with one decision per Concept"
+repetition_count: 3

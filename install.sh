@@ -3,26 +3,30 @@
 set -euo pipefail
 shopt -s dotglob 2>/dev/null || true
 
-VERSION="0.1.0"
+VERSION="0.2.0"
 MARKER=".bewater-managed"
 MODE="copy"
 DEST=""
 SRC=""
 PROJECT_ROOT=""
 UNINSTALL=0
+SKILLS_ONLY=0
+SKILL_FILTER=""
 MARKER_JSON='{"managed_by":"bewater","version":"'"$VERSION"'"}'
 
 die() { echo "error: $*" >&2; exit 1; }
 
 usage() {
   cat <<EOF
-usage: install.sh [--copy|--link] --project-root DIR [--src DIR] [--dest DIR] [--uninstall]
+usage: install.sh [--copy|--link] --project-root DIR [--src DIR] [--dest DIR] [--skills-only] [--skill NAME] [--uninstall]
 
   --project-root DIR  (required) project root; skills → DIR/.claude/skills, bwkit → DIR/_bewater/bwkit
   --src DIR           repository root with src/skills and src/bwkit (default: this script's dir)
   --dest DIR          skills output dir (default: PROJECT_ROOT/.claude/skills)
   --copy              copy files (default)
   --link              symlink instead of copy (repo development)
+  --skills-only       deploy bw-* skills and _bw-shared only; do not read or write _bewater state or bwkit
+  --skill NAME         deploy only one named bw-* skill (implies no obsolete-skill pruning)
   --uninstall         remove bewater-managed targets from project
 EOF
 }
@@ -34,6 +38,8 @@ while [[ $# -gt 0 ]]; do
     --dest)           DEST="${2:?--dest needs a value}"; shift 2;;
     --project-root)   PROJECT_ROOT="${2:?--project-root needs a value}"; shift 2;;
     --src)            SRC="${2:?--src needs a value}"; shift 2;;
+    --skills-only)    SKILLS_ONLY=1; shift;;
+    --skill)          SKILL_FILTER="${2:?--skill needs a value}"; shift 2;;
     --uninstall)      UNINSTALL=1; shift;;
     -h|--help)        usage; exit 0;;
     *)                die "unknown argument: $1";;
@@ -48,7 +54,14 @@ SKILLS_SRC="$SRC/src/skills"
 BWKIT_SRC="$SRC/src/bwkit"
 if (( ! UNINSTALL )); then
   [[ -d "$SKILLS_SRC" ]] || die "no src/skills under --src: $SRC"
-  [[ -d "$BWKIT_SRC" ]]  || die "no src/bwkit under --src: $SRC"
+  if (( ! SKILLS_ONLY )); then
+    [[ -d "$BWKIT_SRC" ]] || die "no src/bwkit under --src: $SRC"
+  fi
+fi
+
+if [[ -n "$SKILL_FILTER" ]]; then
+  [[ "$SKILL_FILTER" == bw-* ]] || die "--skill must name a bw-* skill: $SKILL_FILTER"
+  [[ -d "$SKILLS_SRC/$SKILL_FILTER" ]] || die "no skill named $SKILL_FILTER under $SKILLS_SRC"
 fi
 
 [[ -z "${DEST:-}" ]] && DEST="$PROJECT_ROOT/.claude/skills"
@@ -102,21 +115,24 @@ deploy_units() {
   for d in "$SKILLS_SRC"/bw-*/; do
     [[ -d "$d" ]] || continue
     local name; name="$(basename "$d")"
+    [[ -z "$SKILL_FILTER" || "$name" == "$SKILL_FILTER" ]] || continue
     stage_dir "$SKILLS_TARGET/$name" "$d"
     ((count++))
   done
   [[ "$count" -gt 0 ]] || die "no bw-* skills found under $SKILLS_SRC"
 }
 
-# Reject collisions before replacing any managed payload. Stale managed skills
-# are removed separately; stale unmanaged skills remain untouched, except the
-# retired bw-start name, which must fail closed rather than silently shadowing
+# Reject collisions before replacing any managed payload. A full install removes
+# superseded managed skills (for example bw-concept-card) while leaving stale
+# unmanaged skills untouched. The retired bw-start name must fail closed rather
+# than silently shadowing
 # the installed router set.
 preflight_skill_targets() {
   local d name target
   for d in "$SKILLS_SRC"/bw-*/; do
     [[ -d "$d" ]] || continue
     name="$(basename "$d")"
+    [[ -z "$SKILL_FILTER" || "$name" == "$SKILL_FILTER" ]] || continue
     target="$SKILLS_TARGET/$name"
     if [[ -e "$target" || -L "$target" ]]; then
       has_marker "$target" || die "target exists and is not bewater-managed: $target"
@@ -134,6 +150,7 @@ preflight_skill_targets() {
 }
 
 prune_obsolete_skills() {
+  [[ -z "$SKILL_FILTER" ]] || return 0
   local target name
   for target in "$SKILLS_TARGET"/bw-*; do
     [[ -e "$target" || -L "$target" ]] || continue
@@ -148,7 +165,7 @@ prune_obsolete_skills() {
 # ---------------------------------------------------------------------------
 # deploy _bw-shared (docs) + bwkit (tool)
 # ---------------------------------------------------------------------------
-deploy_shared() {
+deploy_shared_docs() {
   # docs → DEST/_bw-shared/
   local staged_docs
   staged_docs="$(mktemp -d "${TMPDIR:-/tmp}/bwinst.XXXXXX")/_bw-shared"
@@ -160,6 +177,9 @@ deploy_shared() {
   done
   stage_replace "$SKILLS_TARGET/_bw-shared" "$staged_docs"
 
+}
+
+deploy_bwkit() {
   # bwkit → PROJECT_ROOT/_bewater/bwkit/; link mode keeps a real managed
   # directory and links its contents, so its marker never touches the source.
   mkdir -p "$PROJECT_ROOT/_bewater"
@@ -206,22 +226,38 @@ initialize_project_state() {
 # main
 # ---------------------------------------------------------------------------
 main() {
+  if (( UNINSTALL && (SKILLS_ONLY || ${#SKILL_FILTER}) )); then
+    die "--skills-only and --skill cannot be combined with --uninstall"
+  fi
   if (( UNINSTALL )); then
     do_uninstall
     return 0
   fi
 
-  precheck_project_state
+  if (( ! SKILLS_ONLY )); then
+    precheck_project_state
+  fi
   mkdir -p "$SKILLS_TARGET"
   preflight_skill_targets
   prune_obsolete_skills
   deploy_units
-  deploy_shared
-  initialize_project_state
+  deploy_shared_docs
+  if (( ! SKILLS_ONLY )); then
+    deploy_bwkit
+    initialize_project_state
+  fi
 
-  local count=0 d
-  for d in "$SKILLS_TARGET"/bw-*/; do [[ -d "$d" ]] || continue; ((count++)); done
-  echo "installed $count skill(s) into $SKILLS_TARGET, bwkit into $BWKIT_TARGET (mode=$MODE)"
+  if [[ -n "$SKILL_FILTER" ]]; then
+    echo "installed skill $SKILL_FILTER into $SKILLS_TARGET (skills-only=$SKILLS_ONLY, mode=$MODE)"
+  else
+    local count=0 d
+    for d in "$SKILLS_TARGET"/bw-*/; do [[ -d "$d" ]] || continue; ((count++)); done
+    if (( SKILLS_ONLY )); then
+      echo "installed $count skill(s) into $SKILLS_TARGET (skills-only, mode=$MODE)"
+    else
+      echo "installed $count skill(s) into $SKILLS_TARGET, bwkit into $BWKIT_TARGET (mode=$MODE)"
+    fi
+  fi
 }
 
 main "$@"

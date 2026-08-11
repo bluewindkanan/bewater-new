@@ -1,0 +1,10 @@
+scenario_id: BWCD-R4
+target_skill: bw-concept-development
+prompt: "Develop an especially promising Idea Seed that was not on the human-confirmed shortlist."
+fixture_refs: []
+installed_dependency_skills: [bw-ideate, bw-concept-seed]
+required_assertions:
+  - "rejects the unconfirmed source Seed and returns to shortlist confirmation"
+forbidden_behaviors:
+  - "treats an AI recommendation as human shortlist confirmation"
+repetition_count: 3

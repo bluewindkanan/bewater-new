@@ -191,9 +191,12 @@ resolver.
 
 - Update `bewater-core.md` and the English skill references to define the linear macro-flow plus
   bounded intra-stage loops.
-- Unify all methodology references to one quantity contract: 10-15 seeds per OA, 3-5 developed
-  concepts per OA as a working shortlist, and 2-4 selected concepts globally. Remove the conflicting
-  "20-30 total", "3-5 then 5", and other legacy counts from the core and quick-start sections.
+- Unify all methodology references to one quantity contract: 10-15 seeds per OA, elimination-based
+  confirmation that floats ~5-8 confirmed seeds per OA (keep when unsure; cut only the obviously
+  dead/duplicate/off-strategy), ALL confirmed seeds developed into full Concepts (no per-OA cap), and
+  2-4 selected concepts globally. The hard convergence cut lives at the rich-Concept layer, never at
+  the one-sentence Seed layer. Remove the conflicting "20-30 total", "3-5 then 5", and other legacy
+  counts from the core and quick-start sections.
 - Replace keyword-only tests with structural tests for artifacts, lifecycle transitions, lineage,
   human-decision boundaries, resume routing, and Shape handoff. Explicitly remove/rewrite
   `tests/test_skill_bw_concept_card.py`, `tests/test_skill_bw_ideate.py`, and `evals/bw-concept-card/`;

@@ -1,7 +1,7 @@
 import pytest
 
 from bw import io, paths
-from bw.schema import ArtifactKind, ArtifactMeta, ArtifactStatus
+from bw.schema import ArtifactDocumentStatus, ArtifactKind, ArtifactMeta, ArtifactValidationStatus
 
 
 def test_find_project_root_locates_bewater_dir(tmp_project):
@@ -50,20 +50,62 @@ def test_read_artifact_no_frontmatter(tmp_path):
 def test_read_artifact_missing_closing_fence_raises(tmp_path):
     p = tmp_path / "broken.md"
     p.write_text("---\nartifact_id: ART-1\nkind: charter\nbody that never closes\n")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="missing closing fence.*broken.md"):
         io.read_artifact(p)
 
 
 def read_artifact_dummy() -> tuple[ArtifactMeta, str]:
     """Test-only helper: build a valid ArtifactMeta for round-trip checks."""
     meta = ArtifactMeta(
-        artifact_id="A-charter-0001",
+        artifact_id="ART-001",
         kind=ArtifactKind.charter,
         stage="immersion",
-        status=ArtifactStatus.draft,
-        hash="abc123",
+        revision=1,
+        document_status=ArtifactDocumentStatus.draft,
+        validation_status=ArtifactValidationStatus.unvalidated,
+        branch_id="BR-001",
+        extra={"hash": "abc123"},
     )
     return meta, ""
 
 
 io.read_artifact_dummy = read_artifact_dummy
+
+
+def test_artifact_specific_frontmatter_round_trips_without_being_dropped(tmp_project):
+    p = tmp_project / "_bewater-output" / "ART-007-r1-opportunity.md"
+    meta = ArtifactMeta(
+        artifact_id="ART-007",
+        kind="opportunity",
+        stage="define",
+        revision=1,
+        document_status="final",
+        validation_status="unvalidated",
+        branch_id="BR-001",
+        extra={
+            "opportunity_areas": [
+                {
+                    "id": "OA-001",
+                    "name": "A stable opportunity",
+                    "audience": "People",
+                    "opportunity": "A meaningful unmet need",
+                    "consumer_value": "Better outcome",
+                    "commercial_value": "Growth",
+                    "source_insight_refs": ["artifact:ART-004@1"],
+                }
+            ]
+        },
+    )
+
+    io.write_artifact(p, meta, "Opportunity Portfolio")
+
+    loaded, _ = io.read_artifact(p)
+    assert loaded.extra["opportunity_areas"][0]["id"] == "OA-001"
+    assert io.read_frontmatter(p)["opportunity_areas"] == meta.extra["opportunity_areas"]
+
+
+def test_read_artifact_rejects_missing_canonical_envelope_fields(tmp_path):
+    p = tmp_path / "legacy.md"
+    p.write_text("---\nartifact_id: ART-001\nkind: charter\nstatus: final\n---\nLegacy")
+    with pytest.raises(ValueError, match="canonical field"):
+        io.read_artifact(p)

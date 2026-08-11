@@ -15,7 +15,8 @@ class SkillCheckError(Exception):
 
 
 def skill_dir(repo: Path, name: str) -> Path:
-    return Path(repo) / ".claude" / "skills" / name
+    """Return the authored skill directory, never a deployed copy."""
+    return Path(repo) / "src" / "skills" / name
 
 
 _PLACEHOLDER_RE = re.compile(r"\b(TODO|TBD|FIXME|XXX)\b")

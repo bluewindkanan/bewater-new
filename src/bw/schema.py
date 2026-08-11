@@ -1,6 +1,8 @@
-"""BeWater runtime schema: enums, dataclasses, and invariants.
+"""Canonical runtime contracts for the BeWater lifecycle.
 
-Field names here are the contract consumed by io (Task 2) and all later tasks.
+The runtime deliberately models the current methodology only.  Artifact
+frontmatter has separate document and validation states; assumption state is
+not reused for either of them.
 """
 from __future__ import annotations
 
@@ -10,13 +12,13 @@ from typing import Any
 
 from bw.errors import ValidationError
 
-# --- Enums ---
 
 class Layer(str, Enum):
     root = "root"
     strategy = "strategy"
     opportunity = "opportunity"
     concept = "concept"
+    solution = "solution"
     feature = "feature"
 
 
@@ -51,6 +53,9 @@ class EvidenceLevel(str, Enum):
     L5 = "L5"
     L6 = "L6"
 
+    def _rank(self) -> int:
+        return _EVIDENCE_ORDER.index(self.value)
+
     def __lt__(self, other: Any) -> bool:
         return self._rank() < _coerce_evidence(other)._rank()
 
@@ -63,24 +68,13 @@ class EvidenceLevel(str, Enum):
     def __ge__(self, other: Any) -> bool:
         return self._rank() >= _coerce_evidence(other)._rank()
 
-    def _rank(self) -> int:
-        return _EVIDENCE_ORDER.index(self.value)
 
-
-def _coerce_evidence(value: Any) -> EvidenceLevel:
-    if isinstance(value, EvidenceLevel):
-        return value
-    if isinstance(value, str):
-        return EvidenceLevel(value)
-    return NotImplemented  # type: ignore[return-value]
-
-
-class ValidationStatus(str, Enum):
-    open = "open"
+class AssumptionValidationStatus(str, Enum):
+    untested = "untested"
     testing = "testing"
-    validated = "validated"
+    supported = "supported"
     falsified = "falsified"
-    superseded = "superseded"
+    inconclusive = "inconclusive"
 
 
 class AssumptionStatus(str, Enum):
@@ -93,8 +87,9 @@ class ArtifactKind(str, Enum):
     charter = "charter"
     directional_hypothesis = "directional-hypothesis"
     strategy = "strategy"
-    opportunity_area = "opportunity-area"
-    concept = "concept"
+    opportunity = "opportunity"
+    idea_pool = "idea-pool"
+    concept_portfolio = "concept-portfolio"
     solution = "solution"
     investment_narrative = "investment-narrative"
     research = "research"
@@ -102,10 +97,17 @@ class ArtifactKind(str, Enum):
     initial_assessment = "initial-assessment"
 
 
-class ArtifactStatus(str, Enum):
+class ArtifactDocumentStatus(str, Enum):
     draft = "draft"
     final = "final"
     superseded = "superseded"
+
+
+class ArtifactValidationStatus(str, Enum):
+    unvalidated = "unvalidated"
+    in_review = "in-review"
+    validated = "validated"
+    invalidated = "invalidated"
 
 
 class GateExit(str, Enum):
@@ -116,21 +118,26 @@ class GateExit(str, Enum):
     kill = "kill"
 
 
-# --- Helpers ---
+@dataclass(frozen=True)
+class Issue:
+    scope: str
+    kind: str
+    message: str
+
 
 def _coerce_enum(value: Any, enum_cls: type[Enum]):
-    if value is None:
-        return None
     if isinstance(value, enum_cls):
         return value
     return enum_cls(value)
 
 
-def _enum_value(value: Any):
+def _enum_value(value: Any) -> Any:
     return value.value if isinstance(value, Enum) else value
 
 
-# --- Assumption ---
+def _coerce_evidence(value: Any) -> EvidenceLevel:
+    return _coerce_enum(value, EvidenceLevel)
+
 
 @dataclass
 class Assumption:
@@ -141,13 +148,21 @@ class Assumption:
     impact: Impact
     uncertainty: Uncertainty
     evidence_level: EvidenceLevel
-    validation_status: ValidationStatus
+    validation_status: AssumptionValidationStatus
     status: AssumptionStatus
-    evidence_ref: str
+    evidence_refs: list[str] = field(default_factory=list)
     derived_from: list[str] = field(default_factory=list)
     affects: list[str] = field(default_factory=list)
-    branch: str = ""
+    branch_id: str = ""
+    record_revision: int = 1
+    source_concept_id: str | None = None
+    side: str | None = None
+    supersedes_ref: str | None = None
+    risk_history: list[dict[str, Any]] = field(default_factory=list)
+    history: list[dict[str, Any]] = field(default_factory=list)
+    l4_obligation_status: str = "open"
     updated_at: str | None = None
+    extra: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         self.layer = _coerce_enum(self.layer, Layer)
@@ -155,90 +170,83 @@ class Assumption:
         self.impact = _coerce_enum(self.impact, Impact)
         self.uncertainty = _coerce_enum(self.uncertainty, Uncertainty)
         self.evidence_level = _coerce_enum(self.evidence_level, EvidenceLevel)
-        self.validation_status = _coerce_enum(self.validation_status, ValidationStatus)
+        self.validation_status = _coerce_enum(self.validation_status, AssumptionValidationStatus)
         self.status = _coerce_enum(self.status, AssumptionStatus)
 
     @property
     def is_achilles_heel(self) -> bool:
-        # Invariant 1 (is_achilles_heel <==> impact x uncertainty == high x high)
-        # holds BY CONSTRUCTION here: the flag is derived, never stored. Do not add
-        # a stored is_achilles_heel field — it would duplicate this and re-introduce
-        # a checkable invariant. `test_achilles_heel_is_high_high` is the coverage.
         return self.impact == Impact.high and self.uncertainty == Uncertainty.high
 
+    @property
+    def has_durable_l4_obligation(self) -> bool:
+        if self.is_achilles_heel:
+            return True
+        return any(
+            entry.get("impact") == Impact.high.value
+            and entry.get("uncertainty") == Uncertainty.high.value
+            for entry in [*self.risk_history, *self.history]
+            if isinstance(entry, dict)
+        )
+
+    @property
+    def l4_obligation_open(self) -> bool:
+        return (
+            self.has_durable_l4_obligation
+            and self.status == AssumptionStatus.active
+            and self.l4_obligation_status == "open"
+        )
+
     def invariant_violations(self) -> list[str]:
-        """Return this assumption's invariant-violation messages (non-raising).
-
-        Single source of truth for the achilles/L4 predicate —
-        :meth:`check_invariants`, :func:`ledger_ops.validate_one`, and
-        :func:`validate.validate_all` all read from here.
-
-        Invariant 1 (is_achilles_heel <==> high x high) is satisfied by
-        construction (see the property) and is therefore not checked here.
-        """
-        violations: list[str] = []
-        if (
-            self.is_achilles_heel
-            and self.validation_status == ValidationStatus.validated
-            and self.evidence_level < EvidenceLevel.L4
-        ):
-            violations.append(
-                f"Assumption {self.id}: achilles heel validated below L4 "
-                f"(got {_enum_value(self.evidence_level)})"
-            )
-        return violations
+        if self.has_durable_l4_obligation and self.validation_status == AssumptionValidationStatus.supported and self.evidence_level < EvidenceLevel.L4:
+            return [f"Assumption {self.id}: achilles heel supported below L4 (got {self.evidence_level.value})"]
+        return []
 
     def check_invariants(self) -> bool:
-        """Validate this assumption's invariants.
-
-        Raises ValidationError on violation. Returns the falsified flag
-        (falsified backtrack is enforced in ledger_ops, not here).
-        """
         violations = self.invariant_violations()
         if violations:
             raise ValidationError(violations[0])
-
-        return self.validation_status == ValidationStatus.falsified
+        return self.validation_status == AssumptionValidationStatus.falsified
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            "id": self.id,
-            "statement": self.statement,
-            "layer": _enum_value(self.layer),
-            "category": _enum_value(self.category),
-            "impact": _enum_value(self.impact),
-            "uncertainty": _enum_value(self.uncertainty),
-            "evidence_level": _enum_value(self.evidence_level),
-            "validation_status": _enum_value(self.validation_status),
-            "status": _enum_value(self.status),
-            "evidence_ref": self.evidence_ref,
-            "derived_from": list(self.derived_from),
-            "affects": list(self.affects),
-            "branch": self.branch,
+        data = dict(self.extra)
+        data.update({
+            "id": self.id, "statement": self.statement, "layer": _enum_value(self.layer),
+            "category": _enum_value(self.category), "impact": _enum_value(self.impact),
+            "uncertainty": _enum_value(self.uncertainty), "evidence_level": _enum_value(self.evidence_level),
+            "validation_status": _enum_value(self.validation_status), "status": _enum_value(self.status),
+            "evidence_refs": list(self.evidence_refs), "derived_from": list(self.derived_from),
+            "affects": list(self.affects), "branch_id": self.branch_id,
+            "record_revision": self.record_revision, "source_concept_id": self.source_concept_id,
+            "side": self.side,
+            "supersedes_ref": self.supersedes_ref, "risk_history": list(self.risk_history),
+            "history": list(self.history), "l4_obligation_status": self.l4_obligation_status,
             "updated_at": self.updated_at,
-        }
+        })
+        return data
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> Assumption:
+    def from_dict(cls, data: dict[str, Any], *, id_override: str | None = None) -> Assumption:
+        known = {
+            "id", "statement", "layer", "category", "impact", "uncertainty",
+            "evidence_level", "validation_status", "status", "evidence_refs",
+            "derived_from", "affects", "branch_id", "record_revision",
+            "source_concept_id", "side", "supersedes_ref",
+            "risk_history", "history", "l4_obligation_status", "updated_at",
+        }
         return cls(
-            id=d["id"],
-            statement=d["statement"],
-            layer=_coerce_enum(d["layer"], Layer),
-            category=_coerce_enum(d["category"], Category),
-            impact=_coerce_enum(d["impact"], Impact),
-            uncertainty=_coerce_enum(d["uncertainty"], Uncertainty),
-            evidence_level=_coerce_enum(d["evidence_level"], EvidenceLevel),
-            validation_status=_coerce_enum(d["validation_status"], ValidationStatus),
-            status=_coerce_enum(d["status"], AssumptionStatus),
-            evidence_ref=d.get("evidence_ref", ""),
-            derived_from=list(d.get("derived_from", [])),
-            affects=list(d.get("affects", [])),
-            branch=d.get("branch", ""),
-            updated_at=d.get("updated_at"),
+            id=id_override or data["id"], statement=data["statement"], layer=data["layer"],
+            category=data["category"], impact=data["impact"], uncertainty=data["uncertainty"],
+            evidence_level=data["evidence_level"], validation_status=data["validation_status"],
+            status=data["status"], evidence_refs=list(data.get("evidence_refs", [])),
+            derived_from=list(data.get("derived_from", [])), affects=list(data.get("affects", [])),
+            branch_id=data.get("branch_id", ""), record_revision=data.get("record_revision", 1),
+            source_concept_id=data.get("source_concept_id"), side=data.get("side"),
+            supersedes_ref=data.get("supersedes_ref"),
+            risk_history=list(data.get("risk_history", [])), history=list(data.get("history", [])),
+            l4_obligation_status=data.get("l4_obligation_status", "open"), updated_at=data.get("updated_at"),
+            extra={key: value for key, value in data.items() if key not in known},
         )
 
-
-# --- Ledger ---
 
 @dataclass
 class Ledger:
@@ -250,114 +258,94 @@ class Ledger:
     assumptions: dict[str, Assumption] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            "schema_version": self.schema_version,
-            "revision": self.revision,
-            "next_id": self.next_id,
-            "updated_at": self.updated_at,
-            "updated_by": self.updated_by,
-            "assumptions": {k: v.to_dict() for k, v in self.assumptions.items()},
-        }
+        return {"schema_version": self.schema_version, "revision": self.revision, "next_id": self.next_id,
+                "updated_at": self.updated_at, "updated_by": self.updated_by,
+                "assumptions": {key: assumption.to_dict() for key, assumption in self.assumptions.items()}}
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> Ledger:
-        assumptions_raw = d.get("assumptions", {})
-        if isinstance(assumptions_raw, list):
-            # v4 compat: list -> dict keyed by id
-            assumptions = {a["id"]: Assumption.from_dict(a) for a in assumptions_raw}
-        else:
-            assumptions = {k: Assumption.from_dict(v) for k, v in assumptions_raw.items()}
-        return cls(
-            schema_version=d.get("schema_version", 1),
-            revision=d.get("revision", 1),
-            next_id=d.get("next_id", 1),
-            updated_at=d.get("updated_at"),
-            updated_by=d.get("updated_by", "bw-init"),
-            assumptions=assumptions,
-        )
+    def from_dict(cls, data: dict[str, Any]) -> Ledger:
+        raw = data.get("assumptions", {})
+        if not isinstance(raw, dict):
+            raise TypeError("ledger assumptions must be an ID-keyed mapping")
+        assumptions: dict[str, Assumption] = {}
+        for key, value in raw.items():
+            if not isinstance(key, str) or not isinstance(value, dict):
+                raise TypeError("ledger assumptions must contain string IDs mapped to records")
+            if "id" in value and value["id"] != key:
+                raise ValueError(f"ledger assumption key {key!r} conflicts with record id {value['id']!r}")
+            assumptions[key] = Assumption.from_dict(value, id_override=key)
+        return cls(schema_version=data.get("schema_version", 1), revision=data.get("revision", 1),
+                   next_id=data.get("next_id", 1), updated_at=data.get("updated_at"),
+                   updated_by=data.get("updated_by", "bw-init"), assumptions=assumptions)
 
-
-# --- ArtifactMeta ---
 
 @dataclass
 class ArtifactMeta:
     artifact_id: str
     kind: ArtifactKind
     stage: str
-    status: ArtifactStatus
-    hash: str
+    revision: int
+    document_status: ArtifactDocumentStatus
+    validation_status: ArtifactValidationStatus
+    branch_id: str = ""
     locked: bool = False
-    validated_by: str | None = None
-    validated_at: str | None = None
-    signoffs: list[str] = field(default_factory=list)
+    signoffs: list[dict[str, Any]] = field(default_factory=list)
     dual_sided: dict[str, Any] | None = None
     derived_from: list[str] = field(default_factory=list)
     last_validated_against: list[dict[str, Any]] = field(default_factory=list)
     created_at: str | None = None
     updated_at: str | None = None
+    extra: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         self.kind = _coerce_enum(self.kind, ArtifactKind)
-        self.status = _coerce_enum(self.status, ArtifactStatus)
+        self.document_status = _coerce_enum(self.document_status, ArtifactDocumentStatus)
+        self.validation_status = _coerce_enum(self.validation_status, ArtifactValidationStatus)
+
+    @property
+    def hash(self) -> str:
+        return str(self.extra.get("hash", ""))
+
+    @hash.setter
+    def hash(self, value: str) -> None:
+        self.extra["hash"] = value
 
     @classmethod
     def empty(cls) -> ArtifactMeta:
-        return cls(
-            artifact_id="",
-            kind=ArtifactKind.charter,
-            stage="",
-            status=ArtifactStatus.draft,
-            hash="",
-            locked=False,
-            validated_by=None,
-            validated_at=None,
-            signoffs=[],
-            dual_sided=None,
-            derived_from=[],
-            last_validated_against=[],
-            created_at=None,
-            updated_at=None,
-        )
+        return cls("", ArtifactKind.charter, "", 1, ArtifactDocumentStatus.draft,
+                   ArtifactValidationStatus.unvalidated)
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            "artifact_id": self.artifact_id,
-            "kind": _enum_value(self.kind),
-            "stage": self.stage,
-            "status": _enum_value(self.status),
-            "hash": self.hash,
-            "locked": self.locked,
-            "validated_by": self.validated_by,
-            "validated_at": self.validated_at,
-            "signoffs": list(self.signoffs),
-            "dual_sided": self.dual_sided,
-            "derived_from": list(self.derived_from),
-            "last_validated_against": list(self.last_validated_against),
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-        }
+        data = dict(self.extra)
+        data.update({
+            "artifact_id": self.artifact_id, "kind": _enum_value(self.kind), "stage": self.stage,
+            "revision": self.revision, "document_status": _enum_value(self.document_status),
+            "validation_status": _enum_value(self.validation_status), "branch_id": self.branch_id,
+            "locked": self.locked, "signoffs": list(self.signoffs), "dual_sided": self.dual_sided,
+            "derived_from": list(self.derived_from), "last_validated_against": list(self.last_validated_against),
+            "created_at": self.created_at, "updated_at": self.updated_at,
+        })
+        return {key: value for key, value in data.items() if value is not None}
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> ArtifactMeta:
+    def from_dict(cls, data: dict[str, Any]) -> ArtifactMeta:
+        required = {"artifact_id", "kind", "stage", "revision", "document_status", "validation_status"}
+        missing = sorted(key for key in required if key not in data)
+        if missing:
+            raise ValueError(f"artifact frontmatter missing required canonical field(s): {', '.join(missing)}")
+        known = required | {"branch_id", "locked", "signoffs", "dual_sided", "derived_from",
+                            "last_validated_against", "created_at", "updated_at"}
         return cls(
-            artifact_id=d["artifact_id"],
-            kind=_coerce_enum(d["kind"], ArtifactKind),
-            stage=d["stage"],
-            status=_coerce_enum(d["status"], ArtifactStatus),
-            hash=d["hash"],
-            locked=d.get("locked", False),
-            validated_by=d.get("validated_by"),
-            validated_at=d.get("validated_at"),
-            signoffs=list(d.get("signoffs", [])),
-            dual_sided=d.get("dual_sided"),
-            derived_from=list(d.get("derived_from", [])),
-            last_validated_against=list(d.get("last_validated_against", [])),
-            created_at=d.get("created_at"),
-            updated_at=d.get("updated_at"),
+            artifact_id=data["artifact_id"], kind=data["kind"], stage=data["stage"], revision=data["revision"],
+            document_status=data["document_status"], validation_status=data["validation_status"],
+            branch_id=data.get("branch_id", ""), locked=data.get("locked", False),
+            signoffs=list(data.get("signoffs", [])), dual_sided=data.get("dual_sided"),
+            derived_from=list(data.get("derived_from", [])),
+            last_validated_against=list(data.get("last_validated_against", [])),
+            created_at=data.get("created_at"), updated_at=data.get("updated_at"),
+            extra={key: value for key, value in data.items() if key not in known},
         )
 
-
-# --- GateRecord ---
 
 @dataclass
 class GateRecord:
@@ -371,30 +359,18 @@ class GateRecord:
     conditions: list[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
-        self.exit = _coerce_enum(self.exit, GateExit) if self.exit is not None else None
+        if self.exit is not None:
+            self.exit = _coerce_enum(self.exit, GateExit)
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            "gate": self.gate,
-            "attempt_id": self.attempt_id,
-            "position": self.position,
-            "subject_refs": list(self.subject_refs),
-            "decision_date": self.decision_date,
-            "decision_maker": self.decision_maker,
-            "exit": _enum_value(self.exit) if self.exit is not None else None,
-            "conditions": list(self.conditions),
-        }
+        return {"gate": self.gate, "attempt_id": self.attempt_id, "position": self.position,
+                "subject_refs": list(self.subject_refs), "decision_date": self.decision_date,
+                "decision_maker": self.decision_maker, "exit": _enum_value(self.exit),
+                "conditions": list(self.conditions)}
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> GateRecord:
-        exit_val = d.get("exit")
-        return cls(
-            gate=d["gate"],
-            attempt_id=d["attempt_id"],
-            position=d["position"],
-            subject_refs=list(d.get("subject_refs", [])),
-            decision_date=d.get("decision_date"),
-            decision_maker=d.get("decision_maker"),
-            exit=_coerce_enum(exit_val, GateExit) if exit_val is not None else None,
-            conditions=list(d.get("conditions", [])),
-        )
+    def from_dict(cls, data: dict[str, Any]) -> GateRecord:
+        return cls(gate=data["gate"], attempt_id=data["attempt_id"], position=data["position"],
+                   subject_refs=list(data.get("subject_refs", [])), decision_date=data.get("decision_date"),
+                   decision_maker=data.get("decision_maker"), exit=data.get("exit"),
+                   conditions=list(data.get("conditions", [])))

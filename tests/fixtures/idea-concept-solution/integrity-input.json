@@ -1,0 +1,13 @@
+{
+  "records": [
+    {"file": "ART-010-r1-opportunity.md", "id": "ART-010", "revision": 1, "supersedes": null},
+    {"file": "ART-011-r1-idea-pool.md", "id": "ART-011", "revision": 1, "supersedes": null},
+    {"file": "ART-011-r2-idea-pool.md", "id": "ART-011", "revision": 2, "supersedes": {"id": "ART-011", "revision": 1}},
+    {"file": "ART-012-r1-concept-portfolio.md", "id": "ART-012", "revision": 1, "supersedes": null},
+    {"file": "ART-012-r2-concept-portfolio.md", "id": "ART-012", "revision": 2, "supersedes": {"id": "ART-012", "revision": 1}},
+    {"file": "ART-020-r1-solution.md", "id": "ART-020", "revision": 1, "supersedes": null},
+    {"file": "ART-020-r2-solution.md", "id": "ART-020", "revision": 2, "supersedes": {"id": "ART-020", "revision": 1}},
+    {"file": "ART-021-r1-solution.md", "id": "ART-021", "revision": 1, "supersedes": null},
+    {"file": "ART-021-r2-solution.md", "id": "ART-021", "revision": 2, "supersedes": {"id": "ART-021", "revision": 1}}
+  ]
+}

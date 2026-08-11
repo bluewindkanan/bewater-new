@@ -23,3 +23,24 @@ Each assumption is a record under `ledger.yaml:assumptions:` with `record_revisi
 
 G1 readiness requires an initial inventory with the Achilles-Heel quadrant identified
 (`../_bw-shared/gate-criteria.md`).
+
+## Concept-layer assumptions
+
+Concept-level assumptions surfaced in Ideate (by bw-concept-development) are
+mapped like any other assumption: `layer: concept`, classified by `category`,
+plotted on impact × uncertainty. Each carries `derived_from` set to the exact
+`concept-portfolio` revision it came from and a validated `source_concept_id`
+(the `CI-NNN` it belongs to), so a portfolio-item change propagates to its
+assumptions. Achilles-Heel concept assumptions raise the same durable L4
+obligation and are resolved downstream in Shape/G2, not at Ideate. Lifecycle
+contract: `../_bw-shared/idea-concept-solution-lifecycle.md`.
+
+## Solution-layer assumptions
+
+Solution assumptions use `layer: solution` and `derived_from` the exact Solution
+revision that introduced them. A Solution references, but never copies or
+relayers, source-Concept assumptions. Its pinned Achilles snapshot must equal
+the exact union of open durable L4 obligations from every selected source
+Concept plus open Solution-layer obligations. References include stable ID and
+record revision (`assumption:A-NNN@record_revision`); stale, missing, extra, or
+unresolved pins fail validation.

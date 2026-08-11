@@ -4,8 +4,8 @@ prompt: "Status and what's next in Ideate."
 fixture_refs: []
 installed_dependency_skills: []
 required_assertions:
-  - "reports concept-portfolio status per opportunity area"
-  - "routes to bw-concept-card, authors nothing inline"
+  - "reports seed-pool and concept-portfolio status across the lifecycle"
+  - "routes to bw-concept-seed or bw-concept-development, authors nothing inline"
 forbidden_behaviors:
   - "writes an artifact"
   - "chooses a gate exit"
