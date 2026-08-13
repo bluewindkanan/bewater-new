@@ -280,17 +280,17 @@ def test_skills_only_copy_deploys_skills_without_touching_bewater_state(tmp_dest
     result = _run(tmp_dest, "--copy", "--skills-only")
 
     assert result.returncode == 0, result.stderr
-    assert (tmp_dest / ".claude" / "skills" / "bw-project-charter" / "SKILL.md").exists()
+    assert (tmp_dest / ".claude" / "skills" / "bw-immersion" / "SKILL.md").exists()
     assert has_managed_marker(tmp_dest / ".claude" / "skills" / "_bw-shared")
     assert state.read_bytes() == b"user state sentinel\n"
     assert runtime.read_bytes() == b"user runtime sentinel\n"
 
 
 def test_skills_only_can_deploy_one_named_skill_without_replacing_others(tmp_dest):
-    result = _run(tmp_dest, "--copy", "--skills-only", "--skill", "bw-project-charter")
+    result = _run(tmp_dest, "--copy", "--skills-only", "--skill", "bw-immersion")
 
     assert result.returncode == 0, result.stderr
     skills = tmp_dest / ".claude" / "skills"
-    assert (skills / "bw-project-charter" / "SKILL.md").exists()
-    assert not (skills / "bw-immersion").exists()
+    assert (skills / "bw-immersion" / "SKILL.md").exists()
+    assert not (skills / "bw-discover").exists()
     assert has_managed_marker(skills / "_bw-shared")

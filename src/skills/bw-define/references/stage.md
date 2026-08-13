@@ -11,7 +11,9 @@ the G1 gate's input stage.
 - **bw-directional-hypothesis** — compose/refine By / We can / Resulting in hypotheses.
 - **bw-strategy-statement** — create/select/revise/lock the choice-cutting strategy.
 - **bw-opportunity-area** — define 2–4 non-overlapping opportunity areas.
-- **bw-assumption-map** — initial assumption inventory + Achilles-Heel prioritization.
+- **bw-assumption-map** — complete the G1 inventory and Achilles-Heel review after Research's
+  selective projection; route here whenever either remains incomplete, including after zero
+  Research projections.
 
 ## Gate
 

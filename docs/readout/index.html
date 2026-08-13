@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hardso · BeWater 项目阅读站</title>
+<style>
+:root{
+  --bg:#fafbfc; --card:#fff; --ink:#1a202c; --ink2:#4a5568; --ink3:#718096;
+  --line:#e2e8f0; --line2:#edf2f7;
+  --immersion:#3b82f6; --discover:#8b5cf6; --define:#ec4899; --ideate:#f59e0b; --shape:#10b981;
+  --draft:#f59e0b; --final:#10b981; --gap:#ef4444;
+  --sel:#10b981; --kill:#ef4444; --merge:#8b5cf6; --recycle:#3b82f6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;font-size:15px}
+.layout{display:flex;min-height:100vh}
+
+/* sidebar */
+.sidebar{width:260px;background:#1a202c;color:#cbd5e0;position:fixed;height:100vh;overflow-y:auto;padding:20px 0;box-shadow:2px 0 8px rgba(0,0,0,.1)}
+.sidebar .brand{padding:0 20px 16px;border-bottom:1px solid #2d3748;margin-bottom:12px}
+.sidebar .brand h1{font-size:17px;color:#fff;font-weight:700}
+.sidebar .brand .sub{font-size:12px;color:#a0aec0;margin-top:2px}
+.sidebar .grp{margin-bottom:14px}
+.sidebar .grp-h{padding:6px 20px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#718096;font-weight:600;display:flex;align-items:center;gap:8px}
+.sidebar .grp-h .dot{width:8px;height:8px;border-radius:50%}
+.sidebar a{display:block;padding:7px 20px;color:#cbd5e0;text-decoration:none;font-size:13.5px;border-left:3px solid transparent;transition:.15s}
+.sidebar a:hover{background:#2d3748;color:#fff}
+.sidebar a.active{background:#2d3748;color:#fff;border-left-color:var(--shape)}
+.sidebar a .badge-mini{font-size:10px;padding:1px 5px;border-radius:3px;background:#4a5568;color:#cbd5e0;margin-left:6px;vertical-align:middle}
+.sidebar a .badge-mini.old{background:#2d3748;color:#718096}
+
+/* main */
+.main{margin-left:260px;flex:1;padding:32px 40px 80px;max-width:1100px}
+.anch{scroll-margin-top:24px}
+
+/* dashboard */
+.dashboard{background:linear-gradient(135deg,#1a202c 0%,#2d3748 100%);color:#fff;padding:28px 32px;border-radius:12px;margin-bottom:32px;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.dashboard h2{font-size:22px;margin-bottom:4px}
+.dashboard .lead{color:#a0aec0;font-size:13.5px;margin-bottom:20px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.kpi{background:rgba(255,255,255,.07);padding:14px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.1)}
+.kpi .v{font-size:24px;font-weight:700;line-height:1.2}
+.kpi .l{font-size:11.5px;color:#a0aec0;margin-top:3px;text-transform:uppercase;letter-spacing:.04em}
+.kpi .v.warn{color:#f59e0b} .kpi .v.bad{color:#ef4444} .kpi .v.ok{color:#10b981}
+
+/* pipeline */
+.pipeline{display:flex;align-items:center;margin-top:18px;flex-wrap:wrap;gap:4px}
+.pipe-node{padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;color:#fff}
+.pipe-node.immersion{background:var(--immersion)} .pipe-node.discover{background:var(--discover)}
+.pipe-node.define{background:var(--define)} .pipe-node.ideate{background:var(--ideate)} .pipe-node.shape{background:var(--shape)}
+.pipe-node.gate{background:#4a5568}
+.pipe-sep{color:#4a5568;font-size:11px}
+.g1-banner{margin-top:14px;padding:10px 14px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.4);border-radius:6px;font-size:13px;color:#fbd38d}
+
+/* artifact card */
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px 28px;margin-bottom:22px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card-hd{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.card-hd .stag{width:4px;align-self:stretch;border-radius:2px;min-height:40px}
+.card-hd .stag.immersion{background:var(--immersion)} .card-hd .stag.discover{background:var(--discover)}
+.card-hd .stag.define{background:var(--define)} .card-hd .stag.ideate{background:var(--ideate)} .card-hd .stag.shape{background:var(--shape)}
+.card-titles{flex:1;min-width:200px}
+.card-titles h3{font-size:18px;font-weight:700;margin-bottom:2px}
+.card-titles .meta{font-size:12px;color:var(--ink3)}
+.badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.badge{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600;white-space:nowrap}
+.badge.draft{background:#fef3c7;color:#92400e}
+.badge.final{background:#d1fae5;color:#065f46}
+.badge.gap{background:#fee2e2;color:#991b1b}
+.badge.rev{background:var(--line2);color:var(--ink2)}
+.badge.kind{background:#e0e7ff;color:#3730a3}
+.summary{color:var(--ink2);font-size:14.5px;margin-bottom:14px;padding:12px 16px;background:var(--line2);border-radius:6px;border-left:3px solid var(--line)}
+.highlight{background:linear-gradient(90deg,#fffbeb,#fef3c7);border-left:3px solid var(--ideate);padding:12px 16px;border-radius:6px;font-size:14px;margin:14px 0}
+.highlight::before{content:"🎯 关键判断  ";font-weight:700;color:#92400e;font-size:12px}
+.highlight .body{color:var(--ink)}
+.kp-title{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:600;margin-bottom:8px}
+.kp-list{list-style:none}
+.kp-list li{padding:8px 0 8px 24px;position:relative;border-bottom:1px dashed var(--line2);font-size:14px}
+.kp-list li:last-child{border-bottom:none}
+.kp-list li::before{content:"▸";position:absolute;left:6px;color:var(--shape);font-weight:700}
+.kp-list li b{color:var(--ink)}
+
+/* experiment table */
+.exp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:8px}
+.exp-card{background:var(--line2);border-radius:8px;padding:16px;border:1px solid var(--line)}
+.exp-card .eh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.exp-card .eid{font-weight:700;font-size:14px;color:var(--ink)}
+.exp-card .elvl{font-size:10px;padding:2px 7px;border-radius:3px;font-weight:700}
+.exp-card .elvl.L4{background:#dbeafe;color:#1e40af}
+.exp-card .elvl.L5{background:#fef3c7;color:#92400e}
+.exp-card .et{font-size:13px;font-weight:600;margin-bottom:8px}
+.exp-card .eassump{font-size:11px;color:var(--ink3);margin-bottom:10px}
+.exp-th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.exp-th.pp{color:#065f46} .exp-th.kk{color:#991b1b}
+.exp-body{font-size:12.5px;padding:5px 0}
+
+/* concept matrix */
+.concept-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:10px}
+.concept-box{background:var(--line2);border-radius:8px;padding:14px;border-left:3px solid var(--sel)}
+.concept-box .cid{font-weight:700;color:var(--sel);font-size:13px}
+.concept-box .cd{font-size:13px;margin:4px 0}
+.concept-box .coa{font-size:11px;color:var(--ink3)}
+
+.achilles-bar{margin-top:16px;padding:14px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px}
+.achilles-bar .ab-t{font-size:13px;font-weight:600;color:#991b1b;margin-bottom:8px}
+.progress{height:8px;background:#fee2e2;border-radius:4px;overflow:hidden}
+.progress .fill{height:100%;background:var(--kill);width:0%}
+.achilles-stat{font-size:12px;color:#991b1b;margin-top:6px}
+
+details{margin-top:12px;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+details summary{padding:10px 14px;background:var(--line2);cursor:pointer;font-size:13px;font-weight:600;color:var(--ink2);list-style:none}
+details summary::after{content:"▾";float:right;transition:.2s}
+details[open] summary::after{transform:rotate(180deg)}
+details .det-body{padding:14px;font-size:13px;color:var(--ink2)}
+
+.note{font-size:12px;color:var(--ink3);margin-top:18px;padding:12px;background:#fffbeb;border:1px dashed #fcd34d;border-radius:6px}
+
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0;padding:20px}.concept-grid,.exp-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="brand">
+    <h1>hardso</h1>
+    <div class="sub">BeWater 项目阅读站 · BR-001</div>
+  </div>
+  <div class="grp">
+    <div class="grp-h"><span class="dot" style="background:var(--immersion)"></span>Immersion</div>
+    <a href="#art-001">项目章程 ART-001</a>
+    <a href="#art-002">初步评估 ART-002</a>
+  </div>
+  <div class="grp">
+    <div class="grp-h"><span class="dot" style="background:var(--discover)"></span>Discover</div>
+    <a href="#art-003">发现期研究 ART-003<span class="badge-mini old">r2</span></a>
+  </div>
+  <div class="grp">
+    <div class="grp-h"><span class="dot" style="background:var(--define)"></span>Define</div>
+    <a href="#art-004">Insight 组合 ART-004</a>
+    <a href="#art-005">方向假设 ART-005</a>
+    <a href="#art-006">锁定策略 ART-006</a>
+    <a href="#art-007">机会组合 ART-007</a>
+  </div>
+  <div class="grp">
+    <div class="grp-h"><span class="dot" style="background:var(--ideate)"></span>Ideate</div>
+    <a href="#art-008">Idea Pool ART-008</a>
+    <a href="#art-009">Concept 组合 ART-009</a>
+  </div>
+  <div class="grp">
+    <div class="grp-h"><span class="dot" style="background:var(--shape)"></span>Shape</div>
+    <a href="#art-010">Solution ART-010</a>
+    <a href="#art-011">投资叙事 ART-011</a>
+    <a href="#experiments">9 个实验 EXP-001~009</a>
+  </div>
+  <div class="grp">
+    <div class="grp-h"><span class="dot" style="background:#4a5568"></span>状态</div>
+    <a href="#dashboard">↑ 回到仪表盘</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="anch">
+  <div class="dashboard">
+    <h2>hardso — Evidence Before Irreversibility</h2>
+    <div class="lead">AI 硬件 founder 不可逆投入前的反证决策闭环 · BeWater 决策段（Immersion → G2）</div>
+    <div class="kpis">
+      <div class="kpi"><div class="v ok">4</div><div class="l">Selected Concepts</div></div>
+      <div class="kpi"><div class="v">1</div><div class="l">Solution (draft)</div></div>
+      <div class="kpi"><div class="v warn">0/9</div><div class="l">Achilles L4 证据</div></div>
+      <div class="kpi"><div class="v bad">0</div><div class="l">一手财务数据</div></div>
+      <div class="kpi"><div class="v warn">4</div><div class="l">G1 Open Conditions</div></div>
+      <div class="kpi"><div class="v bad">未指定</div><div class="l">G2 决策人</div></div>
+    </div>
+    <div class="pipeline">
+      <span class="pipe-node immersion">Immersion</span><span class="pipe-sep">→</span>
+      <span class="pipe-node discover">Discover</span><span class="pipe-sep">→</span>
+      <span class="pipe-node define">Define</span><span class="pipe-sep">→</span>
+      <span class="pipe-node gate">G1 ⚠️</span><span class="pipe-sep">→</span>
+      <span class="pipe-node ideate">Ideate</span><span class="pipe-sep">→</span>
+      <span class="pipe-node shape">Shape</span><span class="pipe-sep">→</span>
+      <span class="pipe-node gate">G2</span>
+    </div>
+    <div class="g1-banner">
+      ⚠️ <b>G1 = Conditional Go（非 validated baseline）</b>，带 4 个 open condition（C-001~C-004）。C-004 要求 9 条 Achilles 的 L4 行为证据，当前 0/9。Shape 产物均 draft，未满足 G2 readiness。
+    </div>
+  </div>
+  <div class="note">
+    📌 本页是<b>提炼阅读视图</b>，每个工件只展示核心要点与关键判断；完整字段见 <code>_bewater-output/</code> 下原文件。
+    每个工件只显示<b>最新 revision</b>（旧版 r1 在原文件中保留为 append-only 链）。
+  </div>
+</section>
+
+<!-- ============ IMMERSION ============ -->
+<section id="art-001" class="card anch">
+  <div class="card-hd">
+    <div class="stag immersion"></div>
+    <div class="card-titles">
+      <h3>项目章程</h3>
+      <div class="meta">ART-001 · charter · immersion</div>
+    </div>
+    <div class="badges"><span class="badge draft">draft</span><span class="badge rev">r1</span></div>
+  </div>
+  <div class="summary">把 BeWater 方法论具象化为 Agent 驱动的 SaaS「hardso」，服务 AI 硬件 founder 跑完立项前战略决策段（Immersion→G2）。目标用户是凭感觉抄竞品、战略能力弱、预算紧的 AI 硬件 founder，收入路径为 B2B2C（机构为 cohort 付费）。</div>
+  <div class="kp-title">核心要点</div>
+  <ul class="kp-list">
+    <li><b>命题</b>：AI agent 主导带 founder 跑完全决策段，founder 只在 gate 上做决策</li>
+    <li><b>目标用户</b>：AI 硬件 founder（如儿童机器人 founder），战略能力弱、没能力做市场验证</li>
+    <li><b>Magic</b>：把「立项前先想明白」从专业咨询才买得起变成 founder 自己跑得起</li>
+    <li><b>Money</b>：B2B2C——孵化器/加速器/VC/硬件平台为 founder cohort 付费</li>
+    <li><b>Tension</b>：agent 产出质量若守不住 gate 严谨性，Magic 与 Money 同时崩</li>
+    <li><b>5 条根假设</b> A-001~A-005：founder 真需要、卡点是能力缺、agent 可过 gate、机构愿付费、渠道能触达</li>
+  </ul>
+  <div class="highlight"><span class="body">先用 AI 硬件首垂直 cohort 把 G1→G2 决策段跑通、证明 agent 产出可过 gate，再谈规模化与渠道铺开。</span></div>
+</section>
+
+<section id="art-002" class="card anch">
+  <div class="card-hd">
+    <div class="stag immersion"></div>
+    <div class="card-titles">
+      <h3>初步评估</h3>
+      <div class="meta">ART-002 · initial-assessment · immersion</div>
+    </div>
+    <div class="badges"><span class="badge draft">draft</span><span class="badge rev">r1</span></div>
+  </div>
+  <div class="summary">对 hardso 命题做源有界的前置评估（非 Gate、非验证）：痛点真实且与 42% 创业失败（无市场需要）数据吻合，B2B2C 渠道结构存在。最大未知不是「founder 缺方法」，而是 agent 能否为战略弱 founder 守住 gate 严谨性，以及机构是否愿为结果付费。</div>
+  <div class="kp-title">核心要点</div>
+  <ul class="kp-list">
+    <li>命题可信但关键支撑点全是 belief 非 fact，值得继续探索</li>
+    <li><b>最大分叉</b>：founder 是被「没能力」卡住，还是被「没意识/没意愿」卡住</li>
+    <li><b>Agent 产出质量（A-003）</b>是 Magic 与 Money 共同的单点失败</li>
+    <li>B2B2C 渠道同时是 GTM 与 L4 行为证据来源（同一 pilot 验证两件事）</li>
+    <li>优先方向：在一个机构 cohort 内证明 agent 产出能过 G1/G2 gate</li>
+  </ul>
+  <div class="highlight"><span class="body">在真实的立项决策现场，founder 究竟是被「没能力」卡住、还是被「没意识/没意愿」卡住——这一分叉决定 hardso 是工具还是教育/激励产品。</span></div>
+</section>
+
+<!-- ============ DISCOVER ============ -->
+<section id="art-003" class="card anch">
+  <div class="card-hd">
+    <div class="stag discover"></div>
+    <div class="card-titles">
+      <h3>发现期研究</h3>
+      <div class="meta">ART-003 · research · discover</div>
+    </div>
+    <div class="badges"><span class="badge draft">draft</span><span class="badge rev">r2</span><span class="badge-mini old" style="background:#e2e8f0;color:#718096;padding:1px 5px;border-radius:3px;font-size:10px">旧 r1 已弃</span></div>
+  </div>
+  <div class="summary">Discover Sprint 1 用 14 条原子证据（创业行为/Agent 评测/平台规则/项目评估）重构了关键不确定性。capability-vs-willingness 二分被反证为多机制结构（优先级/身份/样本/硬件阶段），B2B2C 仍是候选但采购证据缺失，明确进入 synthesize 而非再做 desk research。</div>
+  <div class="kp-title">核心要点</div>
+  <ul class="kp-list">
+    <li><b>「能力 vs 意愿」二分不成立</b>——至少四类机制共同决定 founder 是否验证</li>
+    <li>硬件关键不是「是否先 build」，而是 <b>build 是否仍可逆、反证能否在不可逆量产前改变方向</b></li>
+    <li>Agent 质量需分层评测（协议/状态/重复可靠性/整体采用/修复成本），不能以文档完成率代理</li>
+    <li>机构愿为相邻项目投入，但<b>补贴/入选 ≠ 使用</b>（40% 软件 voucher 未兑换）</li>
+    <li>下一步进入 synthesize；不再做公开 desk research，需现场/cohort/机构访谈</li>
+  </ul>
+  <div class="highlight"><span class="body">hardso 的核心不是「替 founder 填完一套方法」，而是「在不可逆投入前制造真实承诺、正确样本、反证采纳和可审计决策变化的系统」。</span></div>
+</section>
+
+<!-- ============ DEFINE ============ -->
+<section id="art-004" class="card anch">
+  <div class="card-hd">
+    <div class="stag define"></div>
+    <div class="card-titles">
+      <h3>签署的 Insight 组合</h3>
+      <div class="meta">ART-004 · insights · define</div>
+    </div>
+    <div class="badges"><span class="badge final">final</span><span class="badge rev">r2</span></div>
+  </div>
+  <div class="summary">从 ART-003 提炼并经人签署（F/P/E/T）的 4 条互补 Insight，分别覆盖 founder 行为机制、硬件可逆性边界、Agent 质量条件、机构渠道条件。Truth 判断在有显式证据缺口处保持 provisional。</div>
+  <div class="kp-title">4 条 Insight（互补）</div>
+  <ul class="kp-list">
+    <li><b>Insight 1 · 反证权力</b>：真正的验证是让反证有权在不可逆投入前停止、收窄或改变承诺，而非完成步骤</li>
+    <li><b>Insight 2 · 硬件可逆性</b>：硬件最危险的不是「先做」，而是把可逆原型过早变成不可逆承诺；验证保护可逆性</li>
+    <li><b>Insight 3 · Agent 质量</b>：Agent 真正的价值不是隐藏复杂性，而是让未完成判断、偏航与修复成本变得可见</li>
+    <li><b>Insight 4 · 渠道基础设施</b>：机构渠道只有承接时间承诺、公开进度、人工追问与退出后果，才成为行为基础设施</li>
+  </ul>
+  <div class="highlight"><span class="body">反证只有拥有改变承诺的权力，才算真正的验证——这是 hardso 整条价值链的因果核心。</span></div>
+</section>
+
+<section id="art-005" class="card anch">
+  <div class="card-hd">
+    <div class="stag define"></div>
+    <div class="card-titles">
+      <h3>方向假设组合</h3>
+      <div class="meta">ART-005 · directional-hypothesis · define</div>
+    </div>
+    <div class="badges"><span class="badge draft">draft</span><span class="badge rev">r2</span></div>
+  </div>
+  <div class="summary">记录产品负责人对 Candidate 1「Evidence Has Authority」的关闭，候选 2/3 保留为未关闭替代方案。让 cohort workflow 显式承诺时间、正确样本、可见反证与人工审核的停止/收窄/pivot，把验证从文档变成决策机制。仍是假设，非锁定策略或 Gate 决策。</div>
+  <div class="kp-title">三个候选</div>
+  <ul class="kp-list">
+    <li><b>✅ Candidate 1「Evidence Has Authority」(已关闭)</b>：cohort 显式承诺停止规则 + 正确样本 + 可见反证 + 人工审核</li>
+    <li>Candidate 2「Reversible Hardware First」：围绕可逆原型与不可逆承诺边界组织流程（未关闭）</li>
+    <li>Candidate 3「Visible Agent, Accountable Institution」：Agent + 重复评测 + cohort accountability + 结果遥测（未关闭）</li>
+  </ul>
+  <div class="highlight"><span class="body">通过让 cohort workflow 要求显式时间承诺、正确样本证据、可见反证与人工审核的停止/收窄/pivot 决策，把验证从文档练习变成反证可推翻身份与沉没成本的决策机制。</span></div>
+</section>
+
+<section id="art-006" class="card anch">
+  <div class="card-hd">
+    <div class="stag define"></div>
+    <div class="card-titles">
+      <h3>锁定策略：Evidence Before Irreversibility</h3>
+      <div class="meta">ART-006 · strategy-statement · define</div>
+    </div>
+    <div class="badges"><span class="badge final">final</span><span class="badge rev">r2</span></div>
+  </div>
+  <div class="summary">产品负责人锁定的策略：只服务 AI 硬件 founder 在不可逆投入前的决策窗口，把「反证能否改变承诺」设为流程核心。用 cohort accountability、正确样本、可逆性阈值与人类 Gate 审核替代模板完成率与「先做再说」。</div>
+  <div class="kp-title">Choice cuts（不做什么）</div>
+  <ul class="kp-list">
+    <li>聚焦 <b>AI 硬件首垂直</b>，不以所有 founder 为第一阶段目标</li>
+    <li><b>不做</b> founder 自助文档或泛化教育产品</li>
+    <li><b>不以</b>流程完成率或满意度为核心成功指标</li>
+  </ul>
+  <div class="highlight"><span class="body">把「反证能否改变承诺」设为流程核心，用 cohort accountability、正确样本、可逆性阈值和人类 Gate 审核，替代模板完成率与「先做再说」。</span></div>
+</section>
+
+<section id="art-007" class="card anch">
+  <div class="card-hd">
+    <div class="stag define"></div>
+    <div class="card-titles">
+      <h3>确认的机会组合</h3>
+      <div class="meta">ART-007 · opportunity · define</div>
+    </div>
+    <div class="badges"><span class="badge final">final</span><span class="badge rev">r2</span></div>
+  </div>
+  <div class="summary">产品负责人确认了 3 个 Opportunity Area，覆盖承诺前判断边界、可逆行动边界、cohort 运营边界。三者 ID 在下游 Idea Pool 中保持稳定。</div>
+  <div class="kp-title">3 个 Opportunity Area</div>
+  <ul class="kp-list">
+    <li><b>OA-001 Counter-Evidence Readiness</b>：帮 founder 在承诺前识别关键反证、定义正确样本与停止/收窄/转向阈值</li>
+    <li><b>OA-002 Evidence-Making Prototypes</b>：帮 founder 设计可逆、样本正确、问题导向的最小证据行动，区分证据工具与不可逆承诺</li>
+    <li><b>OA-003 Accountable Decision Gates</b>：把 Agent 推进、人工追问、时间承诺、公开里程碑与 Gate 决策连成反证可被采纳的 cohort 基础设施</li>
+  </ul>
+  <div class="highlight"><span class="body">三个边界共同构成反证权力系统：承诺前判断（OA-001）+ 可逆证据行动（OA-002）+ 可问责的 cohort 决策基础设施（OA-003）。</span></div>
+</section>
+
+<!-- ============ IDEATE ============ -->
+<section id="art-008" class="card anch">
+  <div class="card-hd">
+    <div class="stag ideate"></div>
+    <div class="card-titles">
+      <h3>Idea Pool（种子池）</h3>
+      <div class="meta">ART-008 · idea-pool · ideate</div>
+    </div>
+    <div class="badges"><span class="badge draft">draft</span><span class="badge rev">r1</span></div>
+  </div>
+  <div class="summary">分支全局 Idea Pool，按 3 个 OA 收录 ~39 条 Idea Seed（CS-001~CS-045），每条带 strategy_filter 与 shortlist 决策。已对每个 OA 做 shortlist 淘汰（eliminated）并保留 recommended 种子进入 Concept 发育。</div>
+  <div class="kp-title">种子分布（淘汰制 shortlist）</div>
+  <ul class="kp-list">
+    <li><b>OA-001</b>：12 条保留（CS-001~011, CS-013），淘汰 CS-012/014/015</li>
+    <li><b>OA-002</b>：13 条保留（CS-016~029），淘汰 CS-018/030（归并）</li>
+    <li><b>OA-003</b>：14 条保留（CS-031~043, CS-045），淘汰 CS-044</li>
+    <li>淘汰理由多为 off-strategy、归并到更优种子或低优先级执行细节</li>
+  </ul>
+  <div class="highlight"><span class="body">39 条种子按 OA 分布（12/13/14），每条已过 strategy_filter 并完成 shortlist 淘汰决策，等待发育成 Concept。</span></div>
+</section>
+
+<section id="art-009" class="card anch">
+  <div class="card-hd">
+    <div class="stag ideate"></div>
+    <div class="card-titles">
+      <h3>Concept 组合</h3>
+      <div class="meta">ART-009 · concept-portfolio · ideate</div>
+    </div>
+    <div class="badges"><span class="badge final">final</span><span class="badge rev">r2</span></div>
+  </div>
+  <div class="summary">把 ART-008 全部人类确认种子发育成 <b>39 个 Concept</b>（OA-001 12 / OA-002 13 / OA-003 14）。产品负责人选定 <b>4 个 Concept</b> 进入 Shape（CI-002/CI-015/CI-029/CI-033），其余 35 个保留为已发育未选中（未 kill，可经 backtrack 回流）。</div>
+
+  <div class="kp-title">✅ 选定的 4 个 Concept（进入 Shape）</div>
+  <div class="concept-grid">
+    <div class="concept-box">
+      <div class="cid">CI-002 · OA-001</div>
+      <div class="cd"><b>反证 if-then 停止规则</b>：为每个假设事前承诺「观察到 X 就停/收窄/pivot」，Define 期绑定</div>
+      <div class="coa">Magic 核心 · 反证权力</div>
+    </div>
+    <div class="concept-box">
+      <div class="cid">CI-015 · OA-002</div>
+      <div class="cd"><b>原型证据充分性判据</b>：三类证据（承诺/支付/技术降本）+ 样本正确性双门</div>
+      <div class="coa">桥接 · 证据质量</div>
+    </div>
+    <div class="concept-box">
+      <div class="cid">CI-029 · OA-003</div>
+      <div class="cd"><b>Gate 前公开承诺制度</b>：公开陈述下一步+成功标准+反证触发器，事后对照</div>
+      <div class="coa">Money · accountability</div>
+    </div>
+    <div class="concept-box">
+      <div class="cid">CI-033 · OA-003</div>
+      <div class="cd"><b>Gate 状态卡</b>：Agent 自动维护阶段+未满足判据，抵御机构催推进压力</div>
+      <div class="coa">流程完整性 · 抗压力</div>
+    </div>
+  </div>
+
+  <div class="kp-title" style="margin-top:18px">未选 35 个 Concept 的 AI 推荐动作</div>
+  <ul class="kp-list">
+    <li><b style="color:var(--sel)">refine</b>（17 个）：候选保留发育</li>
+    <li><b style="color:var(--merge)">merge</b>（13 个）：CI-006/008/010/021/022/024/025/026/027/030/031/034/036 并入更强 concept</li>
+    <li><b style="color:var(--kill)">kill</b>（4 个）：CI-009/016/019/032 机制独立性弱/不可测</li>
+    <li><b style="color:var(--recycle)">recycle-to-OA</b>（5 个）：CI-007/011/012/023 等应属 OA-003 cohort 设施</li>
+  </ul>
+  <div class="highlight"><span class="body">4 个 selected Concept 覆盖反证权力、证据质量、机构 accountability 与流程完整性四个互补主线，是 Ideate 唯一收敛刀。</span></div>
+</section>
+
+<!-- ============ SHAPE ============ -->
+<section id="art-010" class="card anch">
+  <div class="card-hd">
+    <div class="stag shape"></div>
+    <div class="card-titles">
+      <h3>Solution：hardso</h3>
+      <div class="meta">ART-010 · solution · shape · hybridize(CI-002/015/029/033)</div>
+    </div>
+    <div class="badges"><span class="badge draft">draft</span><span class="badge gap">6 content_gaps</span><span class="badge rev">r1</span></div>
+  </div>
+  <div class="summary">hybridize Solution，把 4 个 selected Concept 融合为一个 Agent-native、cohort 级反证决策平台「hardso — Evidence Before Irreversibility」。四机制绑定到 BeWater Gate 节奏：Define 绑停止规则 → Shape 证据充分性 → Gate 前公开承诺 → 全周期状态卡保护。仍是 draft，<b>9/9 Achilles 未解决、无一手财务、无实验记录，不满足 G2 readiness</b>。</div>
+
+  <div class="kp-title">四机制闭环</div>
+  <ul class="kp-list">
+    <li><b>CI-002</b>（Define）绑停止规则 + <b>CI-015</b>（Shape）证据充分性 + <b>CI-029</b>（Gate 前）公开承诺 + <b>CI-033</b>（全周期）状态卡保护</li>
+    <li><b>Magic</b>：founder 在硬件承诺锁定前仍能根据反证停止/收窄/pivot</li>
+    <li><b>Money</b>：机构为可观察的证据采纳+决策变化+Agent 质量付费（非满意度）</li>
+    <li><b>Right to win</b>：竞品卖完成率，hardso 卖<b>决策变化</b>（BeWater 方法论契约化）</li>
+    <li><b>实现</b>：P0 单 cohort 试点（5-8 founder，Month 0-3）→ P1 复制 3-5 cohort + Agent 质量标准化</li>
+  </ul>
+
+  <div class="achilles-bar">
+    <div class="ab-t">⚠️ Achilles L4 证据进度</div>
+    <div class="progress"><div class="fill" style="width:0%"></div></div>
+    <div class="achilles-stat"><b>0/9 解决</b> · A-001/003/004/006/007/008/009/010/011 全部 open · experiment_refs 为空</div>
+  </div>
+
+  <div class="highlight"><span class="body">hardso 不是文档工具，而是让反证在不可逆硬件投入前拥有改变承诺权力的决策基础设施。</span></div>
+</section>
+
+<section id="art-011" class="card anch">
+  <div class="card-hd">
+    <div class="stag shape"></div>
+    <div class="card-titles">
+      <h3>投资叙事（结构草稿）</h3>
+      <div class="meta">ART-011 · investment-narrative · shape</div>
+    </div>
+    <div class="badges"><span class="badge draft">draft</span><span class="badge gap">8 个 [GAP]</span><span class="badge rev">r1</span></div>
+  </div>
+  <div class="summary">六部分投资叙事的结构草稿——引用的 Solution ART-010 未 validated（0/9 Achilles 解决、无一手财务），因此每个无支撑 claim 标注 [GAP] 而非编造数字。呈现 Brief/Opportunity/Solution/Why big/Financial Case/Roadmap 骨架，但不满足 G2 readiness。</div>
+  <div class="kp-title">六部分摘要</div>
+  <ul class="kp-list">
+    <li><b>Brief</b>：四机制合一的 cohort 级反证决策平台，机构为决策变化付费</li>
+    <li><b>Opportunity</b>：Magic 痛点=反证没有改变承诺的权力；Money 仅有 stated WTP ≠ 采购证据</li>
+    <li><b>Solution</b>：呈现 ART-010 五个 canonical 块</li>
+    <li><b>Why big</b>：差异化在「卖决策变化」vs 竞品「卖完成率」</li>
+    <li><b>Financial Case</b>：<span style="color:var(--gap)">全部 unsourced 假设，scenarios 全空</span>，客单价/续约/CAC/单位经济待采集</li>
+  </ul>
+  <div class="highlight"><span class="body">敏感性排序：机构付费意愿 A-004 > Agent 质量 A-003/A-011 > founder 反证采纳 A-001/A-006 > 人工成本 A-011。</span></div>
+</section>
+
+<!-- EXPERIMENTS -->
+<section id="experiments" class="card anch">
+  <div class="card-hd">
+    <div class="stag shape"></div>
+    <div class="card-titles">
+      <h3>9 个 Achilles 实验（EXP-001~009）</h3>
+      <div class="meta">experiment · shape · 全部 draft，阈值事前固定，待人类批准执行</div>
+    </div>
+    <div class="badges"><span class="badge draft">9× draft</span><span class="badge gap">0/9 已执行</span></div>
+  </div>
+  <div class="summary">为 9 条 Achilles 假设各设计一个 L4/L5 行为实验，阈值事前固定（Proceed/Kill/Inconclusive）。Kill/Proceed 是人类决策；全部 conclusion=null、signoffs=[]。L5 实验（EXP-003/008）要求真实付费证据，非 stated WTP。</div>
+
+  <div class="exp-grid">
+
+    <div class="exp-card">
+      <div class="eh"><span class="eid">EXP-001</span><span class="elvl L4">L4</span></div>
+      <div class="et">反证能否真正改变 founder 承诺</div>
+      <div class="eassump">A-001 · cohort 行为 pilot</div>
+      <div class="exp-th pp">Proceed</div><div class="exp-body">≥40% pilot founder 反证触发后实际执行停止/收窄/pivot</div>
+      <div class="exp-th kk">Kill</div><div class="exp-body">&lt;20% 执行行为变更</div>
+    </div>
+
+    <div class="exp-card">
+      <div class="eh"><span class="eid">EXP-002</span><span class="elvl L4">L4</span></div>
+      <div class="et">Agent 能否产出决策有效（非仅形式正确）</div>
+      <div class="eassump">A-003 · 专家盲评</div>
+      <div class="exp-th pp">Proceed</div><div class="exp-body">≥70% 盲评通过（决策有效）+ 修复成本 &lt; X</div>
+      <div class="exp-th kk">Kill</div><div class="exp-body">&lt;50% 通过，或修复成本 &gt; 纯交付 60%</div>
+    </div>
+
+    <div class="exp-card">
+      <div class="eh"><span class="eid">EXP-003</span><span class="elvl L5">L5</span></div>
+      <div class="et">机构是否真为 cohort 反证决策付费</div>
+      <div class="eassump">A-004 · 真实付费试点</div>
+      <div class="exp-th pp">Proceed</div><div class="exp-body">≥2 家真实付费签约，客单价覆盖交付成本</div>
+      <div class="exp-th kk">Kill</div><div class="exp-body">0 家付费，或仅 stated WTP</div>
+    </div>
+
+    <div class="exp-card">
+      <div class="eh"><span class="eid">EXP-004</span><span class="elvl L4">L4</span></div>
+      <div class="et">founder 是否真投入时间定义反证</div>
+      <div class="eassump">A-006 · cohort 行为遥测</div>
+      <div class="exp-th pp">Proceed</div><div class="exp-body">≥60% 达时间下限 + 其中 ≥40% 行为变更</div>
+      <div class="exp-th kk">Kill</div><div class="exp-body">&lt;30% 达时间下限，或达标者中 &lt;20% 变更</div>
+    </div>
+
+    <div class="exp-card">
+      <div class="eh"><span class="eid">EXP-005</span><span class="elvl L4">L4</span></div>
+      <div class="et">Agent 能否持续暴露未完成判断</div>
+      <div class="eassump">A-007 · ground-truth 双盲</div>
+      <div class="exp-th pp">Proceed</div><div class="exp-body">recall ≥0.7 且 precision ≥0.7</div>
+      <div class="exp-th kk">Kill</div><div class="exp-body">recall &lt;0.4 或 precision &lt;0.4</div>
+    </div>
+
+    <div class="exp-card">
+      <div class="eh"><span class="eid">EXP-006</span><span class="elvl L4">L4</span></div>
+      <div class="et">能否用可逆原型拿到样本正确证据并改方向</div>
+      <div class="eassump">A-008 · cohort + 独立审计</div>
+      <div class="exp-th pp">Proceed</div><div class="exp-body">≥60% 样本正确 + 其中 ≥40% 改方向</div>
+      <div class="exp-th kk">Kill</div><div class="exp-body">&lt;30% 样本正确，或 &lt;20% 改方向</div>
+    </div>
+
+    <div class="exp-card">
+      <div class="eh"><span class="eid">EXP-007</span><span class="elvl L4">L4</span></div>
+      <div class="et">accountability 提升反证采纳（非文档率）</div>
+      <div class="eassump">A-009 · A/B 对照</div>
+      <div class="exp-th pp">Proceed</div><div class="exp-body">决策改变率差 ≥20pp 且文档率差 &lt;10pp</div>
+      <div class="exp-th kk">Kill</div><div class="exp-body">决策改变率差 &lt;5pp，或文档率差反超</div>
+    </div>
+
+    <div class="exp-card">
+      <div class="eh"><span class="eid">EXP-008</span><span class="elvl L5">L5</span></div>
+      <div class="et">机构愿付费且接受非满意度指标</div>
+      <div class="eassump">A-010 · 机构合同</div>
+      <div class="exp-th pp">Proceed</div><div class="exp-body">≥2 家签约且合同接受非满意度指标</div>
+      <div class="exp-th kk">Kill</div><div class="exp-body">0 家接受非满意度指标</div>
+    </div>
+
+    <div class="exp-card">
+      <div class="eh"><span class="eid">EXP-009</span><span class="elvl L4">L4</span></div>
+      <div class="et">Agent 质量可重复 + 人工成本不吞噬商业</div>
+      <div class="eassump">A-011 · 重复运行 + 成本计量</div>
+      <div class="exp-th pp">Proceed</div><div class="exp-body">≥3 次运行通过率标准差 ≤10pp + 修复成本 &lt;40%</div>
+      <div class="exp-th kk">Kill</div><div class="exp-body">标准差 &gt;20pp，或修复成本 &gt;60%</div>
+    </div>
+
+  </div>
+
+  <details>
+    <summary>实验间互补关系（为什么是 9 个不是 1 个）</summary>
+    <div class="det-body">
+      <p style="margin-bottom:8px"><b>EXP-001 vs EXP-004</b>：触发后行为变更 vs 触发前时间投入（A-001 的两个维度）</p>
+      <p style="margin-bottom:8px"><b>EXP-002 vs EXP-005 vs EXP-009</b>：单次产出质量 vs 暴露缺口能力 vs 可重复+经济性（Agent 质量三维度）</p>
+      <p style="margin-bottom:8px"><b>EXP-003 vs EXP-008</b>：付费意愿 vs 接受非满意度指标治理（机构侧两层，后者更难）</p>
+      <p><b>EXP-006 vs EXP-007</b>：单 founder 可逆原型 vs cohort accountability 因果（硬件可逆性 + 渠道条件）</p>
+    </div>
+  </details>
+</section>
+
+<div class="note" style="margin-top:32px">
+  📋 <b>阅读指引</b>：左侧导航按 BeWater 管道分组；每个卡片只展示提炼要点；带 <span class="badge gap" style="display:inline-block">gap</span> 标记的工件有未解决缺口；完整原文见 <code>_bewater-output/</code>。<br>
+  生成于 2026-08-12 · BR-001 · 基于 ART-001~011 + EXP-001~009 最新 revision。
+</div>
+
+</main>
+</div>
+
+<script>
+// active link on scroll
+const links = document.querySelectorAll('.sidebar a');
+const secs = document.querySelectorAll('.anch');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  secs.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 80) cur = s.id;
+  });
+  links.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+  });
+});
+</script>
+</body>
+</html>

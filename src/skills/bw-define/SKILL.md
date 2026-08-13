@@ -21,7 +21,9 @@ refines them into an innovation strategy and opportunity areas before G1.
   initial judgment?
 - If no current insights are signed, route first to **bw-insight-craft**. If insights exist but no
   directional hypothesis is closed, route to **bw-directional-hypothesis**. Otherwise route to the
-  remaining Define capabilities (see `references/stage.md`); when the subject is G1-ready or a
+  remaining Define capabilities (see `references/stage.md`). If the G1 inventory or Achilles review
+  is incomplete, route to **bw-assumption-map** even when Research projected zero assumptions.
+  When the subject is G1-ready or a
   deadline has fallen, route to **bw-strategy-gate**. Present the choice and stop when ambiguous.
 
 Define completes at the G1 gate decision. Use `../_bw-shared/gate-criteria.md`.

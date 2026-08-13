@@ -203,6 +203,18 @@ def test_active_eval_manifests_do_not_reference_bw_start():
     assert references == []
 
 
+def test_active_eval_manifests_do_not_reference_removed_skills():
+    manifests = [
+        *REPO.glob("evals/*/scenarios/*.yaml"),
+        *REPO.glob("evals/*/red/*.yaml"),
+        *REPO.glob("evals/*/live/*.yaml"),
+    ]
+
+    for removed in ("bw-project-charter", "bw-initial-assessment"):
+        references = [path for path in manifests if removed in path.read_text()]
+        assert references == [], f"{removed} referenced in {references}"
+
+
 def test_run_scenario_applies_declared_fixture_overlay(tmp_path):
     repo = tmp_path / "repo"
     skill = repo / "src" / "skills" / "bw-resume"

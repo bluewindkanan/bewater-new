@@ -91,7 +91,15 @@ def _reference_exists(
     assumption_match = _ASSUMPTION_REF.match(ref)
     if assumption_match is not None:
         assumption = assumptions.get(assumption_match.group(1))
-        return assumption is not None and assumption.record_revision == int(assumption_match.group(2))
+        if assumption is None:
+            return False
+        revision = int(assumption_match.group(2))
+        if assumption.record_revision == revision:
+            return True
+        return any(
+            isinstance(snapshot, dict) and snapshot.get("record_revision") == revision
+            for snapshot in assumption.history
+        )
     return False
 
 

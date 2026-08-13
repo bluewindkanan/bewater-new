@@ -12,30 +12,29 @@ it does not produce insights or directional hypotheses.
 ## On invoke
 
 1. Confirm `current_stage: discover` on the selected branch.
-2. Read the current charter revision and active root assumptions as the formal Discover inputs. If
-   either is missing, stale, or ambiguous, report the input gap and route to `bw-project-charter`.
-   Never substitute an Assessment or invent a Discover Brief.
-3. Look for an `initial-assessment` on the same branch whose `derived_from` exactly matches the current
-   Charter revision plus the complete active root-assumption revision snapshot.
-4. Read a matching report as an advisory reference and translate only:
-   - **Candidate Insights** → candidate judgments to validate;
-   - **Core Conflict / Tension** → the priority challenge;
-   - **Most Promising Direction** → a candidate research path;
-   - **Key Risks** → disconfirming questions.
-5. Ignore a stale, cross-branch, or snapshot mismatch Assessment. Report a missing or ignored report
-   as an advisory gap; it does not block Discover when the formal inputs are complete.
-6. Report formal input revisions, advisory status, 4C coverage, Discover Plan state, research mode,
-   and outstanding evidence gaps. Use `AskUserQuestion` to present the next action choice:
+2. Read the current Charter revision as the only formal prerequisite and the sole member of the
+   formal Discover inputs. If it is missing, stale, or ambiguous, report the input gap and route to
+   `bw-immersion`.
+   Never substitute an `initial-assessment` or invent a Discover Brief.
+3. Report Assessment status only. Discover must not consume the Initial Assessment as Evidence and may
+   read a matching Assessment's `What to Inspect Next` only as candidate seed questions, never as Facts or
+   Evidence. Whether it is missing, current, or stale does not block Discover
+   and does not seed Research as Evidence, the Knowledge Base, assumptions, or Evidence.
+4. Resolve the current Research Plan for this branch and exact Charter revision. If the Research
+   Plan is missing or stale, route to `bw-discovery-research` in **Research Planning** mode. The
+   absence of assumptions is not an input gap and never routes back to Charter. Recommend Research Planning and stop.
+5. For a current Research Plan, report the formal input revision, Assessment status, 4C coverage,
+   Research Plan state, research mode, and outstanding evidence gaps. Use `AskUserQuestion` to
+   present the next action choice:
    `bw-discovery-research` (continue research) or, when research is at Insight Readiness,
    `bw-define` (enter Define stage to craft insights). Include a clear description of what each
    option does and the current state. Stop and wait for the user's selection; do not auto-route or
    proceed without explicit user direction.
 
-Assessment content never becomes a Fact, Evidence, Accepted Belief, or F/P/E/T Insight directly.
-It remains a candidate until Discover research supplies the required support. Discover does not
-create a Discover Brief and does not change the Assessment.
-
-Treat all Assessment claims as candidate beliefs or hypotheses, not as Facts.
+Assessment content is user-facing only and must not be consumed by Discover as Evidence. A matching
+Assessment's `What to Inspect Next` may seed candidate research questions only, each independently
+source-verified before promotion; `Material Risks` and the Assessment's judgments stay advisory and do
+not flow into Research. Discover does not create a Discover Brief and does not change the Assessment.
 
 Discover hands research evidence (4C coverage, documented gaps) to Define (`bw-define`), where
 insights are crafted and directional hypotheses are composed. Cite `../_bw-shared/gate-criteria.md`

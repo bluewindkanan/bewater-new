@@ -21,8 +21,11 @@ Each assumption is a record under `ledger.yaml:assumptions:` with `record_revisi
 `record_revision` (store prior snapshot in `history`) and the envelope `revision`. Write via
 `bwkit lock acquire` + `cas commit`. Field semantics: `../_bw-shared/ledger-schema.md`.
 
-G1 readiness requires an initial inventory with the Achilles-Heel quadrant identified
-(`../_bw-shared/gate-criteria.md`).
+G1 readiness requires a complete initial G1 inventory with the Achilles-Heel quadrant identified
+(`../_bw-shared/gate-criteria.md`). Research Planning may project zero assumptions or only the
+material uncertain starting beliefs it can justify. Here, revisit Research-derived roots and
+grandfathered Charter-derived roots, then add or confirm real strategy/opportunity risks. Never
+manufacture an assumption to meet the Gate criterion.
 
 ## Concept-layer assumptions
 

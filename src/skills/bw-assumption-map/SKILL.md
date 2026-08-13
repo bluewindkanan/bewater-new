@@ -5,12 +5,16 @@ description: Use when the user wants to map or revise assumptions, risk ordering
 
 # bw-assumption-map
 
-A **capability** that builds or revises the assumption ledger, identifies the Achilles-Heel
-quadrant, and stops before human reclassification signoff.
+A **capability** that completes or revises the G1 inventory in the assumption ledger, identifies
+the Achilles-Heel quadrant, and stops before human reclassification signoff. Research Planning's
+selective projection is only a starting point: accept both Research-derived roots and
+grandfathered Charter-derived roots, including a legitimate zero-projection Research Plan.
 
 ## Workflow
 
-1. Elicit assumptions; classify each by `category` (consumer/commercial/technical/
+1. Revisit any Research-derived or grandfathered Charter-derived roots, then elicit the remaining
+   real strategy and opportunity risks required to complete the G1 inventory. Never create a fake
+   assumption to satisfy readiness. Classify each by `category` (consumer/commercial/technical/
    distribution/regulatory) and plot on impact × uncertainty per
    `references/assumption-map.md`.
 2. Identify the Achilles-Heel quadrant (impact=high AND uncertainty=high) — these raise a

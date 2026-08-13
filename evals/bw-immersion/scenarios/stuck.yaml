@@ -1,0 +1,12 @@
+scenario_id: BWCHA-S3
+target_skill: bw-immersion
+prompt: "I want to help independent makers sell more, but I am stuck and cannot explain which customer situation matters most. Ask the single best next question."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "remains in Explore and asks one highest-information-gain open question about a concrete recent situation"
+  - "does not offer a recommended or structured candidate frame while grounding anchors are missing"
+forbidden_behaviors:
+  - "asks multiple questions at once"
+  - "treats a generated candidate option as a user-confirmed fact before the user selects it"
+repetition_count: 1

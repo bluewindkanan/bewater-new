@@ -13,7 +13,7 @@ delivery system.
 ```
 FIRST ACTION     → bw-immersion
 RESUME / global  → bw-resume       (read-only status and recovery routing)
-immersion        → bw-immersion    → bw-project-charter, bw-initial-assessment
+immersion        → bw-immersion    (produces Charter + Assessment, no sub-skills)
 discover         → bw-discover     → bw-discovery-research
 define           → bw-define       → bw-insight-craft, bw-directional-hypothesis,
                                      bw-strategy-statement, bw-opportunity-area, bw-assumption-map
@@ -38,6 +38,25 @@ Skills are authored under `src/skills/` and deployed under `.claude/skills/`. Sh
 contracts live under `.claude/skills/_bw-shared/`. Deployment initializes BeWater project state;
 the first workflow action is Immersion, while `bw-resume` may be used at any time afterward.
 
+## System Architecture
+
+```
+Methodology Layer    _bw-shared/ (contracts: lifecycle v2, ledger-schema v4, gate-criteria)
+     ↕
+Skill Layer          src/skills/ → .claude/skills/ (20 skills: routers, capabilities, gates)
+     ↕
+Runtime Layer        src/bw/ (oracle: schema, lifecycle, ledger_ops, gate_scan, validate)
+                      src/bwkit/ (helpers: cas, integrity, applier, init, lineage)
+     ↕
+State Layer          _bewater/ (config.yaml, ledger.yaml, conditions.yaml, evidence.yaml)
+     ↕
+Output Layer         _bewater-output/ (ART-NNN-r{n}.md artifacts)
+     ↕
+Eval Layer           evals/ (scenarios, harness, fixtures)
+```
+
+**Key contracts:** lifecycle (OA/CS/CI → Solution), ledger-schema (A-NNN@rev, typed refs)
+
 ## Commands
 
 ```bash
@@ -46,12 +65,18 @@ python -m bwkit cas commit <path> --expected <rev>
 python -m bwkit plan apply <root> < plan.json
 python -m bwkit check integrity
 echo '{"edges":[...], "roots":[...]}' | python -m bwkit scan impact
+
+# bw CLI
+python -m bw ledger add/update/validate/trace/backtrack/baseline
+python -m bw validate <project>
+python -m bw hash <artifact> [--refresh-deps|--stale]
+python -m bw gate-scan <gate> <project> [--subject <solution-branch>]
 ```
 
 ## Design Principles
 
 - **Minimal by default**: every element must justify its existence. One responsibility per phase/role/artifact. If one sentence suffices, don't write two. If one skill can do it, don't create two.
-- **English-first**: BeWater methodology design resources and documents — skill content (SKILL.md), references, templates, and design specs — are written in full English; other languages derive from English, never the reverse. User-facing project artifacts (Charter, Assessment, etc.) preserve the user's own language.
+- **English-first**: BeWater methodology design resources and documents — skill content (SKILL.md), references, templates, and design specs — are written in full English; other languages derive from English, never the reverse. User-facing project artifacts under `_bewater-output/` (Charter, Assessment, etc.) follow the language the user actually interacts in during the session.
 
 ## Rules
 

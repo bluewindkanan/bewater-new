@@ -59,7 +59,7 @@ def _workflow_text() -> str:
 
 
 def _plan_text() -> str:
-    return (skill_dir(REPO, SKILL) / "references" / "discover-plan.md").read_text().lower()
+    return (skill_dir(REPO, SKILL) / "references" / "research-plan.md").read_text().lower()
 
 
 def _framework_text() -> str:
@@ -86,7 +86,6 @@ def test_discovery_research_starts_from_charter_challenge_and_strategic_uncertai
         "strategic uncertainties",
         "future strategic choice",
         "current charter revision",
-        "active root assumptions",
         "same artifact id",
         "supersedes_ref",
         "derived_from",
@@ -105,8 +104,8 @@ def test_discovery_research_runs_an_adaptive_multi_sprint_loop():
     text = _skill_text()
     for token in [
         "orient",
-        "living learning agenda",
-        "latest research sprint",
+        "learning plan",
+        "sprint record",
         "sprint synthesis",
         "plan delta",
         "continue",
@@ -118,7 +117,7 @@ def test_discovery_research_runs_an_adaptive_multi_sprint_loop():
         "contradiction",
         "belief change",
         "reframe",
-        "remaining uncertainty",
+        "remaining gap",
     ]:
         assert token in text, f"Adaptive Sprint loop missing {token!r}"
 
@@ -136,13 +135,15 @@ def test_discovery_research_distinguishes_stable_artifact_state_from_transient_e
     text = _skill_text()
     plan = _plan_text()
     for token in [
-        "research frame",
-        "living learning agenda",
+        "research objective",
+        "learning plan",
+        "research design",
+        "knowledge base index",
         "evidence references",
         "method limitations",
         "sprint synthesis",
         "insight ingredients",
-        "remaining uncertainty",
+        "remaining gap",
     ]:
         assert token in text, f"Stable artifact contract missing {token!r}"
     for transient in [
@@ -177,7 +178,13 @@ def test_discovery_research_reference_set_and_selective_toolkit_loading():
     root = skill_dir(REPO, SKILL)
     references = root / "references"
     markdown_refs = {path.name for path in references.glob("*.md")}
-    assert markdown_refs == {"4c-framework.md", "discover-plan.md", "method-bundles.md"}
+    assert markdown_refs == {
+        "4c-framework.md",
+        "method-bundles.md",
+        "persistence-plan.md",
+        "research-plan.md",
+        "root-assumption-projection.md",
+    }
     assert (references / "research-toolkit.csv").is_file()
 
     text = _skill_text()
@@ -259,7 +266,7 @@ def test_discovery_research_persists_reviewed_plan_before_execution():
     workflow = _workflow_text()
     markers = [
         "orient pass",
-        "draft or update the research frame",
+        "draft or update the research plan",
         "in-context self-review",
         "persist a reviewed research revision",
         "execute only the reviewed",
@@ -414,23 +421,31 @@ def test_discovery_research_does_not_require_a_three_facts_per_4c_quota():
     assert "coverage compass" in text
 
 
-def test_discover_plan_artifact_uses_the_adaptive_sprint_layout():
+def test_research_plan_artifact_uses_the_adaptive_sprint_layout():
     text = _plan_text()
     for token in [
-        "research frame",
-        "living learning agenda",
-        "latest research sprint — after execution only",
-        "sprint synthesis and plan delta — after execution only",
+        "research objective",
+        "learning plan",
+        "research design",
+        "knowledge base index",
+        "sprint record — after execution only",
+        "sprint synthesis — after execution only",
         "insight ingredients",
         "insight readiness",
-        "remaining uncertainty",
-        "revision 1 contains a reviewed research frame",
+        "revision 1 has exactly four core sections",
         "omit a section rather than add an empty placeholder",
     ]:
-        assert token in text, f"Discover Plan layout missing {token!r}"
+        assert token in text, f"Research Plan layout missing {token!r}"
+    for old_heading in [
+        "### research frame",
+        "### living learning agenda",
+        "### latest research sprint",
+        "### remaining uncertainty",
+    ]:
+        assert old_heading not in text, f"Research Plan retains old equivalent heading {old_heading!r}"
 
 
-def test_discover_plan_sprint_synthesis_captures_belief_change_and_reframe():
+def test_research_plan_sprint_synthesis_captures_belief_change_and_reframe():
     text = _plan_text()
     for token in [
         "learned",
@@ -446,7 +461,7 @@ def test_discover_plan_sprint_synthesis_captures_belief_change_and_reframe():
         assert token in text, f"Sprint synthesis contract missing {token!r}"
 
 
-def test_discover_plan_states_insight_readiness_conditions_without_a_gate():
+def test_research_plan_states_insight_readiness_conditions_without_a_gate():
     text = _plan_text()
     for token in [
         "insight readiness",
@@ -458,6 +473,78 @@ def test_discover_plan_states_insight_readiness_conditions_without_a_gate():
         "remaining uncertainty",
     ]:
         assert token in text, f"Insight Readiness contract missing {token!r}"
+
+
+def test_research_plan_separates_learning_intent_from_answer_state():
+    text = _plan_text()
+    for token in [
+        "lp-001",
+        "learning_objective",
+        "starting_state",
+        "starting_view",
+        "decision_relevance",
+        "lens",
+        "priority",
+        "ledger_ref",
+        "not-researched",
+        "partial",
+        "answered",
+        "dropped",
+        "gap-accepted",
+        "evidence_refs",
+        "current_answer",
+        "contradictions",
+        "remaining_gap",
+        "do not duplicate `answer_status` in the learning plan",
+    ]:
+        assert token in text, f"Research Plan state ownership missing {token!r}"
+
+
+def test_research_design_uses_bounded_next_sprint_missions():
+    text = _plan_text()
+    for token in [
+        "rm-001",
+        "learning plan refs",
+        "evidence needed",
+        "method/source bundle",
+        "exclusions",
+        "dependencies",
+        "owner",
+        "bounded budget",
+        "stop condition",
+        "expected output",
+        "limitation",
+        "fully plan only the next sprint",
+    ]:
+        assert token in text, f"Research Design mission contract missing {token!r}"
+
+
+def test_research_planning_allows_zero_selective_projections_with_exact_lineage():
+    text = _skill_text()
+    for token in [
+        "zero qualifying root assumptions",
+        "materially change direction",
+        "observable disconfirming signal",
+        "exact charter revision only",
+        "research plan revision that introduced",
+        "assumption refs never enter",
+        "impact=high",
+        "uncertainty=high",
+        "durable l4 obligation",
+    ]:
+        assert token in text, f"Projection contract missing {token!r}"
+
+
+def test_research_plan_seeds_candidates_from_charter_and_assessment():
+    plan = _plan_text()
+    for token in [
+        "seed it from charter unknowns",
+        "what to inspect next",
+        "candidate seed",
+        "never as evidence",
+    ]:
+        assert token in plan, f"Research Plan candidate-seed contract missing {token!r}"
+    assert "independently source-verify" in _skill_text()
 
 
 def test_discovery_research_surfaces_insight_ingredients_without_signing_an_insight():

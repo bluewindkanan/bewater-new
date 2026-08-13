@@ -20,29 +20,33 @@ and the Sprint loop; it does not own Insight generation, strategy formation, or 
 
 ### 1. Entry and current state
 
-1. Read the current Charter revision and the complete active root-assumption revision snapshot, the
+1. Read the current Charter revision only as the formal input, including the
    innovation challenge, the research boundary, and the strategic uncertainties. Derive the strategic
    uncertainties and the future strategic choice relevance from these inputs. If either formal input
-   is missing or ambiguous, route back to `bw-project-charter`; never invent a Discover Brief.
+   is missing or ambiguous, route back to `bw-immersion`; never consume Initial Assessment as
+   Evidence, and never invent a Discover Brief. A matching Assessment's `What to Inspect Next` may
+   seed candidate Learning Plan items that research must independently source-verify. Research Plan
+   `derived_from` contains the exact Charter revision only.
 2. Find the branch's current research artifact. If none exists, start revision 1 with
-   `references/discover-plan.md`; otherwise read its Research Frame, Living Learning Agenda, Latest
-   Research Sprint, Sprint Synthesis, and remaining uncertainty. Any user-provided documents
+   `references/research-plan.md`; otherwise read its Research Objective, Learning Plan, Research
+   Design, Knowledge Base Index, Sprint Record, Sprint Synthesis, and remaining gap. Any user-provided documents
    available now are optional context inputs; they become evidence only when a source-bounded claim is
    extracted and recorded. Preserve the same artifact ID, the `supersedes_ref` chain, and the exact
-   `derived_from` Charter and active-assumption revisions.
+   Charter `derived_from` lineage.
 
 ### 2. Orient
 
 3. Run an Orient pass when initializing or when the topic materially changes. Use the 4C coverage
    compass plus any challenge-specific extended lens (`references/4c-framework.md`) to surface blind
-   spots, and broaden the Living Learning Agenda beyond the existing assumptions when evidence
-   warrants. Do not persist a separate Orient artifact; fold orientation into the Research Frame and
-   the Living Learning Agenda.
+   spots, and broaden the Learning Plan beyond the existing starting beliefs when evidence
+   warrants. Do not persist a separate Orient artifact; fold orientation into the Research Objective
+   and Learning Plan.
 
 ### 3. Plan the next Sprint
 
-4. Draft or update the Research Frame and Living Learning Agenda before selecting work for the next
-   Sprint, following `references/discover-plan.md`. Select the highest-learning-value questions for
+4. Draft or update the Research Plan before selecting work for the next Sprint, following
+   `references/research-plan.md`. Revision 1 has Research Objective, Learning Plan, Research Design,
+   and Knowledge Base Index. Select the highest-learning-value questions for
    the next Sprint. For each, derive the evidence need before method selection and compose the
    smallest complementary **Method Bundle** from the layered Toolkit (`references/research-toolkit.csv`,
    `references/method-bundles.md`). Load the Toolkit selectively per question; it is a seed library,
@@ -50,14 +54,18 @@ and the Sprint loop; it does not own Insight generation, strategy formation, or 
    redundant frameworks that reuse the same evidence to make the same inference, and do not require
    exactly one method from every layer. The Coordinator resolves each method's `execution_need`
    against tools available in the current host; no method registry hardcodes a connector name.
-5. Run the in-context self-review (`references/discover-plan.md`) after every Frame or Agenda draft or
+5. Run the in-context self-review (`references/research-plan.md`) after every Plan draft or
    revision and before either persistence or execution. Repair issues the current context resolves
    inline; the review creates no artifact, review state, signoff, or human Gate. If a material
    ambiguity would change the mission, decision, priority, scope, authority, or resource commitment,
    ask one question and stop; do not persist or execute.
-6. When the Frame or Agenda is new or materially changed, persist a reviewed research revision after
-   the self-review passes. For a new artifact, this is revision 1 and contains the Research Frame and
-   Living Learning Agenda only; do not create empty Sprint sections.
+6. When the Plan is new or materially changed, persist a reviewed research revision after the
+   self-review passes and before execution using `references/persistence-plan.md`. Research Planning
+   may project zero qualifying root assumptions. Project only beliefs whose failure could materially
+   change direction, that are uncertain, and that name an observable disconfirming signal; follow
+   `references/root-assumption-projection.md`. A projected root derives from the exact Research Plan
+   revision that introduced it; assumption refs never enter Plan lineage. `impact=high` and
+   `uncertainty=high` immediately open the existing durable L4 obligation.
 
 ### 4. Execute, synthesize, and re-plan
 
@@ -88,7 +96,7 @@ and the Sprint loop; it does not own Insight generation, strategy formation, or 
 
 10. Insight Readiness is a topic-level Coordinator judgment about the handoff input;
     completing one wave's local missions is not, by itself, Insight Readiness. When readiness is met
-    (`references/discover-plan.md`), surface **Insight Ingredients** — evidence-backed patterns,
+    (`references/research-plan.md`), surface **Insight Ingredients** — evidence-backed patterns,
     tensions, anomalies, challenged Accepted Beliefs, reframe candidates, strategic relevance, and
     limitations — plus remaining uncertainty to `bw-define` (the Define router will direct to
     `bw-insight-craft`).

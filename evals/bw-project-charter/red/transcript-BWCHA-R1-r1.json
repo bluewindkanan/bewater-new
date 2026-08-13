@@ -1,9 +1,0 @@
-{"type":"thread.started","thread_id":"019fb22b-854f-71e3-b18f-ab64a7cf150d"}
-{"type":"turn.started"}
-{"type":"error","message":"Reconnecting... 2/5 (request timed out)"}
-{"type":"error","message":"Reconnecting... 3/5 (request timed out)"}
-{"type":"error","message":"Reconnecting... 4/5 (request timed out)"}
-{"type":"error","message":"Reconnecting... 5/5 (request timed out)"}
-{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Falling back from WebSockets to HTTPS transport. request timed out"}}
-{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"“X”具体指什么（组织、项目、团队或委员会）？请提供其目的、范围、主要成员与授权边界；我会据此起草正式 charter。"}}
-{"type":"turn.completed","usage":{"input_tokens":14376,"cached_input_tokens":8960,"output_tokens":88,"reasoning_output_tokens":43}}

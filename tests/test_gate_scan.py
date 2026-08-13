@@ -299,6 +299,28 @@ def test_achilles_on_subject_branch_passes(tmp_project):
     assert aq.passed
 
 
+def test_g1_scoring_is_independent_of_root_source_artifact(tmp_project):
+    subject = _complete(tmp_project, subject="sol-01")
+    from bw import ledger_ops
+
+    assumption = next(iter(io.load_ledger(tmp_project).assumptions.values()))
+    ledger_ops.update(
+        tmp_project,
+        assumption.id,
+        {"derived_from": ["artifact:ART-001@1"]},
+    )
+    charter_sourced = gate_scan.scan(tmp_project, "G1", subject=subject)
+
+    ledger_ops.update(
+        tmp_project,
+        assumption.id,
+        {"derived_from": ["artifact:ART-099@1"]},
+    )
+    research_sourced = gate_scan.scan(tmp_project, "G1", subject=subject)
+
+    assert research_sourced == charter_sourced
+
+
 def test_excludes_killed_assumptions(tmp_project):
     from bw import ledger_ops
     a = ledger_ops.add(tmp_project, dict(statement="k", layer="concept", category="consumer",

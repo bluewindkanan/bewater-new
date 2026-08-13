@@ -31,70 +31,77 @@ def test_discover_exits_with_research_evidence_not_insights():
         assert "does not produce" in text and "directional hypotheses" in text, f"Discover output boundary missing directional hypotheses boundary"
 
 
-def test_discover_consumes_charter_and_assumptions_not_assessment_as_fact():
+def test_discover_consumes_only_charter_and_never_assessment():
     root = skill_dir(REPO, "bw-discover")
     text = "\n".join(path.read_text() for path in root.rglob("*.md")).lower()
     for token in [
         "current charter revision",
-        "active root assumptions",
         "formal discover inputs",
         "initial assessment",
-        "candidate beliefs",
-        "not as facts",
-        "bw-project-charter",
+        "must not consume",
+        "candidate seed",
+        "bw-immersion",
     ]:
         assert token in text, f"Discover contract missing {token!r}"
     assert "separate discover brief" not in text
 
 
-def test_discover_formal_input_is_charter_revision_and_active_root_assumptions():
-    text = (skill_dir(REPO, "bw-discover") / "SKILL.md").read_text()
-    for token in ["current charter revision", "active root assumptions", "initial-assessment"]:
+def test_discover_formal_input_is_charter_revision_only():
+    text = (skill_dir(REPO, "bw-discover") / "SKILL.md").read_text().lower()
+    for token in ["current charter revision", "only formal prerequisite", "initial-assessment"]:
         assert token in text, f"Discover missing formal-input rule: {token}"
-    assert "Fact" in text and "candidate" in text
+    assert "active root assumptions" not in text.lower()
 
 
 def test_discover_routes_missing_formal_inputs_back_to_charter():
     text = (skill_dir(REPO, "bw-discover") / "references" / "stage.md").read_text()
     assert "missing" in text
-    assert "bw-project-charter" in text
+    assert "bw-immersion" in text
     assert "does not create" in text.lower() and "discover brief" in text.lower()
 
 
-def test_discover_reads_only_snapshot_matching_assessment_as_advisory():
+def test_discover_does_not_read_assessment_as_evidence_even_when_current():
+    text = "\n".join(
+        path.read_text().lower()
+        for path in sorted(skill_dir(REPO, "bw-discover").rglob("*.md"))
+    )
+    assert "does not read assessment content" not in text
+    for token in [
+        "what to inspect next",
+        "candidate seed",
+        "never as facts",
+        "does not seed research as evidence",
+    ]:
+        assert token in text, f"Discover candidate-seed contract missing {token}"
+    for token in ["candidate insights", "most promising direction", "advisory reference"]:
+        assert token not in text
+
+
+def test_discover_assessment_state_never_blocks_or_seeds_research():
+    text = (skill_dir(REPO, "bw-discover") / "SKILL.md").read_text().lower()
+    for token in [
+        "missing, current, or stale",
+        "does not block discover",
+        "does not seed research as evidence",
+        "candidate seed",
+    ]:
+        assert token in text, f"Discover advisory-gap contract missing {token}"
+
+
+def test_discover_routes_missing_or_stale_research_plan_to_research_planning():
     text = "\n".join(
         path.read_text().lower()
         for path in sorted(skill_dir(REPO, "bw-discover").rglob("*.md"))
     )
     for token in [
-        "exactly matches",
-        "same branch",
-        "candidate insights",
-        "candidate judgments to validate",
-        "core conflict / tension",
-        "priority challenge",
-        "most promising direction",
-        "candidate research path",
-        "key risks",
-        "disconfirming questions",
-        "advisory reference",
+        "research plan",
+        "missing or stale",
+        "research planning",
+        "bw-discovery-research",
+        "recommend research planning and stop",
     ]:
-        assert token in text, f"Discover assessment protocol missing {token}"
-
-
-def test_discover_ignores_mismatched_assessment_without_blocking():
-    text = (skill_dir(REPO, "bw-discover") / "SKILL.md").read_text().lower()
-    for token in [
-        "stale",
-        "cross-branch",
-        "snapshot mismatch",
-        "ignore",
-        "advisory gap",
-        "does not block discover",
-    ]:
-        assert token in text, f"Discover advisory-gap contract missing {token}"
-    for promoted in ["fact", "evidence", "accepted belief", "f/p/e/t insight"]:
-        assert promoted in text
+        assert token in text
+    assert "when assumptions are absent, do not route back" in text
 
 
 def test_discover_eval_matrix_covers_advisory_match_states():

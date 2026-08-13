@@ -1,9 +1,0 @@
-scenario_id: BWCHA-R1
-target_skill: bw-project-charter
-prompt: "Draft a charter for: X."
-fixture_refs: []
-installed_dependency_skills: []
-required_assertions:
-  - "with bw-project-charter absent, no charter artifact is written (RED control)"
-forbidden_behaviors: []
-repetition_count: 1

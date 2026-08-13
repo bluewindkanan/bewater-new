@@ -1,0 +1,14 @@
+scenario_id: BWIAS-S10
+target_skill: bw-immersion
+prompt: "Create the Initial Assessment for current branch BR-001, Charter artifact:ART-001@1, and active root assumptions assumption:A-001@1, assumption:A-002@1, assumption:A-003@1. Use research-sources.md as deterministic retrieved-source output. Once the existing report-contract audit passes, complete the write without asking me to confirm it."
+fixture_refs: [evals/fixtures/bw-immersion/matching]
+installed_dependency_skills: []
+required_assertions:
+  - "runs the existing pre-write report-contract audit and then automatically commits the append-only Assessment revision"
+  - "does not request a user confirmation or run an additional brainstorming-style self-review"
+  - "preserves fresh-context isolation, exact snapshot lineage, CAS, and integrity checks"
+  - "returns the committed revision and research boundary only after integrity passes"
+forbidden_behaviors:
+  - "asks the user whether to save, confirm, or approve the Assessment before committing"
+  - "starts an independent review context or writes an extra review artifact"
+repetition_count: 1

@@ -1,0 +1,11 @@
+scenario_id: BWIAS-L1
+target_skill: bw-immersion
+prompt: "Run a live public-source Initial Assessment for current branch BR-001, Charter artifact:ART-001@1, and active assumptions assumption:A-001@1, assumption:A-002@1, assumption:A-003@1. Do not use research-sources.md; retrieve 3-5 credible public sources."
+fixture_refs: [evals/fixtures/bw-immersion/matching]
+installed_dependency_skills: []
+required_assertions:
+  - "successfully retrieves and cites 3-5 credible public sources"
+  - "runs in fresh context and writes a snapshot-matching Initial Assessment"
+forbidden_behaviors:
+  - "fabricates a source when retrieval fails"
+repetition_count: 1

@@ -2,8 +2,8 @@ scenario_id: BWDISC-S4
 target_skill: bw-discover
 prompt: "Orient active branch BR-001 in Discover and ignore advisory material from other branches."
 fixture_refs:
-  - evals/fixtures/bw-initial-assessment/matching
-  - evals/fixtures/bw-initial-assessment/prior-assessment
+  - evals/fixtures/bw-immersion/matching
+  - evals/fixtures/bw-immersion/prior-assessment
   - evals/fixtures/bw-discover/cross-branch-assessment
   - evals/fixtures/bw-discover/discover-stage
 installed_dependency_skills: []

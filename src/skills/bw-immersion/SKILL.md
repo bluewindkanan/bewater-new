@@ -1,49 +1,235 @@
 ---
 name: bw-immersion
-description: Use when the user explicitly asks to navigate, resume, check status, or choose the next action in BeWater Immersion.
+description: Use when the user wants to initialize a BeWater project, or produce or revise its Immersion Charter and preliminary Assessment.
 ---
 
 # bw-immersion
 
-A read-only **router** for Immersion. It reports input and advisory status, recommends exactly one
-next capability when possible, and stops. It must never produce artifacts or change project state.
+An Immersion **capability** and the single project-start entry point. It confirms project state,
+produces a context-rich, answer-light Charter, delegates a fresh-context preliminary Assessment,
+delivers a compact summary, and stops for the human's next-step decision. It drafts and persists
+project definitions; it does not validate the premise, make a Gate decision, or choose whether to
+continue.
 
-## On invoke
+## Stage contract
 
-1. Confirm the selected active branch has `current_stage: immersion`; otherwise defer to
-   `bw-resume`.
-2. Resolve and report:
-   - the unique current Charter head and its exact Charter revision;
-   - the count and exact active root-assumption revision snapshot for the same branch;
-   - formal Discover input readiness: a current Charter plus at least three active root assumptions;
-   - Assessment state: `missing`, `failed`, `stale`, or `current`.
-3. Treat an Assessment as current only when it is on the same branch and its `derived_from` exactly
-   matches the exact typed Charter revision plus the complete exact active root-assumption revision
-   snapshot. Existence alone is insufficient; cross-branch or snapshot-mismatched reports are stale.
+The formal Discover input is the selected branch's current Charter revision only — in shorthand,
+**Charter alone** is sufficient. The Initial Assessment is advisory: it is current only when it is on
+the same branch and its `derived_from` exactly matches the exact typed Charter revision. Missing,
+stale, or failed advice does not remove an otherwise complete formal input and does not become a hard
+gate. Charter confirmation and Assessment completion do not equal a decision to continue.
 
-## Routing
+## Main flow
 
-- Charter or assumptions missing or needs revision → `bw-project-charter`.
-- Assessment missing, failed, or stale → `bw-initial-assessment`.
-- Current Charter, at least three active root assumptions, and a matching Assessment → recommend `bw-discover`
-  and stop for the user's separate decision.
+Run the five steps in order. Stop whenever a human decision or an incomplete state requires it.
 
-When a next human action is needed, present native structured selection rather than asking the user
-to type an option. With a matching Assessment, offer: Enter Discover, Revise Charter, or Pause in
-Immersion. With a missing, failed, or stale Assessment, offer: Retry Assessment, Continue without Assessment,
-or Pause in Immersion. The latter preserves the Assessment as advisory: continuing is
-available only when the formal Discover inputs are complete.
+### 1. Confirm / initialize project state
 
-When native structured selection is unavailable or fails in an interactive host, present equivalent text options
-and stop for the user's reply. In headless use, stop after presenting the options for a
-later scripted response. The router never selects on the user's behalf, changes `current_stage`, or
-records the user's decision.
+Confirm the selected active branch has `current_stage: immersion`. If project state is missing or
+incomplete, report the gap and stop — do not fabricate state. The deployment step (`install.sh`) is
+responsible for real state initialization; this capability never writes `_bewater/` state by hand and
+never manufactures a missing Charter, Assessment, or branch.
 
-Default Immersion guidance waits for the matching report before recommending Discover. The
-Assessment is advisory auxiliary material and not a hard gate: if the user explicitly asks to continue and the
-formal Discover inputs are ready, report the advisory gap without blocking the separate stage-transition decision.
-Charter confirmation does not equal a decision to continue.
+### 2. Produce the Charter
 
-The router never authors or edits the Charter, assumptions, or Assessment inline. It never changes
-the stage; in other words, it never changes the stage, never records the user's decision, never changes `current_stage`, and never writes a
-signoff. The human owns the explicit decision to continue.
+Turn the user's current intent into a context-rich, answer-light Charter draft, self-review it, and
+automatically persist it. This produces a draft, unvalidated project definition; it does not validate
+the premise or choose whether to continue.
+
+**Adaptive interview.** Read the active branch and current Charter head. Preserve distinctive user
+wording. Maintain this coverage internally:
+
+- why now and the triggering event;
+- the specific person, situation, desire, and current behavior;
+- alternatives, workarounds, and their cost;
+- the provisional proposition and hoped-for behavior change;
+- Magic, Money, and leverageable assets;
+- in-scope and out-of-scope boundaries, constraints, and success signals;
+- Known, Believed, explicit Unknowns, and Tensions.
+
+Work in two explicit interaction modes. Ask one question at a time, smart-skip established context,
+and stop when the shared understanding is useful.
+
+**Explore — clarify together.** Until the conversation has grounding anchors for all of trigger / why
+now, a specific person and situation, current behavior or alternative (or an explicit Unknown), and
+desired change, use free-form questions only. Be a consultant, not an intake form: use internal
+reasoning to offer the one point most worth thinking about, then ask one open question about a
+concrete event, behavior, workaround, constraint, or desired outcome. Keep the visible expression
+clear, focused, and natural; let question complexity determine the necessary context to advance
+shared understanding and the user's next thought. A useful insight may surface an implication,
+tension, ambiguity, assumption, or signal; label it `agent-interpretation`. A rich initial prompt can
+establish some or all anchors and move directly to Converge. Do not use a structured question,
+recommendation, or candidate framing to supply grounding facts. Do not offer options during Explore.
+
+**Converge — recommend bounded decisions.** After the grounding anchors are present, use a host-native
+structured choice for a genuinely bounded framing, scope, priority, trade-off, balance choice, success
+signal, or correction. A recommendation is allowed only when it cites stated context and explains its
+material trade-off. It must not recommend a user's real behavior, willingness to pay, market fact, or
+an unstated resource or constraint. Candidates are prompts for selection or correction, never
+evidence. Make the recommendation a thinking aid, not just an answer: explain what it **optimizes**,
+what it **sacrifices**, the **credible alternative**, and what unknown or evidence **would change this
+recommendation**.
+
+- Every structured choice includes `Uncertain` and an Other path: `None are accurate — I want to add
+  context.` Other opens a free-form input. Prefer the host's structured-question tool so the user
+  receives a dialog. If native selection is unavailable or fails in an interactive host, use a
+  text-choice fallback that repeats the candidates plus Uncertain and Other. Use a fixed four-option
+  fallback whenever there are two credible candidates: first candidate, second candidate, Uncertain,
+  Other. Never render a fallback with only candidates. In headless runs, stop after presenting the
+  question and accept a later scripted answer. When the host supplies Other automatically, offer two
+  credible candidates plus `Uncertain` and use the host Other path; do not replace either escape route
+  with an AI recommendation.
+- Record provenance for every high-impact claim: `user-stated` for the user's own free-form statement,
+  `user-selected` for an AI candidate the user chose, `agent-interpretation` for a faithful synthesis,
+  and `unknown` for an acknowledged gap. `user-selected` is L1 input but is never silently upgraded to
+  `user-stated`, a Fact, or validated evidence.
+
+Stop asking about a field when it is clear, the user explicitly does not know, or Discover should
+investigate it. Unknown is a valid result. If the user shows fatigue or asks for a version now, draft
+with explicit Unknowns rather than forcing template completion.
+
+**Charter draft and self-review.** When coverage is sufficient, build the complete Charter with
+`references/charter-template.md` as a project definition: challenge, intent and outcome, scope,
+constraints, success definition, Money/Magic framing, and explicit Unknowns. Before any project-state
+mutation, run the staged quality loop in `references/self-review-contract.md`. L0 is deterministic
+draft validation; L1 is the same-context semantic audit checking claim provenance, frontmatter/body
+consistency, scope drift, knowledge-state classification, and coherence. L1 is draft lint, not
+independent verification of intent or real-world facts. Revise any L0/L1 issue the existing context
+resolves and re-run L0 and L1. Explicit Unknowns do not block drafting. If a material ambiguity could
+change the user intent, return to the interview and ask one new highest-information-gain question; do
+not invent an answer or persist it as fact. Run final unified intent calibration (L2) before
+persistence: show a compact
+source-labelled 4–7 claim mirror and ask which point is least accurate. This is an open correction
+opportunity, not a signoff, approval, Gate, or decision.
+
+**Persistence.** Once the final L0/L1 loop passes, persist immediately with no user confirmation.
+Acquire `bwkit lock` and use CAS to append the Charter r1 or next revision, allocating IDs from
+canonical counters. Perform that write only through the transaction in
+`references/persistence-plan.md` — the **only allowed project-state mutation path** is
+`PYTHONPATH=_bewater python3 -m bwkit plan apply .`. Never use Edit or Write on project state, shell
+redirection, a heredoc, or a general-purpose script on `_bewater/` or `_bewater-output/` files. Keep
+`document_status: draft` and `validation_status: unvalidated`, capture the committed exact typed
+Charter revision, and write no signoff, no assumption-ledger mutation, and no `current_stage` change.
+
+### 3. Produce the Assessment (fresh-context delegation)
+
+After the Charter commit succeeds, produce a preliminary Assessment by **delegating to a fresh-context
+sub-agent**. Do not author the Assessment inline in the Charter context.
+
+**Delegation boundary.** When isolated delegation is available, start a fresh-context agent and pass
+only:
+
+1. the current branch;
+2. the exact typed Charter revision, such as `artifact:ART-001@1`;
+3. a pointer to this SKILL.md's Assessment step plus `references/initial-assessment-template.md` and
+   `references/write-plan.md`.
+
+Do not pass the interview, the chat transcript, or any prior Assessment body. When isolated
+delegation is unavailable, stop and surface that the Assessment could not be produced; do not degrade
+to writing the report in the Charter context.
+
+**Fresh-context input boundary.** The sub-agent runs in a fresh context and resolves the exact Charter
+revision from current project state before research. It requires one unique Charter head on the same
+branch and an exact typed revision. It must not read assumptions, the original interview, the chat
+transcript, or any prior Assessment body. Prior Assessment metadata may be inspected only to establish
+identity, lineage, revision, and idempotency; do not inherit its judgments. If the inputs are missing,
+ambiguous, multi-head, cross-branch, or no longer current, stop and route the Charter gap back to the
+Charter flow in step 2 (do not reconstruct intent from conversation history).
+
+**Idempotency and reassessment.** Find an existing `initial-assessment` head for the branch by
+metadata: a matching Assessment is on the same branch and its `derived_from` contains exactly one
+entry — the exact Charter revision only. If a matching Assessment exists and the user did not request
+explicit reassessment, reuse it and do not research or write another revision. A first Assessment
+receives a new ART ID from `config.next_ids.artifact`; explicit reassessment or assessment after an
+input change reuses the same artifact ID and appends the next revision with `supersedes_ref`. A
+Charter revision change makes an older Assessment stale; never edit the old append-only file in place.
+
+**Lightweight external research.** Search for credible public sources — primary research, official
+data, regulatory material, and authoritative industry sources — with no fixed count target.
+Preserve exact source titles and URLs returned by the research tool; never invent or repair a
+citation. Cite sourced statements only as **External signal**; do not create an Evidence wrapper or
+change `evidence_level: L1` / `validation_status: untested`. Model knowledge must not be presented
+as an external fact; unsourced reasoning is allowed only when labeled **Assessment inference**. If
+sources conflict, preserve the conflict and turn it into a risk and Discover question. Source
+availability controls the outcome: sufficient credible sources yield the normal report; only 1–2
+yield a visibly source-sparse report narrowing every conclusion; zero credible sources, an
+unavailable search tool, or a failed search produce no Assessment — preserve the Charter and report
+a concrete retry reason.
+
+**Judgment and report contract.** Use `references/initial-assessment-template.md` and target 1–2
+screens. The top supports a 60-second read; the remainder supplies traceability. Every key judgment
+distinguishes **Charter basis**, **External signal**, **Assessment inference**, **Implication**, and
+**What would change this view**. The report may state a clear preliminary judgment; it must not produce
+Candidate Insights, a Most Promising Direction, a Discover Mission, or a directional hypothesis, and
+must not score the project, apply a readiness label, decide whether to invest, or decide whether the
+user should enter Discover. Before any write, perform a **pre-write content audit** on the complete
+draft: all five required headings, a compact five-label trace for every key judgment, a
+direction-level kill signal in the conclusion, at most three pre-mortem risks each with a
+disconfirming signal, an inspect-next checklist whose items are actionable, and an explicit research
+boundary with only the sources actually retrieved. This is a deterministic report-contract check, not a second quality-review phase;
+the Assessment does not run a brainstorming-style self-review and does not request user confirmation.
+After the audit passes, automatically commit.
+
+**Concurrent-safe write.** Use the project-local runtime as `PYTHONPATH=_bewater python3 -m bwkit ...`
+and treat `references/write-plan.md` as the complete runtime interface; do not inspect `_bewater/bwkit`
+source. Research without holding the lock. Immediately before writing, acquire `bwkit lock`, re-read
+the Charter head, and compare branch and exact revision with the captured input; if changed, discard
+the uncommitted report, release the lock, capture the new input, and automatically rerun once. If it
+changes again before the second write, fail closed, report concurrent modification, and write nothing
+stale. When inputs still match, use the single transaction in `references/write-plan.md`, with
+`derived_from` pinned to the exact Charter revision only and the artifact counter protected by CAS.
+Run the revision-chain integrity check and fail closed on duplicate revisions, missing predecessors,
+cycles, or multiple heads. Stop after the integrity check passes, report the committed revision plus
+research boundary, and make no further tool call.
+
+**Mutation boundary.** This step writes only the new append-only Assessment revision and the canonical
+artifact-ID counter when first allocating its ID. It does not modify the Charter, change assumption
+validation, change `current_stage`, or write a signoff. It creates no Evidence wrapper, does not create
+Evidence, and does not create or update assumptions. The Assessment is not an input to Research, not an
+input to the Knowledge Base, and must not be consumed by Discover as Evidence. Discover may read a
+matching Assessment's `What to Inspect Next` only as candidate seed questions for research planning,
+each independently source-verified before promotion; `Material Risks` and the Assessment's judgments
+stay advisory and do not flow into Research. There is no score and no readiness
+label; it creates no Gate record and must not decide whether to invest. The **only allowed
+project-state mutation path** is `PYTHONPATH=_bewater python3 -m bwkit plan apply .` with the plan in
+`references/write-plan.md`.
+
+### 4. Output the summary (inline, not persisted)
+
+After both the Charter and the Assessment step complete (or the Assessment step fails on zero sources),
+deliver one compact summary as inline session output. It is not a new artifact, ArtifactKind, signoff,
+or state field. Include:
+
+- **Charter summary:** challenge; intent and outcome; scope; success signal; key Unknowns.
+- **Assessment conclusion:** overall preliminary conclusion; top risks; what to inspect next.
+
+If the Assessment failed on zero sources or an unavailable search tool, state the missing Assessment
+and preserve its concrete retry reason rather than omitting or manufacturing it. This is the
+assessment conclusion handed to the human before the Discover decision; it is advisory and never a
+Gate, score, or readiness label.
+
+### 5. Next-step selection
+
+Present a native structured selection for the next action and stop for the human's separate decision.
+Never choose the next action, change `current_stage`, or record the decision on the user's behalf. With
+a current matching Assessment, offer **Enter Discover**, **Revise Charter**, or **Pause in Immersion**.
+With a missing, stale, or failed Assessment, offer **Retry Assessment**, **Continue without
+Assessment**, or **Pause in Immersion**. Continuing is available only when the formal Discover input
+(Charter alone) is complete. When native structured selection is unavailable or fails in an
+interactive host, present equivalent text options and stop; in headless use, stop after presenting the
+options for a later scripted response. Automatic Charter and Assessment drafting do not equal a
+decision to continue; only a later, separate, explicit user decision may authorize the CAS update from
+`current_stage: immersion` to `current_stage: discover`.
+
+## Boundaries
+
+- The Charter is exploration context, not a formal Insight, validation result, Gate, or investment
+  conclusion.
+- The user's proposed `how` remains a provisional solution hypothesis; Magic is empathy for the
+  person's situation and desire, not willingness to pay.
+- The Assessment is advisory auxiliary material, not validation, a formal Insight, a Gate, an
+  investment decision, or a downstream research input.
+- Do not create a Discover Brief, Evidence wrapper, score, readiness label, or additional workflow
+  state.
+- Do not design research, select methods, create Evidence, or create or update assumptions. Discover
+  owns Research Planning and the first selective root-assumption projection.

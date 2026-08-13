@@ -31,3 +31,4 @@ dist/
 # claude deployment target (source of truth is src/skills/)
 .claude/skills/
 .claude/settings.local.json
+.gstack/

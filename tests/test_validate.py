@@ -127,6 +127,40 @@ def test_validate_rejects_bare_assumption_ref(tmp_project):
     assert any(i.kind == "dangling-ref" for i in validate.validate_all(tmp_project))
 
 
+def test_validate_exact_archived_assumption_revision_ref_resolves(tmp_project):
+    original = _add_raw(tmp_project, "A-001", statement="original")
+    ledger_ops.update(tmp_project, original.id, {"statement": "updated"})
+    _write_artifact(
+        tmp_project,
+        "ART-9",
+        "research",
+        derived_from=["assumption:A-001@1"],
+    )
+
+    issues = validate.validate_all(tmp_project)
+
+    assert not any(
+        issue.kind == "dangling-ref" and "assumption:A-001@1" in issue.message
+        for issue in issues
+    )
+
+
+def test_validate_rejects_missing_archived_assumption_revision(tmp_project):
+    original = _add_raw(tmp_project, "A-001", statement="original")
+    ledger_ops.update(tmp_project, original.id, {"statement": "updated"})
+    _write_artifact(
+        tmp_project,
+        "ART-9",
+        "research",
+        derived_from=["assumption:A-001@3"],
+    )
+
+    assert any(
+        issue.kind == "dangling-ref" and "assumption:A-001@3" in issue.message
+        for issue in validate.validate_all(tmp_project)
+    )
+
+
 def _write_lineage_subject(root, artifact_id, kind, **extra):
     meta = schema.ArtifactMeta(
         artifact_id=artifact_id,

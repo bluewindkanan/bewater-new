@@ -86,6 +86,7 @@ class AssumptionStatus(str, Enum):
 class ArtifactKind(str, Enum):
     charter = "charter"
     directional_hypothesis = "directional-hypothesis"
+    strategy_statement = "strategy-statement"
     strategy = "strategy"
     opportunity = "opportunity"
     idea_pool = "idea-pool"

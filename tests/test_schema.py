@@ -47,7 +47,7 @@ def test_enum_values():
     assert [m.value for m in schema.EvidenceLevel] == ["L1", "L2", "L3", "L4", "L5", "L6"]
     assert [m.value for m in schema.AssumptionValidationStatus] == ["untested", "testing", "supported", "falsified", "inconclusive"]
     assert [m.value for m in schema.AssumptionStatus] == ["active", "killed", "merged"]
-    assert {m.value for m in schema.ArtifactKind} == {"charter", "directional-hypothesis", "strategy",
+    assert {m.value for m in schema.ArtifactKind} == {"charter", "directional-hypothesis", "strategy-statement", "strategy",
                                                       "opportunity", "idea-pool",
                                                       "concept-portfolio", "solution",
                                                       "investment-narrative", "research", "insights",
@@ -55,6 +55,18 @@ def test_enum_values():
     assert [m.value for m in schema.ArtifactDocumentStatus] == ["draft", "final", "superseded"]
     assert [m.value for m in schema.ArtifactValidationStatus] == ["unvalidated", "in-review", "validated", "invalidated"]
     assert [m.value for m in schema.GateExit] == ["go", "conditional-go", "recycle", "pivot", "kill"]
+
+
+def test_strategy_statement_artifact_kind_round_trips():
+    meta = schema.ArtifactMeta.from_dict({
+        "artifact_id": "ART-006",
+        "kind": "strategy-statement",
+        "stage": "define",
+        "revision": 1,
+        "document_status": "draft",
+        "validation_status": "unvalidated",
+    })
+    assert meta.kind is schema.ArtifactKind.strategy_statement
 
 
 # --- Invariant branches ---

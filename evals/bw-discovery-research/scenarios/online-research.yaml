@@ -5,7 +5,7 @@ fixture_refs: []
 installed_dependency_skills: []
 required_assertions:
   - "reads the current charter revision and active root assumptions as the formal inputs"
-  - "routes back to bw-project-charter when either formal input is missing"
+  - "routes back to bw-immersion when either formal input is missing"
   - "drafts and self-reviews the living Research artifact (Research Frame and Living Learning Agenda) before any persistence or research execution"
   - "initializes revision 1 of one research artifact with a reviewed Research Frame and a Living Learning Agenda with explicit priorities and a 4C coverage map"
   - "omits empty Latest Research Sprint and Sprint Synthesis sections from revision 1 rather than adding ceremonial placeholders"

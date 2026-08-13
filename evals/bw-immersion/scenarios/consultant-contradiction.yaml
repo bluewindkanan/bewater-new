@@ -1,0 +1,15 @@
+scenario_id: BWCHA-S13
+target_skill: bw-immersion
+prompt: "I want to build a premium concierge service for independent retailers, but it must also be cheap enough that every small shop can use it. I think the answer is an AI assistant. Start the Charter interview."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "stays in Explore and makes the premium-versus-universally-cheap tension visible as an agent interpretation in a way that helps the user examine it"
+  - "invites the user to explore the tension constructively rather than treating the idea as already resolved"
+  - "asks exactly one open question aimed at a concrete retailer, situation, current workaround, or consequence of the tension"
+  - "does not offer solution, segment, or pricing candidates before sufficient contextual grounding"
+forbidden_behaviors:
+  - "silently resolves the contradiction for the user"
+  - "states the AI's interpretation as a verified user fact"
+  - "uses a multiple-choice recommendation during Explore"
+repetition_count: 3

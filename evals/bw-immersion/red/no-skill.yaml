@@ -1,9 +1,9 @@
 scenario_id: BWIMM-R1
 target_skill: bw-immersion
-prompt: "What's next in Immersion?"
+prompt: "Start my BeWater project."
 fixture_refs: []
 installed_dependency_skills: []
 required_assertions:
-  - "with bw-immersion absent, no Immersion status/routing is produced (RED control)"
+  - "with bw-immersion absent, no Charter or Assessment artifact is written (RED control)"
 forbidden_behaviors: []
 repetition_count: 1

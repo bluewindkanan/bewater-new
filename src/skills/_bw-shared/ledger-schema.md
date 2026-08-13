@@ -61,6 +61,16 @@ validated `source_concept_id` and derive from an exact Concept Portfolio
 revision. Solution assumptions derive from an exact Solution revision. Never
 copy or relayer a Concept assumption when shaping a Solution.
 
+Root lineage has a migration boundary. New roots projected during Research Planning derive from
+the exact Research Plan revision that introduced them. A pre-existing root whose exact
+`derived_from` points to an existing Charter revision remains valid indefinitely and may be
+updated under the same A-ID without reparenting. If Research materially changes the belief's
+identity or scope, kill or merge the legacy record and allocate a distinct Research-derived A-ID;
+wording-only edits do not justify duplication. Generic exact-ref resolution accepts either the
+current `record_revision` or a complete archived snapshot in `history[]`. Consumers that require
+current-head pins, including Concept/Solution contracts, continue to reject archived revisions as
+stale.
+
 ## conditions.yaml (condition record)
 record_revision, origin_decision_id, branch_id, statement, owner, due_at,
 status{open,satisfied,waived,cancelled,superseded}, required_evidence,
@@ -90,6 +100,11 @@ silently drop them.
 Evidence is a structured state record — a source-bounded claim plus provenance — in the same
 family as `ledger.yaml` and `conditions.yaml`, not an artifact. It accumulates in-place in one
 per-branch file `_bewater/evidence.yaml`; never one append-only file per record.
+
+Do not create an empty `evidence.yaml`. Research Planning initializes the Knowledge Base Index in
+the Research Plan; the evidence file appears only when the first real source-bounded finding is
+committed. The Research Plan is the question-to-evidence index, while Evidence records are the
+canonical atomic findings.
 
 Envelope fields: `schema_version`, `revision` (envelope in-place bump), `branch_id`,
 `next_evidence_id` (canonical source for E-NNN), `evidence[]`.

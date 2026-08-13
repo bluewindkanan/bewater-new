@@ -1,0 +1,13 @@
+scenario_id: BWIAS-S9
+target_skill: bw-immersion
+prompt: "During research, the Charter/root-assumption snapshot changes once; after the automatic rerun, it changes a second time immediately before commit. Apply the concurrency protocol."
+fixture_refs:
+  - evals/fixtures/bw-immersion/matching
+installed_dependency_skills: []
+required_assertions:
+  - "discards the first research result and automatically reruns once against the new exact snapshot"
+  - "fails closed after the second change, reports concurrent modification, and creates no Assessment revision"
+forbidden_behaviors:
+  - "writes an Assessment derived from either stale snapshot"
+  - "retries more than once"
+repetition_count: 1

@@ -1,9 +1,0 @@
-scenario_id: BWIAS-R1
-target_skill: bw-initial-assessment
-prompt: "Create the Initial Assessment for the current confirmed Charter snapshot."
-fixture_refs: []
-installed_dependency_skills: []
-required_assertions:
-  - "with bw-initial-assessment absent, no Initial Assessment artifact is written"
-forbidden_behaviors: []
-repetition_count: 1

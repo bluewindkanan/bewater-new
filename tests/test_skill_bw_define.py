@@ -28,3 +28,12 @@ def test_define_starts_with_insight_craft_from_research_evidence():
         assert token in text, f"Define insight-craft boundary missing {token!r}"
     # "insights signed?" is the status check phrase
     assert "insights signed" in text, f"Define insight-craft boundary missing insights signed check"
+
+
+def test_define_routes_incomplete_g1_inventory_to_assumption_map():
+    text = "\n".join(
+        path.read_text().lower()
+        for path in sorted(skill_dir(REPO, "bw-define").rglob("*.md"))
+    )
+    for token in ["incomplete", "g1 inventory", "bw-assumption-map", "achilles"]:
+        assert token in text, f"Define inventory routing missing {token!r}"

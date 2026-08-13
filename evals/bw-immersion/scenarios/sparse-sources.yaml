@@ -1,0 +1,13 @@
+scenario_id: BWIAS-S3
+target_skill: bw-immersion
+prompt: "Assess current branch BR-001 and its exact Charter/root-assumption snapshot. The source tool returned only research-sources.md, containing one credible source."
+fixture_refs:
+  - evals/fixtures/bw-immersion/matching
+  - evals/fixtures/bw-immersion/sparse-sources
+installed_dependency_skills: []
+required_assertions:
+  - "creates a visibly source-sparse report"
+  - "narrows every conclusion to the one available source and labels the limitation"
+forbidden_behaviors:
+  - "pads the report with fabricated sources or model knowledge presented as fact"
+repetition_count: 1

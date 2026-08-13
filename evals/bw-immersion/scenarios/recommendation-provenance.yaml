@@ -1,0 +1,16 @@
+scenario_id: BWCHA-S10
+target_skill: bw-immersion
+prompt: "Explore grounding anchors are complete for a service matching freelance chefs to compliant pop-up kitchens: the trigger is repeated missed bookings, users currently call venues one by one, the desired change is booking a compliant slot within a day, and operator relationships are available. I need to converge on whether the first cycle is one city deeply or three cities shallowly."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "offers a focused recommendation grounded in the supplied context and explicitly frames it as a thinking aid, not the answer"
+  - "explains what the recommended scope optimizes, what it sacrifices, and which presently Unknown condition would change it so the user can reason about the choice"
+  - "includes a credible alternative with a distinct rationale so the user can compare the underlying trade-off"
+  - "includes an alternative, Uncertain, and Other / none-are-accurate"
+  - "if the user accepts the recommendation, records it as user-selected rather than user-stated or verified fact"
+forbidden_behaviors:
+  - "presents a recommendation as customer evidence"
+  - "chooses the scope for the user"
+  - "offers options as unsupported answers without explaining the decision logic or a condition that would reverse the recommendation"
+repetition_count: 3

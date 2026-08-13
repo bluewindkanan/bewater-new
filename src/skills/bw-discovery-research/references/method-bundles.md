@@ -10,7 +10,7 @@ grows the available option space; it does not auto-fill a Sprint.
 
 For each selected learning question, work top-down and stop as soon as the bundle answers it:
 
-1. **learning question** — the decision-relevant question, drawn from the Living Learning Agenda.
+1. **learning question** — the decision-relevant objective, drawn from the Learning Plan.
 2. **learning intent** — explore, describe, compare, explain, size, forecast, validate, or reframe.
 3. **desired evidence or inference** — the evidence form or inference that would actually move the
    strategic choice.

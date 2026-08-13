@@ -23,7 +23,8 @@ Installing BeWater initializes the project state and deploys the skills from `sr
 separate start step. Invoke `bw-resume` at any time to read global or cross-stage status, recover
 orientation after an interruption, resolve branch ambiguity, or route pending recovery work.
 
-Immersion separates two capabilities: `bw-project-charter` adaptively collects intent, self-reviews,
-and automatically persists the Charter plus root assumptions; `bw-initial-assessment` then runs in
-fresh context against those exact revisions and automatically adds a source-bounded advisory report.
-The report is not a formal Discover input or Gate.
+Immersion is a single entry point, `bw-immersion`: it adaptively collects intent, self-reviews, and
+automatically persists the Charter, then runs a fresh-context, source-bounded preliminary Assessment
+against that exact Charter revision and delivers a compact advisory conclusion. Charter alone is the
+formal Discover input. The report is not an input to Research, the Knowledge Base, assumptions, or
+Evidence, and is not a Gate.

@@ -93,6 +93,23 @@ def test_active_skill_sources_and_entry_docs_do_not_reference_bw_start():
     assert offenders == []
 
 
+def test_active_skill_sources_and_entry_docs_do_not_reference_removed_skills():
+    paths = [
+        REPO / "AGENTS.md",
+        REPO / "CLAUDE.md",
+        REPO / "README.md",
+        REPO / "src" / "bw" / "validate.py",
+        *sorted(SKILLS.rglob("*.md")),
+    ]
+    for removed in ("bw-project-charter", "bw-initial-assessment"):
+        offenders = [
+            str(path.relative_to(REPO))
+            for path in paths
+            if removed in path.read_text()
+        ]
+        assert offenders == [], f"{removed} referenced in {offenders}"
+
+
 def test_pending_g1_eval_uses_canonical_gate_record_fixture():
     records = REPO / "evals" / "fixtures" / "bw-resume" / "pending-g1" / "_bewater" / "records"
     record = records / "D-001-gate.md"

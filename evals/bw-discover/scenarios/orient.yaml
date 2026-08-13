@@ -2,16 +2,16 @@ scenario_id: BWDISC-S1
 target_skill: bw-discover
 prompt: "Status check and what's next in Discover."
 fixture_refs:
-  - evals/fixtures/bw-initial-assessment/matching
-  - evals/fixtures/bw-initial-assessment/prior-assessment
+  - evals/fixtures/bw-immersion/matching
+  - evals/fixtures/bw-immersion/prior-assessment
   - evals/fixtures/bw-discover/discover-stage
 installed_dependency_skills: []
 required_assertions:
   - "reports 4C coverage, Discover Plan state, and evidence gaps"
   - "checks for the current charter revision and active root assumptions as formal Discover inputs"
-  - "routes missing formal inputs back to bw-project-charter"
-  - "reads initial-assessment only when its branch and exact input snapshot match"
-  - "maps Candidate Insights, Core Conflict/Tension, Most Promising Direction, and Key Risks into advisory research prompts"
+  - "routes missing formal inputs back to bw-immersion"
+  - "reads a matching assessment only when its branch and exact input snapshot match"
+  - "uses a matching assessment's What to Inspect Next only as candidate seed questions, never as Facts or Evidence"
   - "ignores stale, cross-branch, or snapshot-mismatched assessment and reports a non-blocking advisory gap"
   - "never promotes assessment content to Fact, Evidence, Accepted Belief, or F/P/E/T Insight"
   - "reports the formal input revisions and does not invent a Discover Brief"

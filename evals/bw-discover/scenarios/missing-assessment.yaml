@@ -2,7 +2,7 @@ scenario_id: BWDISC-S2
 target_skill: bw-discover
 prompt: "Orient me in Discover and use any current advisory Assessment that is available."
 fixture_refs:
-  - evals/fixtures/bw-initial-assessment/matching
+  - evals/fixtures/bw-immersion/matching
   - evals/fixtures/bw-discover/discover-stage
 installed_dependency_skills: []
 required_assertions:
