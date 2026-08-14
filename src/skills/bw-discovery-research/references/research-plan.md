@@ -4,8 +4,8 @@ The Research Plan is the branch's one living `kind: research` planning artifact.
 adaptive Sprints using the same artifact ID and `supersedes_ref`. Older revisions preserve history;
 do not duplicate every prior Sprint in the current revision.
 
-Revision 1 has exactly four core sections: Research Objective, Learning Plan, Research Design, and
-Knowledge Base Index. Sprint Record, Sprint Synthesis, and Insight Ingredients and Insight Readiness
+Revision 1 has exactly four core sections: Research Objective, Learning Plan, Next Sprint, and
+Research Progress. Sprint Decision and Insight Ingredients and Insight Readiness
 appear only after execution; omit a section rather than add an empty placeholder. An internal Orient pass may be part of initialization, but persist it as a
 separate meaningful delta only when it changes the agenda, priorities, boundary, or lens map.
 
@@ -18,18 +18,15 @@ sections below; the execution-only sections appear only after a Sprint has actua
    strategic uncertainties, and the future
    strategic choices the research may inform without implying such a choice already exists.
 2. **Learning Plan** — stable learning intent and optional projected assumption refs.
-3. **Research Design** — bounded missions for the next Sprint only.
-4. **Knowledge Base Index** — the authoritative answer state and question-to-Evidence index.
-5. **Sprint Record — after execution only** — the learning questions selected for this
-   Sprint; the validity-relevant Method Bundle and its limitations; the work actually executed with
-   evidence references; and material deviations and tool or access fallbacks.
-6. **Sprint Synthesis — after execution only** — what was learned, contradicted,
+3. **Next Sprint** — bounded research missions for the next Sprint only.
+4. **Research Progress** — the authoritative answer state and exact question-to-Knowledge index.
+5. **Sprint Decision — after execution only** — what was learned, contradicted,
    reframed, deepened, or dropped; new questions and remaining gaps; and the next transition with
    rationale.
-7. **Insight Ingredients and Insight Readiness — after execution only** — evidence-backed patterns, tensions, anomalies,
+6. **Insight Ingredients and Insight Readiness — after execution only** — evidence-backed patterns, tensions, anomalies,
    challenged Accepted Beliefs, reframe candidates, and strategic relevance, plus the Insight
    Readiness assessment that decides whether to hand off.
-Remaining uncertainty is not a separate state section. `Knowledge Base Index.remaining_gap` owns it.
+Remaining uncertainty is not a separate state section. `Research Progress.remaining_gap` owns it.
 
 ### Learning Plan
 
@@ -38,18 +35,20 @@ Use stable artifact-local IDs such as `LP-001`. Every row has `id`, `learning_ob
 `decision_relevance`, `lens`, `priority`, and optional `ledger_ref`. The Learning Plan owns learning
 intent, not current answer state. Do not duplicate `answer_status` in the Learning Plan.
 
-### Research Design
+### Next Sprint
 
 Fully plan only the next Sprint. Each mission uses a stable ID such as `RM-001`, one or more Learning Plan refs,
 the evidence needed, smallest suitable method/source bundle, exclusions, dependencies,
 owner, bounded budget, stop condition, expected output, and limitation.
 
-### Knowledge Base Index
+### Research Progress
 
 Initialize one row per Learning Plan item. Each row contains `learning_ref`, `answer_status`
-(`not-researched`, `partial`, `answered`, `dropped`, or `gap-accepted`), exact `evidence_refs`,
-`current_answer` (initially `Not researched`), `contradictions`, and `remaining_gap`. Do not create an
-empty `evidence.yaml`; create it only with the first real source-bounded finding.
+(`not-researched`, `partial`, `answered`, `dropped`, or `gap-accepted`), exact `knowledge_refs`,
+`current_answer` (initially `Not researched`), and `remaining_gap`. `answered` and `partial` require
+at least one complete Knowledge workpaper on the same branch. `RM-NNN` is an activity identifier and
+is never a Knowledge or Evidence ref. Assessment-derived candidates remain unknown until independent
+Knowledge supports an answer.
 
 ### Research Objective
 
@@ -73,16 +72,7 @@ plus any challenge-specific extended lens that is material here, and keep them a
 not four tasks. Record accepted gaps and why each is acceptable, including what strategic
 consequence the gap may carry. Add newly discovered questions and material lenses as Sprints proceed.
 
-### Sprint Record — after execution only
-
-After a Sprint has executed, record the learning questions selected for it, the validity-relevant
-Method Bundle and its limitations, the work actually executed with evidence references, and material
-deviations and tool or access fallbacks. Keep connector and worker detail transient (see Stable
-versus transient state); persist only what affects what the evidence can support or explains a
-fallback. Revision 1 has no Sprint Record section: omit it rather than adding an empty
-placeholder.
-
-### Sprint Synthesis — after execution only
+### Sprint Decision — after execution only
 
 Replace a collection-only debrief with a synthesis that records what changed in belief and
 understanding:
@@ -97,7 +87,7 @@ understanding:
 - **remaining gaps** — material gaps that survive and what each may change.
 
 Then record the Plan Delta (which priorities, agenda items, lens map, boundary, or Method Bundles
-changed for the next Sprint) and choose the next transition from `continue`, `deepen`, `redirect`,
+changed for the next Sprint) and choose the Sprint Decision from `continue`, `deepen`, `redirect`,
 `synthesize`, or `stop`, with a rationale and stop rule based on marginal strategic learning rather
 than on a fixed Sprint count. `redirect` is chosen when evidence moves the question to a different
 frame. The synthesis is the decision edge for another Sprint; it is not a human Gate.
@@ -126,7 +116,7 @@ Insight Readiness is not a human Gate, not a score, not a fact quota, not a fram
 permission to sign F/P/E/T. One wave's local missions completing is not, by itself, Insight
 Readiness.
 
-Record surviving high-value gaps only in `Knowledge Base Index.remaining_gap`, including what each
+Record surviving high-value gaps only in `Research Progress.remaining_gap`, including what each
 may change and a future research path when known. A short cross-objective gap summary may travel
 with Insight Ingredients into `bw-define`; it does not own or duplicate the underlying state.
 
@@ -139,14 +129,14 @@ execution detail stays out of the artifact.
 
 - Research Objective;
 - Learning Plan;
-- Research Design for the next Sprint;
-- Knowledge Base Index;
-- evidence references;
+- Next Sprint research design;
+- Research Progress;
+- exact Knowledge references;
 - meaningful method limitations (only when they affect what the evidence can support or explain a
   fallback);
-- Sprint Synthesis and its next-plan delta;
+- Sprint Decision and its next-plan delta;
 - Insight Ingredients;
-- Knowledge Base Index remaining gaps.
+- Research Progress remaining gaps.
 
 **Transient — do not persist:**
 
@@ -242,7 +232,7 @@ step. It does not block Research on missing interviews.
 ## Plan self-review
 
 Run one in-context self-review after drafting or changing the Research Objective, Learning Plan,
-Research Design, or Knowledge Base Index, and before persistence or execution. Use the
+Next Sprint research design, or Research Progress, and before persistence or execution. Use the
 same four checks as the brainstorming self-review, adapted to research:
 
 1. **Placeholder scan** — remove temporary or incomplete placeholders, incomplete required

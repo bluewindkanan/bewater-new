@@ -1,6 +1,6 @@
 import pytest
 
-from bw import schema
+from bw import evidence, schema
 from bw.errors import ValidationError
 
 # --- Assumption.is_achilles_heel + invariants (from brief) ---
@@ -16,7 +16,7 @@ def test_achilles_heel_is_high_high():
 def test_invariant_achilles_validated_needs_L4():
     a = schema.Assumption(id="A-1", statement="x", layer="concept", category="consumer",
                           impact="high", uncertainty="high", evidence_level="L3",
-                          validation_status="supported", status="active", evidence_refs=["kb/x"],
+                          validation_status="supported", status="active", evidence_refs=["evidence:E-001@1"],
                           derived_from=[], affects=[], branch_id="BR-001")
     with pytest.raises(ValidationError):
         a.check_invariants()
@@ -50,7 +50,7 @@ def test_enum_values():
     assert {m.value for m in schema.ArtifactKind} == {"charter", "directional-hypothesis", "strategy-statement", "strategy",
                                                       "opportunity", "idea-pool",
                                                       "concept-portfolio", "solution",
-                                                      "investment-narrative", "research", "insights",
+                                                      "investment-narrative", "experiment", "research", "insights",
                                                       "initial-assessment"}
     assert [m.value for m in schema.ArtifactDocumentStatus] == ["draft", "final", "superseded"]
     assert [m.value for m in schema.ArtifactValidationStatus] == ["unvalidated", "in-review", "validated", "invalidated"]
@@ -74,7 +74,7 @@ def test_strategy_statement_artifact_kind_round_trips():
 def test_achilles_validated_at_L4_ok():
     a = schema.Assumption(id="A-1", statement="x", layer="concept", category="consumer",
                           impact="high", uncertainty="high", evidence_level="L4",
-                          validation_status="supported", status="active", evidence_refs=["kb/x"],
+                          validation_status="supported", status="active", evidence_refs=["evidence:E-001@1"],
                           derived_from=[], affects=[], branch_id="BR-001")
     a.check_invariants()
 
@@ -82,7 +82,7 @@ def test_achilles_validated_at_L4_ok():
 def test_achilles_validated_at_L5_ok():
     a = schema.Assumption(id="A-1", statement="x", layer="concept", category="consumer",
                           impact="high", uncertainty="high", evidence_level="L5",
-                          validation_status="supported", status="active", evidence_refs=["kb/x"],
+                          validation_status="supported", status="active", evidence_refs=["evidence:E-001@1"],
                           derived_from=[], affects=[], branch_id="BR-001")
     a.check_invariants()
 
@@ -90,9 +90,93 @@ def test_achilles_validated_at_L5_ok():
 def test_not_achilles_validated_low_evidence_ok():
     a = schema.Assumption(id="A-1", statement="x", layer="concept", category="consumer",
                           impact="low", uncertainty="high", evidence_level="L1",
-                          validation_status="supported", status="active", evidence_refs=["kb/x"],
+                          validation_status="supported", status="active", evidence_refs=["evidence:E-001@1"],
                           derived_from=[], affects=[], branch_id="BR-001")
     a.check_invariants()
+
+
+@pytest.mark.parametrize("evidence_refs", [[], ["evidence:E-001"], ["knowledge:K-001@1"], ["RM-001"]])
+def test_supported_assumption_requires_exact_evidence_revision(evidence_refs):
+    assumption = schema.Assumption(
+        id="A-1",
+        statement="x",
+        layer="root",
+        category="consumer",
+        impact="low",
+        uncertainty="low",
+        evidence_level="L1",
+        validation_status="supported",
+        status="active",
+        evidence_refs=evidence_refs,
+        derived_from=[],
+        affects=[],
+        branch_id="BR-001",
+    )
+
+    with pytest.raises(ValidationError, match="exact Evidence revision"):
+        assumption.check_invariants()
+
+
+def test_evidence_ref_resolves_only_current_active_record_on_same_branch(tmp_path):
+    state_dir = tmp_path / "_bewater"
+    state_dir.mkdir()
+    (state_dir / "evidence.yaml").write_text(
+        """schema_version: 1
+revision: 3
+branch_id: BR-001
+next_evidence_id: 2
+evidence:
+  - id: E-001
+    record_revision: 2
+    validity: active
+"""
+    )
+
+    assert evidence.ref_resolves(tmp_path, "evidence:E-001@2", branch_id="BR-001")
+    assert not evidence.ref_resolves(tmp_path, "evidence:E-001@1", branch_id="BR-001")
+    assert not evidence.ref_resolves(tmp_path, "evidence:E-001@2", branch_id="BR-002")
+    assert not evidence.ref_resolves(tmp_path, "knowledge:K-001@2", branch_id="BR-001")
+
+
+def test_invalidated_evidence_ref_does_not_resolve(tmp_path):
+    state_dir = tmp_path / "_bewater"
+    state_dir.mkdir()
+    (state_dir / "evidence.yaml").write_text(
+        """schema_version: 1
+revision: 2
+branch_id: BR-001
+next_evidence_id: 2
+evidence:
+  - id: E-001
+    record_revision: 1
+    validity: invalidated
+"""
+    )
+
+    assert not evidence.ref_resolves(tmp_path, "evidence:E-001@1", branch_id="BR-001")
+
+
+def test_malformed_evidence_state_fails_closed(tmp_path):
+    state_dir = tmp_path / "_bewater"
+    state_dir.mkdir()
+    (state_dir / "evidence.yaml").write_text("evidence: [")
+
+    assert not evidence.ref_resolves(tmp_path, "evidence:E-001@1", branch_id="BR-001")
+
+
+def test_malformed_evidence_record_fails_closed(tmp_path):
+    state_dir = tmp_path / "_bewater"
+    state_dir.mkdir()
+    (state_dir / "evidence.yaml").write_text(
+        """branch_id: BR-001
+evidence:
+  - id: E-001
+    record_revision: not-a-number
+    validity: active
+"""
+    )
+
+    assert not evidence.ref_resolves(tmp_path, "evidence:E-001@1", branch_id="BR-001")
 
 
 def test_is_achilles_heel_false_when_low_impact():
@@ -134,7 +218,7 @@ def test_ledger_round_trip():
                            derived_from=[], affects=[], branch_id="BR-001")
     a2 = schema.Assumption(id="A-2", statement="y", layer="strategy", category="technical",
                            impact="high", uncertainty="high", evidence_level="L4",
-                           validation_status="supported", status="active", evidence_refs=["kb/y"],
+                           validation_status="supported", status="active", evidence_refs=["evidence:E-001@1"],
                            derived_from=["A-1"], affects=[], branch_id="BR-002")
     led = schema.Ledger(schema_version=1, revision=3, next_id=5,
                         updated_at="2026-01-01", updated_by="test",

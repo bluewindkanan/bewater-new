@@ -3,6 +3,7 @@ isolated tmp_home / tmp_dest from Plan 1's conftest."""
 from __future__ import annotations
 
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -81,6 +82,11 @@ def test_copy_fresh_install_initializes_complete_project_state(tmp_dest):
     assert (bewater / "conditions.yaml").is_file()
     assert (bewater / "records").is_dir()
     assert (tmp_dest / "_bewater-output").is_dir()
+    assert sorted(path.name for path in (tmp_dest / "_bewater-output").iterdir()) == [
+        "artifacts",
+        "knowledge",
+        "sources",
+    ]
     assert "current_stage: immersion" in (bewater / "config.yaml").read_text()
 
 
@@ -110,6 +116,17 @@ def test_copy_is_idempotent(tmp_dest):
     assert r2.returncode == 0, r2.stderr
     assert (tmp_dest / ".claude" / "skills" / "bw-immersion" / "SKILL.md").exists()
     assert {path: path.read_bytes() for path in before} == before
+
+
+def test_managed_skills_do_not_publish_legacy_flat_artifact_writer_paths():
+    legacy = re.compile(r"_bewater-output/(?:ART|EXP)-", re.IGNORECASE)
+    offenders = []
+    for path in sorted((REPO / "src" / "skills").rglob("*.md")):
+        if "_bw-shared" in path.parts:
+            continue
+        if legacy.search(path.read_text()):
+            offenders.append(str(path.relative_to(REPO)))
+    assert offenders == []
 
 
 def test_copy_invalid_state_fails_before_updating_managed_payload(tmp_dest):

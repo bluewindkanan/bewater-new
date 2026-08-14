@@ -1,8 +1,13 @@
 # Charter artifact template
 
-File: `_bewater-output/ART-001-r1-charter.md` (append-only; a substantive edit writes
+File: `_bewater-output/artifacts/ART-001-r1-charter.md` (append-only; a substantive edit writes
 `ART-001-r2-charter.md` with `supersedes_ref: artifact:ART-001@1`). Allocate the ART id
 from `config.next_ids.artifact` while holding the lock.
+
+The first Charter transaction also binds the repository by setting a concise, non-empty
+`config.project.name`. A later Charter revision retains that established name unless the revision is
+still within the same project; unrelated project intent belongs in a different repository or working
+directory.
 
 ## Frontmatter
 

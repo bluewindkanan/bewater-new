@@ -11,6 +11,7 @@ from pathlib import Path
 import pytest
 
 from bw import cli, ledger_ops
+from bwkit import cli as bwkit_cli
 
 
 def _add(root: Path, statement="s", branch="BR-001", status="active", layer="root") -> str:
@@ -219,3 +220,15 @@ def test_hash_stale_and_refresh_deps_mutually_exclusive(tmp_project):
     with pytest.raises(SystemExit) as exc:
         cli.main(["hash", str(art), "--stale", "--refresh-deps"])
     assert exc.value.code == 2
+
+
+def test_bwkit_output_layout_migration_cli_requires_explicit_mode(tmp_path, capsys):
+    from bwkit.init import initialize_project
+
+    initialize_project(tmp_path)
+    with pytest.raises(SystemExit) as exc:
+        bwkit_cli.main(["migrate", "output-layout", str(tmp_path)])
+    assert exc.value.code == 2
+
+    assert bwkit_cli.main(["migrate", "output-layout", str(tmp_path), "--check"]) == 0
+    assert "eligible" in capsys.readouterr().out

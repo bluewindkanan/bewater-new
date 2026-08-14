@@ -21,7 +21,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import io, ledger_ops, paths, schema
+from . import evidence, io, ledger_ops, paths, schema
 from .concept_lifecycle import concept_issues
 from .errors import ValidationError
 from .signoffs import has_fpet_signoff
@@ -55,16 +55,7 @@ def _iter_artifacts(root: Path):
     Malformed files are yielded too (the caller's read surfaces a
     malformed-frontmatter Issue); only unreadable duplicates are skipped.
     """
-    art_dir = paths.output_dir(root)
-    if not art_dir.is_dir():
-        return
-    seen: set[Path] = set()
-    for p in sorted(art_dir.rglob("*.md")):
-        rp = p.resolve()
-        if rp in seen:
-            continue
-        seen.add(rp)
-        yield p
+    yield from paths.iter_workflow_documents(root)
 
 
 def _single_sided_violations(meta: schema.ArtifactMeta) -> list[str]:
@@ -196,6 +187,18 @@ def validate_all(root: Path) -> list[Issue]:
     for a in assumptions:
         for msg in a.invariant_violations():
             issues.append(Issue(scope=a.id, kind="invariant-violation", message=msg))
+        if (
+            a.validation_status == schema.AssumptionValidationStatus.supported
+            and not evidence.assumption_refs_resolve(root, a)
+        ):
+            issues.append(Issue(
+                scope=a.id,
+                kind="evidence-ref",
+                message=(
+                    "supported assumption must resolve an exact current active Evidence "
+                    "revision on the same branch"
+                ),
+            ))
 
     # --- 4 & 6. Artifacts: single-sided + malformed frontmatter ---
     artifact_revisions: set[tuple[str, int]] = set()

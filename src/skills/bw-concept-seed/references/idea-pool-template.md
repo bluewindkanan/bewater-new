@@ -2,7 +2,7 @@
 
 One `idea-pool` revision chain serves the entire active branch. It groups 10–15
 raw Idea Seeds under each Opportunity Area and records the exact Ideate input
-snapshot. File: `_bewater-output/ART-NNN-rN-idea-pool.md`.
+snapshot. File: `_bewater-output/artifacts/ART-NNN-rN-idea-pool.md`.
 
 ```yaml
 schema_version: 1

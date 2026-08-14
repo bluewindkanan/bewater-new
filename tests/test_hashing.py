@@ -49,3 +49,16 @@ def test_is_stale_when_upstream_changed(tmp_project):
 def test_is_stale_no_deps_is_false(tmp_project):
     dep = _write(tmp_project, "_bewater-output/hyp.md", "HYP-1", "hbody", deps=[])
     assert hashing.is_stale(tmp_project, dep) is False
+
+
+def test_hash_index_ignores_artifact_shaped_knowledge(tmp_project):
+    _write(tmp_project, "_bewater-output/knowledge/K-001-question.md", "UPSTREAM", "body")
+    dep = _write(
+        tmp_project,
+        "_bewater-output/artifacts/ART-002-r1-research.md",
+        "DEPENDENT",
+        "body",
+        deps=[{"id": "UPSTREAM", "hash": ""}],
+    )
+
+    assert hashing.is_stale(tmp_project, dep) is True

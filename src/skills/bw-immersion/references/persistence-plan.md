@@ -15,7 +15,7 @@ texts outside the project, then use the provided emitter and pipe it directly to
 python3 .claude/skills/bw-immersion/scripts/emit_charter_plan.py \
   --action-id charter:ART-001@1 \
   --owner bw-immersion \
-  --artifact-path _bewater-output/ART-001-r1-charter.md \
+  --artifact-path _bewater-output/artifacts/ART-001-r1-charter.md \
   --artifact-file /tmp/charter.md \
   --cas-step artifact-counter _bewater/config.yaml 2 /tmp/config.yaml \
 | PYTHONPATH=_bewater python3 -m bwkit plan apply .
@@ -32,8 +32,9 @@ only; `bwkit plan apply` must perform every project-state write.
 
 For a first Charter, construct one ordered plan with:
 
-1. `write_new` for the immutable Charter revision under `_bewater-output/`;
-2. `cas_commit` for the complete config revision with `next_ids.artifact` advanced once.
+1. `write_new` for the immutable Charter revision under `_bewater-output/artifacts/`;
+2. `cas_commit` for the complete config revision with `next_ids.artifact` advanced once and a
+   non-empty `project.name` that binds this repository to the Charter's project.
 
 The Charter step must precede the config update so an identical resumable retry can skip the
 already-appended revision and complete only the missing CAS-protected steps. A later Charter revision

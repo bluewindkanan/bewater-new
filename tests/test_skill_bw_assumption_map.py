@@ -23,3 +23,17 @@ def test_assumption_map_owns_complete_g1_inventory_after_research_projection():
     )
     for token in ["research-derived", "charter-derived", "complete", "g1 inventory", "zero"]:
         assert token in text, f"assumption-map boundary missing {token!r}"
+
+
+def test_assumption_map_keeps_knowledge_distinct_from_gate_evidence():
+    text = "\n".join(
+        path.read_text()
+        for path in sorted(skill_dir(REPO, "bw-assumption-map").rglob("*.md"))
+    )
+    for token in [
+        "knowledge:K-NNN@n",
+        "evidence:E-NNN@n",
+        "does not close",
+        "next_evidence_id",
+    ]:
+        assert token in text, f"assumption-map Evidence boundary missing {token!r}"

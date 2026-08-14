@@ -22,7 +22,7 @@ carries one or two solutions at `validated` status.
    commercial_value_proposition + leverageable_assets; tension; balance_choice) and attach a
    business case + traceable evidence. Achilles Heels must be resolved by L4+ experiments
    (bw-experiment) before a solution can be `validated`.
-3. Write solution artifacts (`_bewater-output/ART-xxx-rN-solution.md`, `kind: solution`,
+3. Write solution artifacts (`_bewater-output/artifacts/ART-xxx-rN-solution.md`, `kind: solution`,
    `stage: shape`) via bwkit. Validate the revision chain with `bwkit check integrity`.
 4. Use exact `content_gaps` and `applicability_exceptions` fields when a draft is incomplete.
 5. Present 1–2 candidates + evidence, name the human decision authority, and **stop**. Setting

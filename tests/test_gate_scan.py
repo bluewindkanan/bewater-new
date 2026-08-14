@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+import yaml
 
 from bw import gate_scan, io, paths, schema
 
@@ -13,9 +14,6 @@ _DS = {
 
 def _mk(root, rel, kind, stage, status="final", dual=None, locked=False, signoffs=None):
     rel_path = Path(rel)
-    # Strip a leading "artifacts" so the file lands under _bewater-output/.
-    if rel_path.parts and rel_path.parts[0] == "artifacts":
-        rel_path = Path(*rel_path.parts[1:])
     p = paths.output_dir(root) / rel_path
     p.parent.mkdir(parents=True, exist_ok=True)
     meta = schema.ArtifactMeta(
@@ -75,13 +73,32 @@ def _complete(root, subject=None, oas=2, hyps=2, achilles=True):
         evidence_level="L4" if achilles else "L1",
         validation_status="supported" if achilles else "untested",
         status="active",
-        evidence_refs=[],
+        evidence_refs=["evidence:E-001@1"] if achilles else [],
         derived_from=[],
         affects=[],
         branch_id=subject,
         l4_obligation_status="closed" if achilles else "open",
     )
     ledger_ops.add(root, payload)
+    if achilles:
+        (root / "_bewater" / "evidence.yaml").write_text(
+            yaml.safe_dump(
+                {
+                    "schema_version": 1,
+                    "revision": 1,
+                    "branch_id": subject,
+                    "next_evidence_id": 2,
+                    "evidence": [
+                        {
+                            "id": "E-001",
+                            "record_revision": 1,
+                            "validity": "active",
+                        }
+                    ],
+                },
+                sort_keys=False,
+            )
+        )
     return subject
 
 
@@ -119,6 +136,75 @@ def test_g1_passes_when_complete(tmp_project):
     }
     notes = [(c.name, c.note) for c in r.criteria]
     assert any(n == "requires human judgment" for _, n in notes)
+
+
+def test_g1_blocks_when_closed_l4_obligation_has_no_machine_evidence(tmp_project):
+    subject = _complete(tmp_project, subject="sol-01")
+    (tmp_project / "_bewater" / "evidence.yaml").unlink()
+    knowledge = paths.knowledge_dir(tmp_project) / "K-001-behavior.md"
+    knowledge.parent.mkdir(parents=True, exist_ok=True)
+    knowledge.write_text("# Behavior research\n\n## Conclusion\nSupported.\n")
+
+    result = gate_scan.scan(tmp_project, "G1", subject=subject)
+
+    criterion = next(c for c in result.criteria if c.name == "l4-obligations")
+    assert not criterion.passed and criterion.blocking
+    assert "go" not in result.exit_allowed
+
+
+def test_missing_presentation_does_not_affect_gate_result(tmp_project):
+    subject = _complete(tmp_project, subject="sol-01")
+    before = gate_scan.scan(tmp_project, "G1", subject=subject)
+    presentations = tmp_project / "docs" / "presentations"
+    presentations.mkdir(parents=True)
+    (presentations / "readout.md").write_text("not canonical")
+
+    assert gate_scan.scan(tmp_project, "G1", subject=subject) == before
+
+
+def test_equivalent_state_scores_the_same_in_legacy_and_shallow_layout(tmp_path):
+    def make_root(name):
+        root = tmp_path / name
+        (root / "_bewater" / "records").mkdir(parents=True)
+        (root / "_bewater-output").mkdir()
+        (root / "_bewater" / "ledger.yaml").write_text(
+            yaml.safe_dump(
+                {
+                    "schema_version": 1,
+                    "revision": 1,
+                    "next_id": 1,
+                    "updated_at": None,
+                    "updated_by": "bw-init",
+                    "assumptions": {},
+                }
+            )
+        )
+        return root
+
+    shallow = make_root("shallow")
+    legacy = make_root("legacy")
+    shallow_subject = _complete(shallow, subject="sol-01")
+    legacy_subject = _complete(legacy, subject="sol-01")
+    for document in list(paths.artifacts_dir(legacy).rglob("*.md")):
+        document.replace(paths.output_dir(legacy) / document.name)
+
+    for gate in ["G1", "G2"]:
+        assert gate_scan.scan(shallow, gate, subject=shallow_subject) == gate_scan.scan(
+            legacy, gate, subject=legacy_subject
+        )
+
+
+def test_gate_scan_ignores_artifact_shaped_knowledge(tmp_project):
+    subject = _complete(tmp_project, subject="sol-01", oas=4)
+    knowledge = paths.knowledge_dir(tmp_project) / "K-001-not-an-opportunity.md"
+    knowledge.parent.mkdir(parents=True, exist_ok=True)
+    meta = schema.ArtifactMeta(
+        artifact_id="ART-999", kind="opportunity", stage="define", revision=1,
+        document_status="final", validation_status="unvalidated", branch_id="BR-001",
+    )
+    io.write_artifact(knowledge, meta, "not a workflow artifact")
+
+    assert "go" in gate_scan.scan(tmp_project, "G1", subject=subject).exit_allowed
 
 
 # --- charter criterion ----------------------------------------------------
@@ -243,7 +329,7 @@ def test_strategy_not_locked_blocks(tmp_project):
 
 def test_strategy_missing_blocks(tmp_project):
     _complete(tmp_project, subject="sol-01")
-    (paths.output_dir(tmp_project) / "define" / "strategy.md").unlink(missing_ok=False)
+    (paths.artifacts_dir(tmp_project) / "define" / "strategy.md").unlink(missing_ok=False)
     r = gate_scan.scan(tmp_project, "G1", subject="sol-01")
     strat = next(c for c in r.criteria if c.name == "strategy")
     assert not strat.passed and strat.blocking

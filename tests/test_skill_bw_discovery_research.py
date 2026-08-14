@@ -105,8 +105,8 @@ def test_discovery_research_runs_an_adaptive_multi_sprint_loop():
     for token in [
         "orient",
         "learning plan",
-        "sprint record",
-        "sprint synthesis",
+        "research progress",
+        "sprint decision",
         "plan delta",
         "continue",
         "deepen",
@@ -137,11 +137,11 @@ def test_discovery_research_distinguishes_stable_artifact_state_from_transient_e
     for token in [
         "research objective",
         "learning plan",
-        "research design",
-        "knowledge base index",
-        "evidence references",
+        "next sprint",
+        "research progress",
+        "knowledge references",
         "method limitations",
-        "sprint synthesis",
+        "sprint decision",
         "insight ingredients",
         "remaining gap",
     ]:
@@ -180,7 +180,8 @@ def test_discovery_research_reference_set_and_selective_toolkit_loading():
     markdown_refs = {path.name for path in references.glob("*.md")}
     assert markdown_refs == {
         "4c-framework.md",
-        "method-bundles.md",
+            "method-bundles.md",
+            "knowledge-workpaper.md",
         "persistence-plan.md",
         "research-plan.md",
         "root-assumption-projection.md",
@@ -426,10 +427,9 @@ def test_research_plan_artifact_uses_the_adaptive_sprint_layout():
     for token in [
         "research objective",
         "learning plan",
-        "research design",
-        "knowledge base index",
-        "sprint record — after execution only",
-        "sprint synthesis — after execution only",
+        "next sprint",
+        "research progress",
+        "sprint decision — after execution only",
         "insight ingredients",
         "insight readiness",
         "revision 1 has exactly four core sections",
@@ -491,9 +491,8 @@ def test_research_plan_separates_learning_intent_from_answer_state():
         "answered",
         "dropped",
         "gap-accepted",
-        "evidence_refs",
+        "knowledge_refs",
         "current_answer",
-        "contradictions",
         "remaining_gap",
         "do not duplicate `answer_status` in the learning plan",
     ]:
@@ -564,3 +563,21 @@ def test_discovery_research_surfaces_insight_ingredients_without_signing_an_insi
         "do not choose a gate exit",
     ]:
         assert token in text, f"Insight ingredient boundary missing {token!r}"
+
+
+def test_discovery_research_persists_workpapers_before_progress_and_keeps_sources_external():
+    text = _skill_text()
+    plan = _plan_text()
+    for token in [
+        "one stable file per k-nnn",
+        "knowledge:k-nnn@n",
+        "source sha-256",
+        "bytes only",
+        "current research head",
+        "complete knowledge workpaper",
+        "bwkit plan apply",
+        "resumable action",
+    ]:
+        assert token in text or token in plan, f"Knowledge persistence contract missing {token!r}"
+    assert "`rm-nnn` is an activity identifier" in plan
+    assert "assessment" in plan and "independent" in plan

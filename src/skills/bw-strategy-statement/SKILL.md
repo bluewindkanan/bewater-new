@@ -14,7 +14,7 @@ a G1 readiness requirement.
 1. Draft 1–3 strategy-statement candidates using `references/strategy-statement.md` — each
    captures a pivot insight or narrowed opportunity and must pass "can it cut at least one
    candidate option?" A statement that only summarizes fails.
-2. Write strategy-statement artifacts (`_bewater-output/ART-xxx-rN-strategy-statement.md`,
+2. Write strategy-statement artifacts (`_bewater-output/artifacts/ART-xxx-rN-strategy-statement.md`,
    `kind: strategy-statement`).
 3. Present candidates, name the product-owner decision authority, and **stop**. The human
    selects and locks; you record the lock only after receiving it.

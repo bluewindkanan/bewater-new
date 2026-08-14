@@ -29,7 +29,7 @@ and the Sprint loop; it does not own Insight generation, strategy formation, or 
    `derived_from` contains the exact Charter revision only.
 2. Find the branch's current research artifact. If none exists, start revision 1 with
    `references/research-plan.md`; otherwise read its Research Objective, Learning Plan, Research
-   Design, Knowledge Base Index, Sprint Record, Sprint Synthesis, and remaining gap. Any user-provided documents
+   Next Sprint research design, Research Progress, Sprint Decision, and remaining gap. Any user-provided documents
    available now are optional context inputs; they become evidence only when a source-bounded claim is
    extracted and recorded. Preserve the same artifact ID, the `supersedes_ref` chain, and the exact
    Charter `derived_from` lineage.
@@ -45,8 +45,8 @@ and the Sprint loop; it does not own Insight generation, strategy formation, or 
 ### 3. Plan the next Sprint
 
 4. Draft or update the Research Plan before selecting work for the next Sprint, following
-   `references/research-plan.md`. Revision 1 has Research Objective, Learning Plan, Research Design,
-   and Knowledge Base Index. Select the highest-learning-value questions for
+   `references/research-plan.md`. Revision 1 has Research Objective, Learning Plan, Next Sprint,
+   and Research Progress. Select the highest-learning-value questions for
    the next Sprint. For each, derive the evidence need before method selection and compose the
    smallest complementary **Method Bundle** from the layered Toolkit (`references/research-toolkit.csv`,
    `references/method-bundles.md`). Load the Toolkit selectively per question; it is a seed library,
@@ -83,9 +83,11 @@ and the Sprint loop; it does not own Insight generation, strategy formation, or 
    normalize packets, deduplicate findings by underlying origin rather than page count, check
    claim-to-source support and source locations, search for disconfirming evidence where important
    claims remain one-sided, preserve contradictions and alternative explanations, and apply the fan-in
-   quality audit. One Coordinator commit writes the normalized evidence plus the next research
-   revision.
-9. After every meaningful Sprint, run the Sprint Synthesis. Record learned, contradicted, belief
+   quality audit. The Coordinator first writes or CAS-revises one stable file per K-NNN, then appends
+   the Research revision whose Research Progress pins exact `knowledge:K-NNN@n` refs. Promote only
+   decision-critical atomic claims into Evidence. One Coordinator commit is one validated,
+   resumable action through `bwkit plan apply`.
+9. After every meaningful Sprint, run the synthesis and record a Sprint Decision. Record learned, contradicted, belief
    changed, reframed, deepened, dropped, new questions, and remaining gaps; propagate new questions,
    contradictions, belief changes, reframes, and remaining uncertainty into the next Sprint. Then
    choose `continue`, `deepen`, `redirect`, `synthesize`, or `stop` based on marginal strategic
@@ -103,3 +105,20 @@ and the Sprint loop; it does not own Insight generation, strategy formation, or 
 11. Do not create a final Insight. Do not sign F/P/E/T. Do not compose a directional hypothesis. Do
     not form a strategy. Do not choose a Gate exit. Initial Assessment content and self-report remain
     candidate beliefs until research supports them.
+
+## Knowledge and persistence contract
+
+Follow `references/knowledge-workpaper.md` and `references/persistence-plan.md`. Research Progress
+owns answer status and Knowledge references; `answered` or `partial` requires a complete Knowledge
+workpaper. `RM-NNN` identifies activity and never masquerades as Knowledge or Evidence. The current
+Research head and its live same-branch K revisions move together. A workpaper's `research_ref`
+continues to identify the approved plan revision that authorized the work and is not rewritten to
+the newly appended head.
+
+Host tools prepare material under `_bewater-output/sources/`. Before emitting canonical steps,
+validate every local path and Source SHA-256 from bytes only. Never parse a binary Source as text,
+never emit a Source step, and never write `config-after-sprint*.yaml` or another staged candidate
+into project state. New K IDs use `config.next_ids.knowledge`; revisions CAS the same stable path.
+Knowledge steps precede the immutable Research revision, optional Evidence and Ledger steps appear
+only for decision-critical changes, and config CAS is last so an interrupted action can resume
+without reallocating an occupied K ID.

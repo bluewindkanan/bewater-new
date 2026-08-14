@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+import re
 from typing import Any
 
 from bw.errors import ValidationError
@@ -43,6 +44,7 @@ class Uncertainty(str, Enum):
 
 
 _EVIDENCE_ORDER = ("L1", "L2", "L3", "L4", "L5", "L6")
+_EXACT_EVIDENCE_REF = re.compile(r"^evidence:E-\d{3}@[1-9]\d*$")
 
 
 class EvidenceLevel(str, Enum):
@@ -93,6 +95,7 @@ class ArtifactKind(str, Enum):
     concept_portfolio = "concept-portfolio"
     solution = "solution"
     investment_narrative = "investment-narrative"
+    experiment = "experiment"
     research = "research"
     insights = "insights"
     initial_assessment = "initial-assessment"
@@ -200,6 +203,13 @@ class Assumption:
     def invariant_violations(self) -> list[str]:
         if self.has_durable_l4_obligation and self.validation_status == AssumptionValidationStatus.supported and self.evidence_level < EvidenceLevel.L4:
             return [f"Assumption {self.id}: achilles heel supported below L4 (got {self.evidence_level.value})"]
+        if (
+            self.validation_status == AssumptionValidationStatus.supported
+            and not any(_EXACT_EVIDENCE_REF.fullmatch(ref) for ref in self.evidence_refs)
+        ):
+            return [
+                f"Assumption {self.id}: supported status requires an exact Evidence revision"
+            ]
         return []
 
     def check_invariants(self) -> bool:

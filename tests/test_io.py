@@ -19,6 +19,9 @@ def test_paths_layout(tmp_project):
     assert paths.ledger_path(tmp_project) == tmp_project / "_bewater" / "ledger.yaml"
     assert paths.records_dir(tmp_project) == tmp_project / "_bewater" / "records"
     assert paths.output_dir(tmp_project) == tmp_project / "_bewater-output"
+    assert paths.artifacts_dir(tmp_project) == tmp_project / "_bewater-output/artifacts"
+    assert paths.sources_dir(tmp_project) == tmp_project / "_bewater-output/sources"
+    assert paths.knowledge_dir(tmp_project) == tmp_project / "_bewater-output/knowledge"
 
 
 def test_round_trip_ledger(tmp_project):

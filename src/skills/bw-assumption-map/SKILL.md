@@ -22,6 +22,9 @@ grandfathered Charter-derived roots, including a legitimate zero-projection Rese
 3. Update the ledger: add/revise assumption records (allocate A-ids from `ledger.next_id`,
    bump `record_revision` + the ledger envelope `revision`) via `bwkit lock acquire` +
    `cas commit _bewater/ledger.yaml --expected <rev>`.
+   A Knowledge workpaper (`knowledge:K-NNN@n`) does not close an L4 obligation. A supported
+   assumption or closed obligation requires an exact current `evidence:E-NNN@n` record; allocate
+   new Evidence only from `evidence.yaml.next_evidence_id`.
    Concept assumptions use `layer: concept`, derive from an exact Concept Portfolio revision, and
    carry `source_concept_id`. Solution assumptions use `layer: solution` and derive from an exact
    Solution revision. Never copy or relayer Concept assumptions into a Solution.

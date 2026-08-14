@@ -58,6 +58,32 @@ def test_validate_passes_clean(tmp_project):
     assert validate.validate_all(tmp_project) == []
 
 
+def test_validate_ignores_non_artifact_markdown_in_knowledge_and_sources(tmp_project):
+    for relative in ("knowledge/K-001-question.md", "sources/interview-note.md"):
+        path = paths.output_dir(tmp_project) / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("---\nnot: artifact-frontmatter\n---\nresearch")
+
+    assert validate.validate_all(tmp_project) == []
+
+
+def test_validate_reads_artifact_and_experiment_from_shallow_layout(tmp_project):
+    _write_artifact(
+        tmp_project,
+        "ART-001",
+        "research",
+        path_name="artifacts/ART-001-r1-research.md",
+    )
+    _write_artifact(
+        tmp_project,
+        "EXP-001",
+        "experiment",
+        path_name="artifacts/EXP-001-r1-experiment.md",
+    )
+
+    assert validate.validate_all(tmp_project) == []
+
+
 def test_validate_returns_list_of_issues(tmp_project):
     _add(tmp_project, derived_from=["GONE"])
     issues = validate.validate_all(tmp_project)

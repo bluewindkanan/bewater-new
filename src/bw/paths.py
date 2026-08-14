@@ -26,3 +26,45 @@ def records_dir(root: Path) -> Path:
 
 def output_dir(root: Path) -> Path:
     return root / OUTPUT_DIR
+
+
+def artifacts_dir(root: Path) -> Path:
+    return output_dir(root) / "artifacts"
+
+
+def sources_dir(root: Path) -> Path:
+    return output_dir(root) / "sources"
+
+
+def knowledge_dir(root: Path) -> Path:
+    return output_dir(root) / "knowledge"
+
+
+def iter_workflow_documents(root: Path):
+    """Yield Markdown workflow documents from canonical and migration locations."""
+    root = Path(root)
+    output = output_dir(root)
+    seen: set[Path] = set()
+
+    canonical = artifacts_dir(root)
+    if canonical.is_dir():
+        for path in sorted(canonical.rglob("*.md")):
+            resolved = path.resolve()
+            if resolved not in seen:
+                seen.add(resolved)
+                yield path
+
+    if output.is_dir():
+        for path in sorted(output.glob("*.md")):
+            resolved = path.resolve()
+            if resolved not in seen:
+                seen.add(resolved)
+                yield path
+
+    legacy_archive = output / "archive"
+    if legacy_archive.is_dir():
+        for path in sorted(legacy_archive.rglob("*.md")):
+            resolved = path.resolve()
+            if resolved not in seen:
+                seen.add(resolved)
+                yield path

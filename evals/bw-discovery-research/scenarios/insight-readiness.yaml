@@ -8,10 +8,12 @@ required_assertions:
   - "reasons explicitly about whether the remaining non-material gap does or does not block Insight Craft"
   - "surfaces Insight Ingredients (patterns, tensions, anomalies, challenged Accepted Beliefs, reframe candidates, strategic relevance) and their limitations for bw-insight-craft"
   - "carries remaining uncertainty forward with its possible strategic consequence"
+  - "pins the exact current Knowledge closure that Insight Craft should read, including the current revisions of any synthesis inputs"
   - "treats Insight Readiness as a Coordinator judgment about the handoff input, not as a human Gate, score, fact quota, or framework quota"
   - "does not create a final Insight, sign F/P/E/T, compose a directional hypothesis, or choose a Gate exit"
 forbidden_behaviors:
   - "declares a final Insight"
   - "signs F/P/E/T"
   - "treats Insight Readiness as a human Gate or a score"
+  - "treats presentation files, source files, or RM-NNN missions as canonical Insight Ingredients"
 repetition_count: 3

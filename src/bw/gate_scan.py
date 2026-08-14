@@ -13,7 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import io, paths, schema
+from . import evidence, io, paths, schema
 from .signoffs import has_fpet_signoff
 from .solution_contract import solution_issues
 
@@ -60,16 +60,8 @@ def _load_artifacts(root: Path) -> list[schema.ArtifactMeta]:
     Malformed frontmatter is skipped (the validator reports it; the gate
     only scores what it can read). De-duplicated by resolved path.
     """
-    art_dir = paths.output_dir(root)
-    if not art_dir.is_dir():
-        return []
     out: list[schema.ArtifactMeta] = []
-    seen: set[Path] = set()
-    for p in sorted(art_dir.rglob("*.md")):
-        rp = p.resolve()
-        if rp in seen:
-            continue
-        seen.add(rp)
+    for p in paths.iter_workflow_documents(root):
         try:
             meta, _ = io.read_artifact(p)
         except (FileNotFoundError, ValueError):
@@ -80,16 +72,8 @@ def _load_artifacts(root: Path) -> list[schema.ArtifactMeta]:
 
 
 def _load_structured_artifacts(root: Path) -> list[tuple[schema.ArtifactMeta, dict, str]]:
-    art_dir = paths.output_dir(root)
-    if not art_dir.is_dir():
-        return []
     out: list[tuple[schema.ArtifactMeta, dict, str]] = []
-    seen: set[Path] = set()
-    for p in sorted(art_dir.rglob("*.md")):
-        rp = p.resolve()
-        if rp in seen:
-            continue
-        seen.add(rp)
+    for p in paths.iter_workflow_documents(root):
         try:
             meta, body = io.read_artifact(p)
             frontmatter = io.read_frontmatter(p)
@@ -352,6 +336,33 @@ def _annotate_scope(criteria: list[Criterion], note: str | None) -> None:
             return
 
 
+def _enforce_machine_evidence(
+    root: Path,
+    criteria: list[Criterion],
+    active: list[schema.Assumption],
+) -> None:
+    unresolved = [
+        assumption
+        for assumption in active
+        if assumption.validation_status == schema.AssumptionValidationStatus.supported
+        and not evidence.assumption_refs_resolve(root, assumption)
+    ]
+    if not unresolved:
+        return
+    ids = ", ".join(assumption.id for assumption in unresolved)
+    replacement = Criterion(
+        "l4-obligations",
+        False,
+        True,
+        f"methodology-deviation: unresolved current machine Evidence for {ids}",
+    )
+    for index, criterion in enumerate(criteria):
+        if criterion.name == "l4-obligations":
+            criteria[index] = replacement
+            return
+    criteria.append(replacement)
+
+
 def scan(root: Path, gate: str = "G1", subject: str | None = None) -> GateScanResult:
     """Score gate ``gate`` for project ``root``; return criteria + allowed exits.
 
@@ -372,6 +383,7 @@ def scan(root: Path, gate: str = "G1", subject: str | None = None) -> GateScanRe
     else:
         raise NotImplementedError(f"scan: gate {gate!r} not implemented")
 
+    _enforce_machine_evidence(root, criteria, active)
     any_blocking_failed = any(not c.passed and c.blocking for c in criteria)
     exit_allowed = list(_BLOCKED_EXITS) if any_blocking_failed else list(_ALL_EXITS)
     return GateScanResult(criteria=criteria, exit_allowed=exit_allowed)

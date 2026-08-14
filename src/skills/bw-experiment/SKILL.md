@@ -12,7 +12,7 @@ satisfies the L4 obligation.
 
 ## Workflow
 
-1. **Design** — create/revise `_bewater-output/EXP-xxx-rN-experiment.md` linked to ≥1 assumption
+1. **Design** — create/revise `_bewater-output/artifacts/EXP-xxx-rN-experiment.md` linked to ≥1 assumption
    and the exact artifact revision under test. Shape experiments pin an exact `solution_ref` and
    target Solution-layer or inherited Concept-layer assumption records without copying them.
    Before execution, secure human approval of: target assumption refs; method + target evidence

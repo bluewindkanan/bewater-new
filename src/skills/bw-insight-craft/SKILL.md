@@ -28,7 +28,7 @@ directional hypotheses; they stay in Define.
 4. Judge each candidate against F/P/E/T (`references/fpet-judgment.md`); reclassify a failing
    candidate as a Fact only when it is directly observed, otherwise retain it as a candidate belief
    or explanatory hypothesis.
-5. Write insight artifacts (`_bewater-output/ART-xxx-rN-insights.md`, `kind: insights`,
+5. Write insight artifacts (`_bewater-output/artifacts/ART-xxx-rN-insights.md`, `kind: insights`,
    `stage: define`).
 6. Present all insight candidates in the artifact body with their number, statement, evidence,
    and your F/P/E/T assessment. Then use `AskUserQuestion` once to ask the human to enter the

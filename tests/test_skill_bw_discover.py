@@ -104,6 +104,13 @@ def test_discover_routes_missing_or_stale_research_plan_to_research_planning():
     assert "when assumptions are absent, do not route back" in text
 
 
+def test_discover_router_reports_knowledge_progress_without_writing():
+    text = (skill_dir(REPO, "bw-discover") / "SKILL.md").read_text().lower()
+    for token in ["read-only router", "research progress", "knowledge gaps", "exact knowledge refs"]:
+        assert token in text
+    assert "does not author artifacts" in text
+
+
 def test_discover_eval_matrix_covers_advisory_match_states():
     scenarios = REPO / "evals" / "bw-discover" / "scenarios"
     names = {path.stem for path in scenarios.glob("*.yaml")}

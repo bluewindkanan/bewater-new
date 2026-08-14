@@ -20,6 +20,9 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    if not args.artifact_path.startswith("_bewater-output/artifacts/ART-"):
+        parser.error("Assessment artifact path must be under _bewater-output/artifacts/.")
+
     steps = [
         {
             "step_id": "assessment-revision",

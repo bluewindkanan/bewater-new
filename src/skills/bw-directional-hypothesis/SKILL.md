@@ -16,7 +16,7 @@ human-signed insights. You produce candidates and stop before the human chooses 
 2. Collide insights into candidate hypotheses using `references/hypothesis-template.md`
    — each has **By**[means] / **We can**[consumer value = Magic] / **Resulting in**[business
    outcome = Money], each backed by ≥1 insight from each relevant C (no lopsided 4C).
-3. Write one hypothesis artifact (`_bewater-output/ART-xxx-rN-directional-hypothesis.md`,
+3. Write one hypothesis artifact (`_bewater-output/artifacts/ART-xxx-rN-directional-hypothesis.md`,
    `kind: directional-hypothesis`, `stage: define`) via bwkit, with `derived_from` pinned to the
    signed insight revisions. The single artifact contains all 2–5 candidates.
 4. Present all candidates in the artifact body with their numbers and dual-sided coverage

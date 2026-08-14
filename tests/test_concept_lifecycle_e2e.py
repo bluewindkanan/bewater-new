@@ -194,7 +194,29 @@ def _canonical_lifecycle():
 def _materialize_canonical(root, artifacts=None, ledger=None):
     if artifacts is None or ledger is None:
         artifacts, ledger = _canonical_lifecycle()
+    evidence_records = []
+    for index, assumption in enumerate(ledger.assumptions.values(), 1):
+        if assumption.validation_status != schema.AssumptionValidationStatus.supported:
+            continue
+        evidence_id = f"E-{index:03d}"
+        assumption.evidence_refs = [f"evidence:{evidence_id}@1"]
+        evidence_records.append(
+            {"id": evidence_id, "record_revision": 1, "validity": "active"}
+        )
     io.save_ledger(root, ledger)
+    if evidence_records:
+        (root / "_bewater" / "evidence.yaml").write_text(
+            yaml.safe_dump(
+                {
+                    "schema_version": 1,
+                    "revision": 1,
+                    "branch_id": "BR-001",
+                    "next_evidence_id": len(evidence_records) + 1,
+                    "evidence": evidence_records,
+                },
+                sort_keys=False,
+            )
+        )
     for entry in artifacts:
         if len(entry) == 2:
             meta, frontmatter = entry

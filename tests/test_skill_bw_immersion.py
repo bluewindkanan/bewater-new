@@ -27,6 +27,57 @@ def _all_text() -> str:
     return _normalize("\n".join(path.read_text() for path in sorted(_root().rglob("*.md"))))
 
 
+def _valid_charter() -> str:
+    return """---
+schema_version: 1
+artifact_id: ART-001
+revision: 1
+supersedes_ref: null
+kind: charter
+stage: immersion
+branch_id: BR-001
+document_status: draft
+validation_status: unvalidated
+dual_sided:
+  magic:
+    consumer_value_proposition: {statement: Useful matching, evidence_refs: []}
+    consumer_target: {statement: Freelance chefs, evidence_refs: []}
+  money:
+    commercial_value_proposition: {statement: Booking fee, evidence_refs: []}
+    leverageable_assets: {statement: Kitchen network, evidence_refs: []}
+  tension: {statement: Trust versus speed}
+  balance_choice: Start in one city
+derived_from: []
+signoffs: []
+stale_reason: null
+---
+# Charter
+
+### Original intent
+Help freelance chefs book compliant kitchens.
+
+### Project definition
+**Challenge:** Chefs cannot find compliant space quickly.
+**Intent and outcome:** Make booking reliable.
+**Scope:** One city.
+**Constraints:** Existing kitchen network.
+**Success definition:** Completed compliant bookings.
+
+### Money + Magic
+Create chef value while sustaining the network.
+
+### Intent trace
+| Claim | Provenance | Basis |
+|---|---|---|
+| Start in one city | user-stated | User selected the first-cycle boundary. |
+
+### Current knowledge state
+| Type | Content |
+|---|---|
+| **Unknown** | Will chefs pay? |
+"""
+
+
 def test_bw_immersion_is_well_formed():
     validate_skill(_root())
     validate_skill_evals(REPO / "evals", "bw-immersion")
@@ -147,6 +198,106 @@ def test_immersion_persists_charter_through_one_transactional_plan():
     assert "emit_charter_plan.py" in plan
     assert "--owner bw-immersion" in plan
     assert "charter:art-001@1" in plan
+
+
+def test_immersion_protects_the_repository_project_binding():
+    text = _skill_text()
+    for token in [
+        "one repository",
+        "project.name",
+        "existing charter",
+        "resume or revise",
+        "unrelated project",
+        "new repository or working directory",
+        "write nothing",
+    ]:
+        assert token in text, f"immersion project-binding contract missing {token!r}"
+    for protected in ["charter", "ledger", "conditions", "evidence", "artifact"]:
+        assert f"never delete or reset the existing {protected}" in text
+
+
+def test_first_charter_plan_binds_non_empty_project_name(tmp_path: Path):
+    script = _root() / "scripts" / "emit_charter_plan.py"
+    artifact = tmp_path / "charter.md"
+    config = tmp_path / "config.yaml"
+    artifact.write_text(_valid_charter())
+    config.write_text("revision: 2\nproject:\n  name: Kitchen Match\n")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(script),
+            "--action-id", "charter:ART-001@1",
+            "--owner", "bw-immersion",
+            "--artifact-path", "_bewater-output/artifacts/ART-001-r1-charter.md",
+            "--artifact-file", str(artifact),
+            "--cas-step", "artifact-counter", "_bewater/config.yaml", "1", str(config),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    plan = json.loads(result.stdout)
+    assert [step["path"] for step in plan["steps"]] == [
+        "_bewater-output/artifacts/ART-001-r1-charter.md",
+        "_bewater/config.yaml",
+    ]
+    assert "name: Kitchen Match" in plan["steps"][1]["new_text"]
+
+
+def test_first_charter_plan_rejects_blank_project_name_without_emitting_plan(tmp_path: Path):
+    script = _root() / "scripts" / "emit_charter_plan.py"
+    artifact = tmp_path / "charter.md"
+    config = tmp_path / "config.yaml"
+    artifact.write_text(_valid_charter())
+    config.write_text('revision: 2\nproject:\n  name: ""\n')
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(script),
+            "--action-id", "charter:ART-001@1",
+            "--owner", "bw-immersion",
+            "--artifact-path", "_bewater-output/artifacts/ART-001-r1-charter.md",
+            "--artifact-file", str(artifact),
+            "--cas-step", "artifact-counter", "_bewater/config.yaml", "1", str(config),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode != 0
+    assert result.stdout == ""
+    assert "project.name" in result.stderr
+
+
+def test_charter_plan_rejects_legacy_flat_artifact_path(tmp_path: Path):
+    script = _root() / "scripts" / "emit_charter_plan.py"
+    artifact = tmp_path / "charter.md"
+    config = tmp_path / "config.yaml"
+    artifact.write_text(_valid_charter())
+    config.write_text("revision: 2\nproject:\n  name: Kitchen Match\n")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(script),
+            "--action-id", "charter:ART-001@1",
+            "--owner", "bw-immersion",
+            "--artifact-path", "_bewater-output/ART-001-r1-charter.md",
+            "--artifact-file", str(artifact),
+            "--cas-step", "artifact-counter", "_bewater/config.yaml", "1", str(config),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode != 0
+    assert result.stdout == ""
+    assert "_bewater-output/artifacts/" in result.stderr
 
 
 def test_immersion_delegates_assessment_to_fresh_context():
@@ -298,7 +449,7 @@ def test_assessment_plan_emitter_only_serializes_ordered_plan(tmp_path: Path):
             str(script),
             "--action-id", "assessment:ART-002@1",
             "--owner", "bw-immersion",
-            "--artifact-path", "_bewater-output/ART-002-r1-initial-assessment.md",
+            "--artifact-path", "_bewater-output/artifacts/ART-002-r1-initial-assessment.md",
             "--artifact-file", str(artifact),
             "--cas-step", "artifact-counter", "_bewater/config.yaml", "2", str(config),
         ],
@@ -360,6 +511,7 @@ def test_immersion_eval_matrix_covers_charter_and_assessment_paths():
         "charter-chat-conflict",
         "concurrent-change",
         "automatic-commit",
+        "unrelated-project",
     } <= names
     assert (REPO / "evals" / "bw-immersion" / "live" / "real-search.yaml").is_file()
 

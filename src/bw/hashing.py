@@ -25,18 +25,7 @@ def hash_artifact(path: Path) -> str:
 
 
 def _iter_artifact_files(root: Path):
-    seen: set[Path] = set()
-    primary = paths.output_dir(root)
-    roots = [primary, root] if primary != root else [primary]
-    for base in roots:
-        if not base.is_dir():
-            continue
-        for p in sorted(base.rglob("*.md")):
-            rp = p.resolve()
-            if rp in seen:
-                continue
-            seen.add(rp)
-            yield p
+    yield from paths.iter_workflow_documents(root)
 
 
 def _load_index(root: Path) -> dict[str, str]:

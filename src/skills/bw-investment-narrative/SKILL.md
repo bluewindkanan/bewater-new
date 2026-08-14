@@ -20,7 +20,7 @@ the human's investment judgment. The narrative never compensates for missing Sol
    pricing, CAC, cost, year-by-year P&L, profitability timing (reference comparable crowdfunding
    counts, industry success rates, etc.). Tie each financial assumption to a ledger assumption with
    `evidence_refs`.
-4. Write the narrative artifact (`_bewater-output/ART-xxx-rN-investment-narrative.md`,
+4. Write the narrative artifact (`_bewater-output/artifacts/ART-xxx-rN-investment-narrative.md`,
    `kind: investment-narrative`, `stage: shape`) via bwkit.
 5. Present the narrative + financial case, name the investment-decision authority, and **stop**.
 

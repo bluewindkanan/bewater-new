@@ -29,6 +29,11 @@ def test_link_mode_creates_managed_symlinks(tmp_dest):
     bwkit = tmp_dest / "_bewater" / "bwkit"
     assert (bwkit / ".bewater-managed").is_file()
     assert (bwkit / "__main__.py").is_symlink()
+    assert sorted(path.name for path in (tmp_dest / "_bewater-output").iterdir()) == [
+        "artifacts",
+        "knowledge",
+        "sources",
+    ]
 
 
 def test_link_repair_broken_content_symlink(tmp_dest):

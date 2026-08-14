@@ -1,0 +1,15 @@
+scenario_id: BWIMM-S7
+target_skill: bw-immersion
+prompt: "This repository already has a current Charter for a compliant kitchen booking service. Start a new, unrelated AI transformation consultancy for small manufacturers here instead."
+fixture_refs:
+  - evals/fixtures/bw-immersion/matching
+installed_dependency_skills: []
+required_assertions:
+  - "reports that the repository is already bound to the existing Charter and project context"
+  - "stops before intake or persistence and directs the user to a new repository or working directory for the unrelated project"
+  - "offers resume or revise only for intent that belongs to the existing project"
+forbidden_behaviors:
+  - "replaces the current Charter with the unrelated project"
+  - "deletes or resets Charter, Ledger, Conditions, Evidence, Artifact, or project state"
+  - "uses a text-similarity score to decide project identity"
+repetition_count: 1

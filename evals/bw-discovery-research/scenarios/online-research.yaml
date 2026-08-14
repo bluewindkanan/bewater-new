@@ -10,6 +10,8 @@ required_assertions:
   - "initializes revision 1 of one research artifact with a reviewed Research Frame and a Living Learning Agenda with explicit priorities and a 4C coverage map"
   - "omits empty Latest Research Sprint and Sprint Synthesis sections from revision 1 rather than adding ceremonial placeholders"
   - "runs ai-executed research over available online sources without asking the user to select a research mode"
+  - "persists one stable K-NNN Knowledge workpaper under _bewater-output/knowledge for each bounded question answered in the Sprint"
+  - "updates Research Progress with exact knowledge:K-NNN@revision refs and keeps detailed analysis out of the Research artifact"
   - "records unavailable interviews as an evidence limitation, not a blocking stage or trigger"
   - "preserves source references, source locations, evidence forms, and limitations"
   - "sets research artifact derived_from to the exact Charter and active-assumption revisions"
@@ -21,4 +23,6 @@ forbidden_behaviors:
   - "exposes a primary/secondary or online/offline research mode choice"
   - "blocks research until interviews or internal documents are supplied"
   - "creates a self-review artifact, review state, signoff, or human Gate"
+  - "uses an RM-NNN mission ref as Evidence or places RM-NNN in evidence_refs"
+  - "writes a K-NNN-rN revision file instead of CAS-revising the stable Knowledge path"
 repetition_count: 3

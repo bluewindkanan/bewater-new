@@ -5,7 +5,7 @@ import json
 import sys
 from pathlib import Path
 
-from validate_draft import validate_files
+from validate_draft import validate_files, validate_project_binding
 
 
 def main() -> None:
@@ -24,6 +24,13 @@ def main() -> None:
     args = parser.parse_args()
 
     errors = validate_files(args.artifact_file)
+    if not args.artifact_path.startswith("_bewater-output/artifacts/ART-"):
+        errors.append("Charter artifact path must be under _bewater-output/artifacts/.")
+    config_steps = [step for step in args.cas_step if step[1] == "_bewater/config.yaml"]
+    if len(config_steps) > 1:
+        errors.append("Charter plan must contain at most one config CAS step.")
+    config_file = Path(config_steps[0][3]) if config_steps else None
+    errors.extend(validate_project_binding(args.artifact_file, config_file))
     if any(step[1] == "_bewater/ledger.yaml" for step in args.cas_step):
         errors.append("Project Charter must not emit a ledger CAS step.")
     if errors:

@@ -1,7 +1,7 @@
 # Experiment template
 
 An experiment is a pre-committed bet: thresholds fixed before results. File:
-`_bewater-output/EXP-xxx-rN-experiment.md` (append-only; `experiment:EXP-001@2` typed ref).
+`_bewater-output/artifacts/EXP-xxx-rN-experiment.md` (append-only; `experiment:EXP-001@2` typed ref).
 
 ## Design approval — all fixed before execution
 

@@ -12,6 +12,11 @@ high-impact + high-uncertainty, the resulting L4 obligation is durable — lower
 field does not erase it (`l4_obligation_status` stays open until L4+ evidence or a
 human-signed reclassification).
 
+A Knowledge workpaper (`knowledge:K-NNN@n`) can explain the research behind a claim, but it
+does not close an L4 obligation or make an assumption supported. Those state changes require an
+exact, current, active machine Evidence record (`evidence:E-NNN@n`) from
+`_bewater/evidence.yaml`. Allocate new Evidence only from `evidence.yaml.next_evidence_id`.
+
 ## Ledger write
 
 Each assumption is a record under `ledger.yaml:assumptions:` with `record_revision`,

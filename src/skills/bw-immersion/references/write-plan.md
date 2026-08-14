@@ -15,7 +15,7 @@ applier:
 python3 .claude/skills/bw-immersion/scripts/emit_assessment_plan.py \
   --action-id assessment:ART-002@1 \
   --owner bw-immersion \
-  --artifact-path _bewater-output/ART-002-r1-initial-assessment.md \
+  --artifact-path _bewater-output/artifacts/ART-002-r1-initial-assessment.md \
   --artifact-file /tmp/assessment.md \
   --cas-step artifact-counter _bewater/config.yaml 2 /tmp/config.yaml \
 | PYTHONPATH=_bewater python3 -m bwkit plan apply .
@@ -39,7 +39,7 @@ For the first Assessment, the emitter produces exactly this ordered shape:
     {
       "step_id": "assessment-revision",
       "op": "write_new",
-      "path": "_bewater-output/ART-002-r1-initial-assessment.md",
+      "path": "_bewater-output/artifacts/ART-002-r1-initial-assessment.md",
       "new_text": "<complete confirmed artifact text>"
     },
     {

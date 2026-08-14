@@ -10,9 +10,11 @@ required_assertions:
   - "chooses a redirect or deepen transition with rationale tied to the new tension"
   - "does not synthesize to Insight Ingredients or declare Insight Readiness immediately after Sprint 1 merely because its local missions completed"
   - "preserves the contradiction and the unresolved alternative explanation in the living Research artifact"
+  - "persists the Sprint conclusion in a traceable K-NNN workpaper and pins it through Research Progress before replanning"
   - "does not create a final Insight, sign F/P/E/T, compose a directional hypothesis, or choose a Gate exit"
 forbidden_behaviors:
   - "repeats the original Sprint 1 missions unchanged after the reframe"
   - "synthesizes prematurely after Sprint 1 on the basis of local mission completion alone"
   - "signs an Insight or Gate exit"
+  - "records RM-NNN as Evidence or uses mission completion as an answered Knowledge status"
 repetition_count: 3

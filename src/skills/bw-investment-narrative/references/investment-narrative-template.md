@@ -3,7 +3,7 @@
 The narrative is the shell the investment-decision level reads at G2. It wraps
 one or two complete validated Solutions and never fills gaps that belong in
 canonical Solution frontmatter. Goal: “make it impossible not to invest.” File:
-`_bewater-output/ART-xxx-rN-investment-narrative.md` (append-only).
+`_bewater-output/artifacts/ART-xxx-rN-investment-narrative.md` (append-only).
 
 ## The six parts
 

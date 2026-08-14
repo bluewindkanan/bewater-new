@@ -15,6 +15,9 @@ BUSINESS_PATHS = (
     "_bewater/conditions.yaml",
     "_bewater/records",
     "_bewater-output",
+    "_bewater-output/artifacts",
+    "_bewater-output/sources",
+    "_bewater-output/knowledge",
 )
 
 
@@ -56,9 +59,16 @@ def test_fresh_init_writes_complete_v5_scaffold(tmp_path: Path) -> None:
         "baseline": 1,
         "backtrack": 1,
         "action": 1,
-        "evidence": 1,
+        "knowledge": 1,
     }.items():
         assert re.search(rf"(?m)^  {field}: {value}$", config)
+    assert not re.search(r"(?m)^  evidence:", config)
+    assert sorted(path.name for path in (root / "_bewater-output").iterdir()) == [
+        "artifacts",
+        "knowledge",
+        "sources",
+    ]
+    assert not (root / "_bewater-output/artifacts/archive").exists()
     for fragment in (
         'name: ""',
         "success_criteria: []",

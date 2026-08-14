@@ -68,8 +68,8 @@ The target design preserves the durable parts of professional research practice:
   Use agents with non-overlapping file ownership after the initial RED contract is established.
 - **Dirty worktree:** preserve all existing user changes. Do not modify current BeWater project state,
   deleted outputs, Charter work, or unrelated methodology edits.
-- **Superpowers policy:** do not invoke any prohibited superpowers skill. The repository permits only
-  local brainstorming.
+- **Superpowers policy:** do not invoke any prohibited superpowers skill. The repository permits
+  only brainstorming, writing-plans, and verification-before-completion.
 
 ## Non-goals
 

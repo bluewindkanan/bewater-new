@@ -188,6 +188,31 @@ def validate_files(artifact_file: Path) -> list[str]:
     return errors
 
 
+def validate_project_binding(artifact_file: Path, config_file: Path | None) -> list[str]:
+    """Validate that the first Charter transaction binds the repository to a project name."""
+    try:
+        text = artifact_file.read_text(encoding="utf-8")
+    except OSError as exc:
+        return [f"Charter cannot be read for project binding: {exc}"]
+    frontmatter, _, errors = _frontmatter(text)
+    if frontmatter is None:
+        return errors
+    if frontmatter.get("revision") != 1 and config_file is None:
+        return []
+    if config_file is None:
+        return ["The first Charter transaction must CAS-commit _bewater/config.yaml with project.name."]
+    try:
+        config = yaml.safe_load(config_file.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as exc:
+        return [f"Candidate config for project binding is invalid: {exc}"]
+    if not isinstance(config, dict):
+        return ["Candidate config for project binding must be a YAML mapping."]
+    project = config.get("project")
+    if not isinstance(project, dict) or not _is_text(project.get("name")):
+        return ["The first Charter transaction must set a non-empty project.name."]
+    return []
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Validate a staged BeWater Charter draft.")
     parser.add_argument("--artifact-file", type=Path, required=True)

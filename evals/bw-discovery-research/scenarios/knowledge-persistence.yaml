@@ -1,0 +1,18 @@
+scenario_id: BWDRES-S13
+target_skill: bw-discovery-research
+prompt: "Sprint RM-001 answered LP-001 using _bewater-output/sources/interview-notes.md and _bewater-output/sources/internal-report.md. Persist the completed bounded answer, its conclusion and limitations, then update the current Research head. Neither mission is machine Evidence."
+fixture_refs:
+  - evals/fixtures/bw-discovery-research/supplied-context
+installed_dependency_skills: []
+required_assertions:
+  - "allocates one K-NNN id and writes one stable _bewater-output/knowledge/K-NNN-short-title.md workpaper with revision 1"
+  - "records exact local Source paths and SHA-256 digests without decoding, copying, or writing their bytes through bwkit"
+  - "includes non-empty Summary, Conclusion, and Limitations and new questions sections before marking the workpaper complete"
+  - "appends a Research artifact revision under _bewater-output/artifacts and records knowledge:K-NNN@1 in Research Progress for LP-001"
+  - "validates and emits one resumable canonical action that advances Knowledge and Research state together"
+forbidden_behaviors:
+  - "creates K-NNN-r1 or another immutable Knowledge revision filename"
+  - "puts RM-001 in evidence_refs or represents RM-001 as evidence:RM-001"
+  - "uses the Source files, presentation files, or mission completion as canonical proof without a valid Knowledge workpaper"
+  - "writes config-after-sprint or another staged candidate into project state"
+repetition_count: 1

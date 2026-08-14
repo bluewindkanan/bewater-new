@@ -135,7 +135,7 @@ def test_emitter_outputs_charter_and_counter_without_ledger(tmp_path: Path):
     charter = tmp_path / "charter.md"
     config = tmp_path / "config.yaml"
     charter.write_text(_charter())
-    config.write_text("revision: 3\n")
+    config.write_text("revision: 3\nproject:\n  name: Test project\n")
 
     result = subprocess.run(
         [
@@ -143,7 +143,7 @@ def test_emitter_outputs_charter_and_counter_without_ledger(tmp_path: Path):
             str(EMITTER),
             "--action-id", "charter:ART-001@1",
             "--owner", "bw-immersion",
-            "--artifact-path", "_bewater-output/ART-001-r1-charter.md",
+            "--artifact-path", "_bewater-output/artifacts/ART-001-r1-charter.md",
             "--artifact-file", str(charter),
             "--cas-step", "artifact-counter", "_bewater/config.yaml", "2", str(config),
         ],

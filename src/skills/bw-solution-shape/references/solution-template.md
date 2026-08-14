@@ -3,7 +3,7 @@
 A solution is a sharply-defined dual-sided concept with a business case. Concept → solution paths:
 `linear-refine` / `pivot` / `hybridize` (merge concepts) / `scope-extend`; do not invent outside
 the selected Concept boundary. File:
-`_bewater-output/ART-xxx-rN-solution.md` (append-only; `ART-001-r3-solution.md` supersedes
+`_bewater-output/artifacts/ART-xxx-rN-solution.md` (append-only; `ART-001-r3-solution.md` supersedes
 `ART-001-r2-solution.md` via `supersedes_ref`).
 
 A solution is G2-ready only at `validation_status: validated`, with a dual-sided body, a business

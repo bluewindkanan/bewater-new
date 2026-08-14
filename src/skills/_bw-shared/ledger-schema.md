@@ -8,12 +8,12 @@ contract_version: 4
 Use this shared contract for state fields and reference formats.
 
 ## ID prefixes (stable, never reused)
-BR-001 branch · A-001 assumption · ART-001 artifact · EXP-001 experiment ·
+BR-001 branch · A-001 assumption · ART-001 artifact · EXP-001 experiment · K-001 knowledge ·
 D-001 decision · B-001 baseline · BT-001 backtrack · ACT-001 action ·
 C-001 condition · E-001 evidence.
 
 ## Typed references
-artifact:ART-001@3 · assumption:A-001@4 · experiment:EXP-001@2 ·
+artifact:ART-001@3 · assumption:A-001@4 · experiment:EXP-001@2 · knowledge:K-001@1 ·
 evidence:E-001@1 · gate:D-001 · baseline:B-001. The `@n` pins a mutable
 record revision; gate/baseline refs are immutable (no `@n`).
 
@@ -29,7 +29,7 @@ Go replaces.
 ## Versioning models
 In-place bump (one file): assumptions (`record_revision`), conditions
 (`record_revision`), evidence (`record_revision`), config/ledger/conditions/evidence
-envelopes (`revision`).
+envelopes (`revision`), and Knowledge workpapers (`revision`) at one stable `K-NNN` path.
 Append-only (new file per revision): artifacts (`ART-001-r3-…`).
 Cross-file versioned, in-file immutable: baselines (`B-002` supersedes
 `B-001`), gate decisions (new attempt → new `D-…`).
@@ -39,7 +39,7 @@ schema_version it supports and fails closed on a higher version.
 
 ## config.yaml (selected)
 schema_version, revision, next_ids{branch,artifact,experiment,decision,
-baseline,backtrack,action,evidence}, active_branch, active_execution_handoff,
+baseline,backtrack,action,knowledge}, active_branch, active_execution_handoff,
 branches{BR-nn: status,current_stage,parent_ids,merged_into,gate_due_at,
 inherited_assumption_refs, excluded_assumption_refs, inherited_condition_ids,
 needs_rebase_refs, active_baselines{G1,G2}}. Branch status: active, merged,
@@ -86,7 +86,7 @@ document_status{draft,final,superseded}, validation_status{unvalidated,
 in-review,validated,invalidated}, dual_sided{magic,money,tension,balance_choice},
 derived_from[], signoffs[{person,role,scope,artifact_revision,signed_at}],
 stale_reason. final + non-empty body is document-presence only, never
-readiness. Artifact files are append-only revisions in the flat output dir:
+readiness. Artifact files are append-only revisions under `_bewater-output/artifacts/`:
 `ART-001-r3-solution.md` supersedes `ART-001-r2-solution.md`. The resolver
 requires exactly one head per revision chain; a duplicate, missing
 predecessor, cycle, or two heads is corruption.
@@ -96,15 +96,30 @@ envelope. Opportunity, Idea Pool, Concept Portfolio, and Solution fields are
 defined by `idea-concept-solution-lifecycle.md`; writers and readers must not
 silently drop them.
 
+## Knowledge workpaper
+
+Knowledge uses a stable `K-NNN` identity and exactly one file at
+`_bewater-output/knowledge/K-NNN-<short-title>.md`. Its positive top-level `revision` advances in
+place through CAS; it never uses append-only `K-NNN-rN` files. `knowledge:K-NNN@n` is an exact
+typed reference. A workpaper pins the exact Research revision that authorized it and resolves its
+`LP-NNN` refs inside that revision; the pin is not forced to chase a subsequently appended Research
+head.
+
+Runtime resolution is current-head only: every Knowledge ref in the current Research head must
+equal the live workpaper revision on the same branch, including the transitive inputs of a synthesis
+workpaper. Historical Research revisions preserve their pins as immutable audit text and are not
+re-resolved against live Knowledge. Git, not CAS backups, preserves older workpaper text. Workflow
+Artifacts and Experiments retain their append-only revision model.
+
 ## evidence.yaml (evidence record)
 Evidence is a structured state record — a source-bounded claim plus provenance — in the same
 family as `ledger.yaml` and `conditions.yaml`, not an artifact. It accumulates in-place in one
 per-branch file `_bewater/evidence.yaml`; never one append-only file per record.
 
-Do not create an empty `evidence.yaml`. Research Planning initializes the Knowledge Base Index in
-the Research Plan; the evidence file appears only when the first real source-bounded finding is
-committed. The Research Plan is the question-to-evidence index, while Evidence records are the
-canonical atomic findings.
+Do not create an empty `evidence.yaml`. Research Planning initializes Research Progress and
+Knowledge workpapers; the evidence file appears only when the first decision-critical atomic claim
+is committed. Research Progress is the question-to-Knowledge index, while Evidence records remain
+the canonical machine claims used by assumptions, experiments, and Gates.
 
 Envelope fields: `schema_version`, `revision` (envelope in-place bump), `branch_id`,
 `next_evidence_id` (canonical source for E-NNN), `evidence[]`.

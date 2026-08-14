@@ -51,8 +51,9 @@ runtime service, Research artifact kind, user setting, gate, or primary-research
   the primary agent performs the final integration and verification.
 - **Dirty worktree:** preserve all existing user changes. Do not touch `_bewater/`, `_bewater-output/`,
   Charter work, or unrelated skill edits.
-- **No prohibited Superpowers skills:** repository policy permits only local `brainstorming`; execute
-  this plan without invoking any other `superpowers:*` skill.
+- **No prohibited Superpowers skills:** repository policy permits brainstorming, writing-plans, and
+  verification-before-completion only; execute this plan without invoking any other
+  `superpowers:*` skill.
 
 ## Non-Goals
 

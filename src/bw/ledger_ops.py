@@ -341,20 +341,13 @@ def baseline(root: Path, label: str = "G2") -> dict:
     }
 
     artifacts: dict[str, str] = {}
-    out_dir = paths.output_dir(root)
-    if out_dir.is_dir():
-        seen: set[Path] = set()
-        for p in sorted(out_dir.rglob("*.md")):
-            rp = p.resolve()
-            if rp in seen:
-                continue
-            seen.add(rp)
-            try:
-                meta, _ = io.read_artifact(p)
-            except (FileNotFoundError, ValueError):
-                continue
-            if meta.artifact_id:
-                artifacts[meta.artifact_id] = meta.hash
+    for p in paths.iter_workflow_documents(root):
+        try:
+            meta, _ = io.read_artifact(p)
+        except (FileNotFoundError, ValueError):
+            continue
+        if meta.artifact_id:
+            artifacts[meta.artifact_id] = meta.hash
 
     snapshot = {"assumptions": assumptions, "artifacts": artifacts}
 

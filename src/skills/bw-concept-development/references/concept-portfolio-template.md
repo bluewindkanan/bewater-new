@@ -2,7 +2,7 @@
 
 One `concept-portfolio` revision chain holds the branch's developed,
 researchable Concepts and human convergence decisions. File:
-`_bewater-output/ART-NNN-rN-concept-portfolio.md`.
+`_bewater-output/artifacts/ART-NNN-rN-concept-portfolio.md`.
 
 ```yaml
 schema_version: 1

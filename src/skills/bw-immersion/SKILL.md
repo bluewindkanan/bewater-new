@@ -30,11 +30,24 @@ incomplete, report the gap and stop — do not fabricate state. The deployment s
 responsible for real state initialization; this capability never writes `_bewater/` state by hand and
 never manufactures a missing Charter, Assessment, or branch.
 
+Enforce the **one repository, one project** boundary before interviewing or drafting. Read
+`project.name` and the current Charter head. A repository with an existing Charter is already bound:
+intent within that project must **resume or revise** the existing Charter and must never allocate a
+fresh replacement. If the user presents an unrelated project, report the mismatch, write nothing,
+and direct them to a **new repository or working directory**. This is a semantic capability judgment
+grounded in the Charter and conversation, never a text-similarity score. Never delete or reset the
+existing Charter. Never delete or reset the existing Ledger. Never delete or reset the existing
+Conditions. Never delete or reset the existing Evidence. Never delete or reset the existing Artifact.
+
 ### 2. Produce the Charter
 
 Turn the user's current intent into a context-rich, answer-light Charter draft, self-review it, and
 automatically persist it. This produces a draft, unvalidated project definition; it does not validate
 the premise or choose whether to continue.
+
+For the first Charter only, derive a concise project name from the calibrated intent, preserve it in
+the candidate config as non-empty `project.name`, and commit that config in the same transactional
+plan as the Charter. Later Charter revisions retain the established project binding.
 
 **Adaptive interview.** Read the active branch and current Charter head. Preserve distinctive user
 wording. Maintain this coverage internally:

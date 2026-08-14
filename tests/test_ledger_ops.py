@@ -114,7 +114,14 @@ def test_validate_one_returns_violations_without_raising(tmp_project):
 
 
 def test_validate_one_clean_returns_empty(tmp_project):
-    a = ledger_ops.add(tmp_project, _f(evidence_level="L5", validation_status="supported"))
+    a = ledger_ops.add(
+        tmp_project,
+        _f(
+            evidence_level="L5",
+            validation_status="supported",
+            evidence_refs=["evidence:E-001@1"],
+        ),
+    )
     assert ledger_ops.validate_one(tmp_project, a.id) == []
 
 
@@ -241,6 +248,21 @@ def test_baseline_snapshots_assumptions_and_artifacts(tmp_project):
     # persisted to records/
     baseline_file = paths.records_dir(tmp_project) / "B-G2-baseline.yaml"
     assert baseline_file.exists()
+
+
+def test_baseline_ignores_artifact_shaped_knowledge(tmp_project):
+    from bw import io, paths, schema
+
+    knowledge = paths.knowledge_dir(tmp_project) / "K-001-question.md"
+    knowledge.parent.mkdir(parents=True, exist_ok=True)
+    meta = schema.ArtifactMeta(
+        artifact_id="ART-999", kind="research", stage="discover", revision=1,
+        document_status="final", validation_status="unvalidated", branch_id="BR-001",
+        extra={"hash": "knowledge-hash"},
+    )
+    io.write_artifact(knowledge, meta, "not an artifact")
+
+    assert ledger_ops.baseline(tmp_project, "G2")["artifacts"] == {}
 
 
 def test_backtrack_large_loop_for_strategy_and_opportunity(tmp_project):

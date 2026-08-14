@@ -39,6 +39,18 @@ def test_ledger_schema_covers_core_fields_and_enums():
         assert token in text, f"ledger-schema missing {token}"
 
 
+def test_ledger_schema_defines_living_knowledge_identity_and_counter():
+    text = (REPO / "src/skills/_bw-shared/ledger-schema.md").read_text().lower()
+    assert "k-001 knowledge" in text
+    assert "knowledge:k-001@1" in text
+    config = text.split("## config.yaml", 1)[1].split("## ledger.yaml", 1)[0]
+    assert "knowledge" in config
+    assert "action,evidence" not in config
+    assert "knowledge workpapers" in text and "in-place bump" in text
+    assert "current research head" in text
+    assert "historical research revisions" in text
+
+
 def test_gate_criteria_covers_g1_readiness():
     text = (SHARED / "gate-criteria.md").read_text()
     for token in ["G1", "directional", "strategy", "opportunity", "Achilles", "Money", "Magic"]:

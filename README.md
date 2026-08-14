@@ -28,3 +28,24 @@ automatically persists the Charter, then runs a fresh-context, source-bounded pr
 against that exact Charter revision and delivers a compact advisory conclusion. Charter alone is the
 formal Discover input. The report is not an input to Research, the Knowledge Base, assumptions, or
 Evidence, and is not a Gate.
+
+## Project and output layout
+
+One repository or working directory contains one BeWater project. The first Charter transaction
+sets the repository's non-empty `project.name`; unrelated project intent starts in another
+repository or working directory rather than replacing the current Charter or state.
+
+Canonical and supporting outputs use three shallow directories:
+
+```text
+_bewater-output/
+├── artifacts/   # immutable ART-NNN-rN and EXP-NNN-rN workflow revisions
+├── knowledge/   # living K-NNN research workpapers, revised in place through CAS
+└── sources/     # byte-preserved referenced research material; never written by bwkit
+
+docs/presentations/  # optional user-controlled readouts, outside methodology state
+```
+
+Research Artifacts pin exact `knowledge:K-NNN@n` revisions. `_bewater/evidence.yaml` remains the
+machine contract for decision-critical claims and Gates; a Knowledge workpaper or an `RM-NNN`
+mission is not Evidence.
