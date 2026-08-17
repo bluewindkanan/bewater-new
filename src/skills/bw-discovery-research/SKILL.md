@@ -47,13 +47,18 @@ and the Sprint loop; it does not own Insight generation, strategy formation, or 
 4. Draft or update the Research Plan before selecting work for the next Sprint, following
    `references/research-plan.md`. Revision 1 has Research Objective, Learning Plan, Next Sprint,
    and Research Progress. Select the highest-learning-value questions for
-   the next Sprint. For each, derive the evidence need before method selection and compose the
-   smallest complementary **Method Bundle** from the layered Toolkit (`references/research-toolkit.csv`,
-   `references/method-bundles.md`). Load the Toolkit selectively per question; it is a seed library,
-   not a whitelist, and is never injected wholesale. Select the smallest complementary set, reject
-   redundant frameworks that reuse the same evidence to make the same inference, and do not require
-   exactly one method from every layer. The Coordinator resolves each method's `execution_need`
-   against tools available in the current host; no method registry hardcodes a connector name.
+   the next Sprint. For each, classify the question first — `question_kind` (`question` or
+   `hypothesis`) plus `learning_intent` — then derive the evidence need before method selection, and
+   compose the smallest complementary **Method Bundle** using the routing table in
+   `references/method-map.md` as a recommended default, not a whitelist and not a menu.
+   Load the Toolkit selectively per question, seeded from `references/research-toolkit.csv`; it is a
+   seed library and is never injected wholesale. You may override any recommended method or framework
+   with one the model knows fits better, recording why selected, what it cannot prove, and its
+   limitation. Select the
+   smallest complementary set, reject redundant frameworks that reuse the same evidence to make the
+   same inference, and do not require exactly one method from every layer. Use the host's native
+   tools (web search, browser, file read, subagents) directly; no tool registry is consulted and no
+   connector name is hardcoded.
 5. Run the in-context self-review (`references/research-plan.md`) after every Plan draft or
    revision and before either persistence or execution. Repair issues the current context resolves
    inline; the review creates no artifact, review state, signoff, or human Gate. If a material
@@ -71,7 +76,10 @@ and the Sprint loop; it does not own Insight generation, strategy formation, or 
 
 7. Execute only the reviewed research missions available within the user's authority and the current
    environment. Execution is automatic and internal — never ask the user for a research mode or worker
-   count. Build mission dependencies, merge overlapping missions, mark independent missions eligible
+   count. Offline field research (live interviews, field observation, usability with real users) is
+   out-of-band human work: never auto-execute it and never report it as AI-executed evidence; consume
+   user-provided documents as optional context and record the absence as a limitation. Build mission
+   dependencies, merge overlapping missions, mark independent missions eligible
    for bounded parallel execution, and choose sequential, query-level parallelism, mission-level
    parallelism, or dependency-ordered waves; use at most 2-4 workers and use sequential fallback
    whenever worker concurrency is unavailable. Treat 2-4 workers as a per-wave concurrency limit,

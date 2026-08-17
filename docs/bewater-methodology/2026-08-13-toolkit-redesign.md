@@ -1,5 +1,7 @@
 # DESIGN-001: BeWater Toolkit 重新设计
 
+> **SUPERSEDED** — 历史草稿，已按 `2026-08-14-toolkit-implementation-decision.md` 实现。仅供回溯，不是实现设计。
+
 ## 版本信息
 - **版本**: 1.0
 - **日期**: 2026-08-13

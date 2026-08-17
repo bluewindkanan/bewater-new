@@ -372,14 +372,14 @@ bwkit init             →  初始化 _bewater/{config,ledger,conditions}.yaml +
 | skill | 角色 | 职责 |
 |---|---|---|
 | `bw-discover` | Router | 只读：确认 discover、验正式输入(Charter revision + 完整 root 假设快照)、读匹配 Assessment（仅翻译 4 字段：候选洞察→待验证判断、核心冲突→优先挑战、最有希望方向→候选路径、关键风险→证伪问题）、报 4C 覆盖/Discover Plan/证据缺口，路由 research 或（洞察就绪时）define |
-| `bw-discovery-research` | Capability | 单一 AI 研究能力：初始化/推进一个活 `kind:research` 工件，跑自适应多 Sprint 循环，组装最小互补 Method Bundle（33 法分层 Toolkit），有界并发研究，单写 Coordinator 扇入，洞察就绪时浮出 Insight Ingredients |
+| `bw-discovery-research` | Capability | 单一 AI 研究能力：初始化/推进一个活 `kind:research` 工件，跑自适应多 Sprint 循环，组装最小互补 Method Bundle（在线注册表 + 一张路由表，推荐非限制），有界并发研究，单写 Coordinator 扇入，洞察就绪时浮出 Insight Ingredients |
 | `bw-insight-craft` | Capability（归 Define 路由） | 走认知阶梯 Facts→Accepted Beliefs→Insights，13 透镜 + Pearl/Code/Force 生成候选，F/P/E/T 判断，写 `kind:insights` 工件，**停给人签 F/P/E/T** |
 
 **创新流程（bw-discovery-research 自适应 Sprint）**：
 
 1. **Entry**：读当前 Charter revision + 完整活跃假设快照 + 创新挑战 + 研究边界 + 战略不确定性。
 2. **Orient**：4C 罗盘 + 挑战特定扩展透镜(Technology/Regulation/Economics/Ecosystem/Future)扫盲点；折入 Research Frame + Living Learning Agenda（无单独 Orient 工件）。
-3. **Plan 下一 Sprint**：起草 Frame + Agenda；对每个最高学习价值问题**先**推导证据需求**再**选方法，从分层 Toolkit 组最小互补 Method Bundle（按需加载，绝不整包注入）；解析各方法 `execution_need` 对照宿主工具。
+3. **Plan 下一 Sprint**：起草 Frame + Agenda；对每个最高学习价值问题**先**分类（question_kind + learning_intent）**再**推导证据需求**再**选方法，查路由表（recommended defaults，推荐非限制）组最小互补 Method Bundle（按需加载，绝不整包注入）；直接用宿主原生工具，不建工具库。
 4. **Plan 自审**（4 检查：占位/一致/范围/歧义）后持久化/执行；歧义则问一问停。
 5. **Execute**：Coordinator 自选执行模式（顺序 / query 级并行 / mission 级并行 / 依赖波），**每波 ≤2–4 worker**（并发上限，非范围上限）；worker 只读，返回结构化 Research Packet。
 6. **Fan-in**：Coordinator 单写——归一化 packet、按底层 origin 去重、查 claim-to-source 支持、对单边 claim 搜反证、保矛盾/替代、跑 10 点扇入质量审计；一次 commit 写归一证据 + 下一 revision。
@@ -388,7 +388,7 @@ bwkit init             →  初始化 _bewater/{config,ledger,conditions}.yaml +
 
 **关键方法/工具**：
 - **4C 覆盖罗盘**（Consumer/Company/Category/Channel + 5 扩展透镜）——是盲点检查，**不是**任务/章节/worker 划分。
-- **33 法分层 Toolkit**（`research-toolkit.csv`）：采集 9 / 分析 11 / 验证 6 / 综合 7。种子库非白名单，按需加载。
+- **在线注册表 + 一张路由表**（`research-toolkit.csv` + `method-map.md`）：方法/框架按 `kind` 分，推荐非限制、种子库非白名单，按需加载；工具直接用宿主能力，不建工具库。
 - **Method Bundle**：每学习问题组最小互补集（跨层；一法只在提供独特证据形式/视角/推断/挑战/综合操作时才入选；不要求每层一法）。
 - **认知四阶梯**：Facts → **Accepted Beliefs**（洞察的靶子）→ Insights → Hypotheses。
 - **13 洞察透镜**：痛点挣扎/未满足向往/用词语言/趋势背后 why/跨类类比/文化消费/失效范式/无意识行为/品类空白/怪癖仪式/隐秘行为/补偿行为。
@@ -787,7 +787,7 @@ _bewater-output/         # 追加只读工件 ART-NNN-rN-<kind>.md（用户语�
 
 | 方法论描述 | 实现现实 |
 |---|---|
-| Discover 田野方法包（AEIOU 观察网格 / 沉浸 / 极端用户 / 投射三件套 / 类比启发 / 资源流 / 同伴观察） | Toolkit 采集层用**不同方法名**（contextual-observation-diary-intercept-survey 等）；AEIOU 等词汇在 bw-discovery-research references **不存在**，仅存于 `bewater-core.md` 方法论层 |
+| Discover 田野方法包（AEIOU 观察网格 / 沉浸 / 极端用户 / 投射三件套 / 类比启发 / 资源流 / 同伴观察） | 实现**刻意收敛为 online-only**：田野方法移出注册表，在 `method-map.md` 标注为 **out-of-band 人工输入**；用户提供的访谈笔记/报告作为可选上下文进入 |
 | 综合流水线（每日 Download → Stories → Themes → Insight Statements → Frameworks） | 实际综合 = **Sprint Synthesis**（learned/contradicted/belief changed/reframed/deepened/dropped/new questions/remaining gaps）喂 Insight Ingredients |
 | Charter L1–L4 成熟度 / 质量分 / 方向质量门 | 实现**刻意拒绝**：无 Charter 质量评分门、无成熟度分级；complete-draft 确认点已移除；仅 claim 级 provenance 保留 |
 | Shape 5 路径（含 "New Invention"） | 实现 **4 路径**（linear-refine/pivot/hybridize/scope-extend），`invent` 非法；New Invention 治理禁令：超边界回 Ideate |

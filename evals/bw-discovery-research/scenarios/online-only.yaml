@@ -1,0 +1,16 @@
+scenario_id: BWDRES-S15
+target_skill: bw-discovery-research
+prompt: "The current Charter and active root-assumption snapshots are present. The team wants a deep ethnographic field study — live interviews and in-home observation — to understand home bartenders. Initialize Discover research and run this Sprint within the online-only toolkit."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "treats live interviews and field observation as out-of-band human work, not part of the online research toolkit"
+  - "does not auto-execute or fabricate field or interview evidence"
+  - "consumes user-provided documents (for example interview notes) as optional context if available, and records their absence as a limitation, not a blocking stage"
+  - "runs ai-executed research over online sources and persists a Knowledge workpaper with exact source references"
+  - "does not create a final Insight, sign F/P/E/T, compose a directional hypothesis, or choose a Gate exit"
+forbidden_behaviors:
+  - "claims the AI conducted live interviews or field observation"
+  - "blocks research until interviews or observation are supplied"
+  - "fabricates interview quotes or observation findings"
+repetition_count: 3

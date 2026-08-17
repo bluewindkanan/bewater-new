@@ -10,21 +10,43 @@ SKILL = "bw-discovery-research"
 
 TOOLKIT_FIELDS = [
     "id",
+    "kind",
     "layer",
-    "learning_intent",
+    "methodology_stream",
+    "analysis_object",
     "lens_fit",
+    "learning_intent",
     "use_when",
     "avoid_when",
     "evidence_or_output",
+    "input_requirements",
+    "dimensions",
     "complements",
+    "conflicts",
     "key_limitation",
-    "execution_need",
 ]
 TOOLKIT_LAYERS = {
     "collection_method",
     "analysis_framework",
     "validation_method",
     "synthesis_method",
+}
+TOOLKIT_KINDS = {"method", "framework"}
+TOOLKIT_STREAMS = {
+    "traditional_consulting",
+    "design_research",
+    "innovation_methodology",
+    "cross",
+}
+TOOLKIT_OBJECTS = {
+    "external.industry",
+    "external.market",
+    "external.environment",
+    "internal.capabilities",
+    "internal.economics",
+    "option.strategy",
+    "option.concept",
+    "cross",
 }
 TOOLKIT_LENSES = {
     "Consumer",
@@ -180,7 +202,7 @@ def test_discovery_research_reference_set_and_selective_toolkit_loading():
     markdown_refs = {path.name for path in references.glob("*.md")}
     assert markdown_refs == {
         "4c-framework.md",
-            "method-bundles.md",
+            "method-map.md",
             "knowledge-workpaper.md",
         "persistence-plan.md",
         "research-plan.md",
@@ -211,18 +233,44 @@ def test_research_toolkit_csv_uses_the_layered_schema():
     assert len(rows) >= 1
     assert len({row["id"] for row in rows}) == len(rows)
     assert {row["layer"] for row in rows} == TOOLKIT_LAYERS
+    assert {row["kind"] for row in rows} == TOOLKIT_KINDS
+
+    required_fields = [f for f in TOOLKIT_FIELDS if f not in {"dimensions", "complements", "conflicts"}]
+    layer_to_kind = {
+        "collection_method": "method",
+        "validation_method": "method",
+        "analysis_framework": "framework",
+        "synthesis_method": "framework",
+    }
+    ids = {row["id"] for row in rows}
 
     all_intents: set[str] = set()
     for row in rows:
-        assert all(row[field].strip() for field in TOOLKIT_FIELDS), row
+        assert all(row[field].strip() for field in required_fields), row
+        assert row["kind"] == layer_to_kind[row["layer"]], row
         assert row["layer"] in TOOLKIT_LAYERS
+        assert row["methodology_stream"] in TOOLKIT_STREAMS, row
+        assert row["analysis_object"] in TOOLKIT_OBJECTS, row
+
         intents = {part.strip() for part in row["learning_intent"].split("|") if part.strip()}
         assert intents, row
         assert intents <= LEARNING_INTENTS, row
         all_intents |= intents
+
         lenses = {part.strip() for part in row["lens_fit"].split("|") if part.strip()}
         assert lenses, row
         assert lenses <= TOOLKIT_LENSES, row
+
+        dimensions = {part.strip() for part in row["dimensions"].split("|") if part.strip()}
+        if row["kind"] == "framework":
+            assert dimensions, row
+        else:
+            assert not dimensions, row
+
+        for field in ("complements", "conflicts"):
+            for ref in (part.strip() for part in row[field].split("|") if part.strip()):
+                assert ref in ids, row
+
     assert all_intents == LEARNING_INTENTS
 
 
@@ -230,19 +278,19 @@ def test_research_toolkit_covers_the_layered_method_families_without_hardcoding_
     rows = _toolkit_rows()
     corpus = "\n".join(" ".join(row.values()).lower() for row in rows)
     for token in [
-        # collection
-        "desk", "internal", "interview", "observation", "expert", "usability",
-        "behavioral", "survey", "patent", "regulatory", "social",
+        # collection (online-only)
+        "desk", "internal", "competitor", "behavioral", "patent", "regulatory", "social",
         # analysis
         "sizing", "segmentation", "competitive", "five forces", "value chain",
         "profit pool", "ecosystem", "jtbd", "journey", "pricing", "unit economics",
         "trend", "weak signal", "scenario", "analogy", "causal",
+        "pestel", "strategic group", "lifecycle",
         # validation
         "triangulation", "disconfirming", "contradiction", "sensitivity",
         "alternative explanation", "transferability",
         # synthesis
         "pattern", "anomaly", "accepted belief", "belief shift", "tension",
-        "reframe", "collision", "strategic relevance",
+        "reframe", "collision", "strategic relevance", "swot",
     ]:
         assert token in corpus, f"Toolkit is missing planned coverage for {token!r}"
     for forbidden in ["browser", "spreadsheet", "web search"]:
@@ -257,8 +305,17 @@ def test_discovery_research_composes_smallest_complementary_method_bundles():
         "smallest complementary",
         "reject redundant",
         "do not require exactly one method from every layer",
-        "execution_need against tools available in the current host",
-        "no method registry hardcodes a connector name",
+        "classify the question",
+        "question_kind",
+        "recommended default",
+        "not a whitelist",
+        "not a menu",
+        "open-world",
+        "override",
+        "ad-hoc framework",
+        "host tools",
+        "out-of-band",
+        "never let the table restrict",
     ]:
         assert token in text, f"Method Bundle contract missing {token!r}"
 

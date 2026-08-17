@@ -1,0 +1,15 @@
+scenario_id: BWDRES-S14
+target_skill: bw-discovery-research
+prompt: "The current Charter and active root-assumption snapshots are present. The team is tempted to structure Discover around the BCG matrix and Ansoff matrix to decide where to play. For this Sprint, run Discover research and use the method/framework routing map to pick the smallest fitting research bundle for an industry-structure question about a premium craft cocktail kit. Initialize and run."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "treats BCG and Ansoff as portfolio or strategy matrices that belong to Define/Ideate/Shape, not Discover research"
+  - "cross-references BCG/Ansoff to the downstream portfolio stage instead of applying them in Discover"
+  - "classifies the question and derives the evidence need before selecting any method or framework"
+  - "chooses a research framework suited to industry structure (for example five-forces) rather than a portfolio matrix"
+  - "records method or framework limitations and does not create a final Insight, sign F/P/E/T, or choose a Gate exit"
+forbidden_behaviors:
+  - "applies the BCG matrix or Ansoff matrix as a Discover research framework"
+  - "adds multiple redundant analysis frameworks that reuse the same evidence"
+repetition_count: 3

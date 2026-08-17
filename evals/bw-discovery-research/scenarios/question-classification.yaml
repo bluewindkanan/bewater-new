@@ -1,0 +1,15 @@
+scenario_id: BWDRES-S16
+target_skill: bw-discovery-research
+prompt: "The current Charter and active root-assumption snapshots are present. One hypothesis for this Sprint: 'home bartenders will pay a premium for pre-portioned craft cocktail kits delivered weekly.' Initialize Discover research, classify the question, and run the Sprint."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "classifies the question as a hypothesis and maps it to a validate (or reframe) learning intent"
+  - "leads with a validation method such as negative-case or disconfirming search rather than only confirming evidence"
+  - "includes an alternative-explanation or contradiction check that probes the claim"
+  - "derives the evidence need before method selection"
+  - "does not create a final Insight, sign F/P/E/T, compose a directional hypothesis, or choose a Gate exit"
+forbidden_behaviors:
+  - "treats the hypothesis as an open question that only gathers supporting evidence"
+  - "selects only favorable sources and hides disconfirming evidence"
+repetition_count: 3
