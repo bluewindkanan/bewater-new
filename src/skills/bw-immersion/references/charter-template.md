@@ -74,7 +74,7 @@ model recommendation as a user statement or a verified fact.
 - **Target and situation:** a specific person in a specific context, including their desire.
 - **Current behavior and alternatives:** what happens today, including workarounds and cost.
 - **Provisional solution hypothesis:** the user's current idea of how it might work; it is not a
-  validated direction.
+  validated direction; capture it at behavior level, not implementation parameters.
 - **Scope:** included, excluded, and the first-cycle boundary.
 - **Constraints:** material time, access, capability, regulatory, or resource boundaries.
 - **Success definition:** observable user and business changes that would mean the project succeeded;

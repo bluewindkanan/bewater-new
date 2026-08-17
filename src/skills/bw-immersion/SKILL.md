@@ -50,56 +50,44 @@ the candidate config as non-empty `project.name`, and commit that config in the 
 plan as the Charter. Later Charter revisions retain the established project binding.
 
 **Adaptive interview.** Read the active branch and current Charter head. Preserve distinctive user
-wording. Maintain this coverage internally:
+wording. The Charter template defines what you are filling — use it as a guide, never as a
+questionnaire. Three principles govern every question; when a principle and a habit conflict, the
+principle wins.
 
-- why now and the triggering event;
-- the specific person, situation, desire, and current behavior;
-- alternatives, workarounds, and their cost;
-- the provisional proposition and hoped-for behavior change;
-- Magic, Money, and leverageable assets;
-- in-scope and out-of-scope boundaries, constraints, and success signals;
-- Known, Believed, explicit Unknowns, and Tensions.
+- **Earn its place.** Ask only what would materially change a Charter field. A publicly checkable
+  fact (tool capability or specs, market price, technology state) or a downstream implementation
+  detail is not an interview question: record the user's impression as Believed or leave an explicit
+  Unknown, and let Discover investigate it. The user's trigger, situation, current behavior and its
+  cost, desire, constraints, boundaries, and success definition are the interview's subject — the
+  user's experience of a tool is Charter material; the tool's specifications are not. Capture the
+  provisional solution hypothesis at behavior level (who does what differently), never at
+  implementation detail.
+- **Respect attention.** Start from what the user already gave and smart-skip established context;
+  when the opening is thin, first invite one rich account — trigger, person and situation, current
+  workaround and its cost, hoped-for change, idea — before probing. Then ask one question at a time:
+  the one highest-information-gain question whose answer most changes the draft. Unknown is always a
+  valid answer, and the user's fatigue or a request to draft now is a stop signal, not an obstacle.
+- **Ground before framing.** Until the conversation holds grounding anchors for trigger / why now, a
+  specific person and situation, current behavior or alternative (or an explicit Unknown), and
+  desired change, stay in **Explore — clarify together**: use free-form questions only, do not use a
+  structured question, recommendation, or candidate to supply grounding facts, and label a surfaced
+  insight `agent-interpretation`. A frame offered before grounding leads the user. After grounding,
+  move to **Converge — recommend bounded decisions**: a structured choice for a genuinely bounded
+  framing, scope, priority, trade-off, or success signal is a thinking aid — explain what it
+  optimizes, sacrifices, the credible alternative, and what would change it. It must not recommend
+  the user's real behavior, willingness to pay, market facts, or unstated resources.
 
-Work in two explicit interaction modes. Ask one question at a time, smart-skip established context,
-and stop when the shared understanding is useful.
-
-**Explore — clarify together.** Until the conversation has grounding anchors for all of trigger / why
-now, a specific person and situation, current behavior or alternative (or an explicit Unknown), and
-desired change, use free-form questions only. Be a consultant, not an intake form: use internal
-reasoning to offer the one point most worth thinking about, then ask one open question about a
-concrete event, behavior, workaround, constraint, or desired outcome. Keep the visible expression
-clear, focused, and natural; let question complexity determine the necessary context to advance
-shared understanding and the user's next thought. A useful insight may surface an implication,
-tension, ambiguity, assumption, or signal; label it `agent-interpretation`. A rich initial prompt can
-establish some or all anchors and move directly to Converge. Do not use a structured question,
-recommendation, or candidate framing to supply grounding facts. Do not offer options during Explore.
-
-**Converge — recommend bounded decisions.** After the grounding anchors are present, use a host-native
-structured choice for a genuinely bounded framing, scope, priority, trade-off, balance choice, success
-signal, or correction. A recommendation is allowed only when it cites stated context and explains its
-material trade-off. It must not recommend a user's real behavior, willingness to pay, market fact, or
-an unstated resource or constraint. Candidates are prompts for selection or correction, never
-evidence. Make the recommendation a thinking aid, not just an answer: explain what it **optimizes**,
-what it **sacrifices**, the **credible alternative**, and what unknown or evidence **would change this
-recommendation**.
-
-- Every structured choice includes `Uncertain` and an Other path: `None are accurate — I want to add
-  context.` Other opens a free-form input. Prefer the host's structured-question tool so the user
-  receives a dialog. If native selection is unavailable or fails in an interactive host, use a
-  text-choice fallback that repeats the candidates plus Uncertain and Other. Use a fixed four-option
-  fallback whenever there are two credible candidates: first candidate, second candidate, Uncertain,
-  Other. Never render a fallback with only candidates. In headless runs, stop after presenting the
-  question and accept a later scripted answer. When the host supplies Other automatically, offer two
-  credible candidates plus `Uncertain` and use the host Other path; do not replace either escape route
-  with an AI recommendation.
+- Every structured choice includes `Uncertain` and an Other path (`None are accurate — I want to add
+  context.`) that opens a free-form input. Prefer the host's structured-question tool so the user
+  receives a dialog; if it is unavailable or fails in an interactive host, use a text-choice fallback
+  that repeats the candidates plus Uncertain and Other — never candidates alone. In headless runs,
+  stop after presenting the question and accept a later scripted answer. When the host supplies Other
+  automatically, offer two credible candidates plus `Uncertain` and use the host Other path; do not
+  replace either escape route with an AI recommendation.
 - Record provenance for every high-impact claim: `user-stated` for the user's own free-form statement,
   `user-selected` for an AI candidate the user chose, `agent-interpretation` for a faithful synthesis,
   and `unknown` for an acknowledged gap. `user-selected` is L1 input but is never silently upgraded to
   `user-stated`, a Fact, or validated evidence.
-
-Stop asking about a field when it is clear, the user explicitly does not know, or Discover should
-investigate it. Unknown is a valid result. If the user shows fatigue or asks for a version now, draft
-with explicit Unknowns rather than forcing template completion.
 
 **Charter draft and self-review.** When coverage is sufficient, build the complete Charter with
 `references/charter-template.md` as a project definition: challenge, intent and outcome, scope,

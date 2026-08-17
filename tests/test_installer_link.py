@@ -70,3 +70,27 @@ def test_uninstall_removes_only_managed(tmp_dest):
     assert not (tmp_dest / "_bewater" / "bwkit").exists()
     assert stranger.exists(), "uninstall must not touch unrelated skills"
     assert {path: path.read_bytes() for path in state_sentinels} == state_sentinels
+
+
+def test_link_mode_deploys_cross_agent_target(tmp_dest):
+    r = _run(tmp_dest, "--link")
+    assert r.returncode == 0, r.stderr
+    agents = tmp_dest / ".agents" / "skills"
+    assert (agents / "bw-immersion" / "SKILL.md").is_symlink()
+    assert (agents / "bw-immersion" / ".bewater-managed").is_file()  # real marker, not link
+    assert (agents / "_bw-shared").is_dir()
+
+
+def test_uninstall_cleans_cross_agent_target(tmp_dest):
+    assert _run(tmp_dest, "--copy").returncode == 0
+    agents = tmp_dest / ".agents" / "skills"
+    stranger = agents / "stranger-skill"
+    stranger.mkdir()
+    (stranger / "SKILL.md").write_text("not bewater")
+
+    r = _run(tmp_dest, "--uninstall")
+
+    assert r.returncode == 0, r.stderr
+    assert not (agents / "bw-immersion").exists()
+    assert not (agents / "_bw-shared").exists()
+    assert stranger.exists(), "uninstall must not touch unrelated skills in agents target"

@@ -79,6 +79,9 @@ python -m bw gate-scan <gate> <project> [--subject <solution-branch>]
 ## Design Principles
 
 - **Minimal by default**: every element must justify its existence. One responsibility per phase/role/artifact. If one sentence suffices, don't write two. If one skill can do it, don't create two.
+- **Principles over rules**: judgment-shaped behavior (what to ask, how to probe, when to stop) is
+  specified as a few testable principles; hard rules are reserved for state, evidence, and gate
+  integrity. If a rule merely encodes good judgment, write the principle instead.
 - **English-first**: BeWater methodology design resources and documents — skill content (SKILL.md), references, templates, and design specs — are written in full English; other languages derive from English, never the reverse. User-facing project artifacts under `_bewater-output/` (Charter, Assessment, etc.) follow the language the user actually interacts in during the session.
 
 ## Rules

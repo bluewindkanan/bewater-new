@@ -311,3 +311,36 @@ def test_skills_only_can_deploy_one_named_skill_without_replacing_others(tmp_des
     assert (skills / "bw-immersion" / "SKILL.md").exists()
     assert not (skills / "bw-discover").exists()
     assert has_managed_marker(skills / "_bw-shared")
+
+
+def test_copy_deploys_cross_agent_agents_skills_target(tmp_dest):
+    r = _run(tmp_dest, "--copy")
+    assert r.returncode == 0, r.stderr
+    agents = tmp_dest / ".agents" / "skills"
+    skills = sorted(p.name for p in (REPO / "src" / "skills").glob("bw-*"))
+    installed = sorted(p.name for p in agents.glob("bw-*"))
+    assert installed == skills
+    for s in installed:
+        assert has_managed_marker(agents / s), f"{s} missing marker"
+    assert (agents / "_bw-shared").is_dir() and has_managed_marker(agents / "_bw-shared")
+
+
+def test_copy_no_agents_skips_cross_agent_target(tmp_dest):
+    r = _run(tmp_dest, "--copy", "--no-agents")
+    assert r.returncode == 0, r.stderr
+    assert not (tmp_dest / ".agents" / "skills").exists()
+    assert (tmp_dest / ".claude" / "skills" / "bw-immersion" / "SKILL.md").exists()
+
+
+def test_copy_agents_dir_override(tmp_dest):
+    agents = tmp_dest / "custom-agents"
+    r = _run(tmp_dest, "--copy", "--agents-dir", str(agents))
+    assert r.returncode == 0, r.stderr
+    assert (agents / "bw-immersion" / "SKILL.md").exists()
+    assert has_managed_marker(agents / "_bw-shared")
+
+
+def test_copy_no_agents_conflicts_with_agents_dir(tmp_dest):
+    r = _run(tmp_dest, "--copy", "--no-agents", "--agents-dir", str(tmp_dest / "x"))
+    assert r.returncode != 0
+    assert "mutually exclusive" in r.stderr

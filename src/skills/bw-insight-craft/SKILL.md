@@ -31,7 +31,12 @@ directional hypotheses; they stay in Define.
 5. Write insight artifacts (`_bewater-output/artifacts/ART-xxx-rN-insights.md`, `kind: insights`,
    `stage: define`).
 6. Present all insight candidates in the artifact body with their number, statement, evidence,
-   and your F/P/E/T assessment. Then use `AskUserQuestion` once to ask the human to enter the
-   numbers of insights to sign (e.g., "1,3,4"). Record signoff for each selected insight.
+   and your F/P/E/T assessment. Then ask the human, in one question, which insight numbers to
+   sign (e.g., "1,3,4"). Every candidate must remain selectable: use the host's structured
+   question only while all candidates fit inside its option limit; when candidates outnumber
+   that limit, ask in plain text — the numbered list already shown is the option list — and
+   accept the free-form number list as the answer. A host tool's option cap must never
+   silently drop or hide a candidate from the signoff decision. Record signoff for each
+   selected insight.
    Name the human decision authority and **stop**. Current-revision human F/P/E/T signoff is a G1 readiness requirement —
    the human signs, not you (`../_bw-shared/gate-criteria.md`). This capability does not create directional hypotheses.

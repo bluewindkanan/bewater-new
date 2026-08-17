@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from skill_helpers import skill_dir, validate_skill, validate_skill_evals
@@ -59,6 +60,22 @@ def test_insight_craft_is_a_define_capability_and_stops_at_insights():
         "define capability",
     ]:
         assert token in text, f"Insight craft boundary missing {token!r}"
+
+
+def test_signoff_question_must_express_every_candidate():
+    # A host structured-question tool caps visible options (4 in Claude Code). Candidates
+    # can outnumber that cap; option-per-candidate then silently drops a candidate from
+    # the human's signoff decision. The surface must adapt, never the candidate set.
+    text = re.sub(
+        r"\s+", " ", (skill_dir(REPO, "bw-insight-craft") / "SKILL.md").read_text()
+    ).lower()
+    for token in [
+        "every candidate",
+        "option limit",
+        "never silently drop",
+        "free-form",
+    ]:
+        assert token in text, f"signoff surface contract missing {token!r}"
 
 
 def test_insight_craft_consumes_research_ingredients_and_owns_generation():

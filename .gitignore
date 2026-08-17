@@ -31,4 +31,8 @@ dist/
 # claude deployment target (source of truth is src/skills/)
 .claude/skills/
 .claude/settings.local.json
+
+# shared cross-agent deployment target (dsh / codex; source of truth is src/skills/)
+.agents/skills/
+
 .gstack/

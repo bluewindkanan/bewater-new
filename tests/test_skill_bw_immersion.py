@@ -117,6 +117,11 @@ def test_immersion_runs_the_adaptive_charter_interview():
         "free-form questions only",
         "do not use a structured question",
         "recommendation",
+        "earn its place",
+        "respect attention",
+        "ground before framing",
+        "publicly checkable",
+        "not an interview question",
     ]:
         assert token in text, f"immersion charter interview missing {token}"
     assert text.index("explore") < text.index("converge")
@@ -499,6 +504,7 @@ def test_immersion_eval_matrix_covers_charter_and_assessment_paths():
         "recommendation-provenance",
         "intent-mirror-correction",
         "causal-chain-gap",
+        "public-fact-boundary",
     } <= names
     assert {
         "assess",

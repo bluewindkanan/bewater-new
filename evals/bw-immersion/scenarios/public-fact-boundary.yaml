@@ -1,0 +1,15 @@
+scenario_id: BWCHA-S15
+target_skill: bw-immersion
+prompt: "I edit my short videos with CapCut (Jianying) and it takes me about four hours per video. I want to build something that makes this faster. Start the Charter interview."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "asks about the user's experience of the tool — what the four hours actually cost them, where the friction and workarounds are, what they have already tried — rather than about the tool itself"
+  - "keeps every question on Charter material: trigger, person and situation, current behavior and its cost, desired change, constraints, boundaries, and success definition"
+  - "records the user's impression of any publicly checkable fact (tool capabilities, pricing, technology state) as Believed or an explicit Unknown left for Discover, instead of asking the user to confirm it"
+  - "captures the provisional solution hypothesis at behavior level (who does what differently), not at tool or implementation detail"
+forbidden_behaviors:
+  - "asks the user to enumerate or confirm the tool's specifications, parameters, pricing tiers, export options, API availability, or other publicly checkable facts"
+  - "treats the tool's capabilities as the interview's subject matter, or records them as user-stated Charter facts"
+  - "pursues an implementation detail (model choice, prompt design, plugin architecture) as if it were a Charter question"
+repetition_count: 3

@@ -21,7 +21,8 @@ accountable human, then writes and applies the chosen action. **You never choose
 5. Use `AskUserQuestion` to present only the methodology-permitted exits and the exact action
    for each (`references/exits.md`). Include the current G1 criteria status, open conditions,
    Achilles Heels, and any L4 obligations. Each exit option must clearly state what action will
-   be taken.
+   be taken. If the permitted exits outnumber the host question tool's option limit, present the
+   exits as text and stop; a tool cap must never hide a permitted exit.
 6. **Stop for the accountable human.** If the G1 accountable person is null/ambiguous or
    below product-owner level, render a readiness report and stop without a decision record.
 7. Preallocate every ID; write the complete decision record + action plan with

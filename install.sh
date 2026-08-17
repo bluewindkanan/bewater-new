@@ -7,6 +7,8 @@ VERSION="0.2.0"
 MARKER=".bewater-managed"
 MODE="copy"
 DEST=""
+AGENTS_TARGET=""
+NO_AGENTS=0
 SRC=""
 PROJECT_ROOT=""
 UNINSTALL=0
@@ -20,9 +22,11 @@ usage() {
   cat <<EOF
 usage: install.sh [--copy|--link] --project-root DIR [--src DIR] [--dest DIR] [--skills-only] [--skill NAME] [--uninstall]
 
-  --project-root DIR  (required) project root; skills → DIR/.claude/skills, bwkit → DIR/_bewater/bwkit
+  --project-root DIR  (required) project root; skills → DIR/.claude/skills + DIR/.agents/skills, bwkit → DIR/_bewater/bwkit
   --src DIR           repository root with src/skills and src/bwkit (default: this script's dir)
   --dest DIR          skills output dir (default: PROJECT_ROOT/.claude/skills)
+  --agents-dir DIR    shared cross-agent skills dir (default: PROJECT_ROOT/.agents/skills; read by dsh and codex)
+  --no-agents         skip the shared .agents/skills deployment target
   --copy              copy files (default)
   --link              symlink instead of copy (repo development)
   --skills-only       deploy bw-* skills and _bw-shared only; do not read or write _bewater state or bwkit
@@ -36,6 +40,8 @@ while [[ $# -gt 0 ]]; do
     --copy)           MODE="copy"; shift;;
     --link)           MODE="link"; shift;;
     --dest)           DEST="${2:?--dest needs a value}"; shift 2;;
+    --agents-dir)     AGENTS_TARGET="${2:?--agents-dir needs a value}"; shift 2;;
+    --no-agents)      NO_AGENTS=1; shift;;
     --project-root)   PROJECT_ROOT="${2:?--project-root needs a value}"; shift 2;;
     --src)            SRC="${2:?--src needs a value}"; shift 2;;
     --skills-only)    SKILLS_ONLY=1; shift;;
@@ -65,8 +71,18 @@ if [[ -n "$SKILL_FILTER" ]]; then
 fi
 
 [[ -z "${DEST:-}" ]] && DEST="$PROJECT_ROOT/.claude/skills"
+if (( NO_AGENTS )) && [[ -n "$AGENTS_TARGET" ]]; then
+  die "--no-agents and --agents-dir are mutually exclusive"
+fi
 
+# skills deploy to the Claude Code target (.claude/skills) and, unless disabled,
+# the shared cross-agent target (.agents/skills) that dsh and codex also scan.
 SKILLS_TARGET="$DEST"
+SKILL_TARGETS=("$DEST")
+if (( ! NO_AGENTS )); then
+  [[ -z "$AGENTS_TARGET" ]] && AGENTS_TARGET="$PROJECT_ROOT/.agents/skills"
+  SKILL_TARGETS+=("$AGENTS_TARGET")
+fi
 BWKIT_TARGET="$PROJECT_ROOT/_bewater/bwkit"
 
 # ---------------------------------------------------------------------------
@@ -111,12 +127,14 @@ stage_dir() {
 # deploy skills (bw-*)
 # ---------------------------------------------------------------------------
 deploy_units() {
-  local d count=0
+  local d count=0 target
   for d in "$SKILLS_SRC"/bw-*/; do
     [[ -d "$d" ]] || continue
     local name; name="$(basename "$d")"
     [[ -z "$SKILL_FILTER" || "$name" == "$SKILL_FILTER" ]] || continue
-    stage_dir "$SKILLS_TARGET/$name" "$d"
+    for target in "${SKILL_TARGETS[@]}"; do
+      stage_dir "$target/$name" "$d"
+    done
     ((count++))
   done
   [[ "$count" -gt 0 ]] || die "no bw-* skills found under $SKILLS_SRC"
@@ -128,37 +146,41 @@ deploy_units() {
 # than silently shadowing
 # the installed router set.
 preflight_skill_targets() {
-  local d name target
-  for d in "$SKILLS_SRC"/bw-*/; do
-    [[ -d "$d" ]] || continue
-    name="$(basename "$d")"
-    [[ -z "$SKILL_FILTER" || "$name" == "$SKILL_FILTER" ]] || continue
-    target="$SKILLS_TARGET/$name"
-    if [[ -e "$target" || -L "$target" ]]; then
-      has_marker "$target" || die "target exists and is not bewater-managed: $target"
-    fi
-  done
+  local d name target t
+  for t in "${SKILL_TARGETS[@]}"; do
+    for d in "$SKILLS_SRC"/bw-*/; do
+      [[ -d "$d" ]] || continue
+      name="$(basename "$d")"
+      [[ -z "$SKILL_FILTER" || "$name" == "$SKILL_FILTER" ]] || continue
+      target="$t/$name"
+      if [[ -e "$target" || -L "$target" ]]; then
+        has_marker "$target" || die "target exists and is not bewater-managed: $target"
+      fi
+    done
 
-  for target in "$SKILLS_TARGET"/bw-*; do
-    [[ -e "$target" || -L "$target" ]] || continue
-    name="$(basename "$target")"
-    [[ -d "$SKILLS_SRC/$name" ]] && continue
-    if [[ "$name" == "bw-start" ]] && ! has_marker "$target"; then
-      die "target exists and is not bewater-managed: $target"
-    fi
+    for target in "$t"/bw-*; do
+      [[ -e "$target" || -L "$target" ]] || continue
+      name="$(basename "$target")"
+      [[ -d "$SKILLS_SRC/$name" ]] && continue
+      if [[ "$name" == "bw-start" ]] && ! has_marker "$target"; then
+        die "target exists and is not bewater-managed: $target"
+      fi
+    done
   done
 }
 
 prune_obsolete_skills() {
   [[ -z "$SKILL_FILTER" ]] || return 0
-  local target name
-  for target in "$SKILLS_TARGET"/bw-*; do
-    [[ -e "$target" || -L "$target" ]] || continue
-    name="$(basename "$target")"
-    [[ -d "$SKILLS_SRC/$name" ]] && continue
-    if has_marker "$target"; then
-      rm -rf "$target"
-    fi
+  local target name t
+  for t in "${SKILL_TARGETS[@]}"; do
+    for target in "$t"/bw-*; do
+      [[ -e "$target" || -L "$target" ]] || continue
+      name="$(basename "$target")"
+      [[ -d "$SKILLS_SRC/$name" ]] && continue
+      if has_marker "$target"; then
+        rm -rf "$target"
+      fi
+    done
   done
 }
 
@@ -166,17 +188,19 @@ prune_obsolete_skills() {
 # deploy _bw-shared (docs) + bwkit (tool)
 # ---------------------------------------------------------------------------
 deploy_shared_docs() {
-  # docs → DEST/_bw-shared/
-  local staged_docs
-  staged_docs="$(mktemp -d "${TMPDIR:-/tmp}/bwinst.XXXXXX")/_bw-shared"
-  mkdir -p "$staged_docs"
-  local f
-  for f in "$SKILLS_SRC/_bw-shared"/*.md; do
-    [[ -e "$f" ]] || continue
-    if [[ "$MODE" == "copy" ]]; then cp "$f" "$staged_docs/"; else ln -s "$f" "$staged_docs/$(basename "$f")"; fi
+  # docs → <target>/_bw-shared/ for every skills target
+  local target
+  for target in "${SKILL_TARGETS[@]}"; do
+    local staged_docs
+    staged_docs="$(mktemp -d "${TMPDIR:-/tmp}/bwinst.XXXXXX")/_bw-shared"
+    mkdir -p "$staged_docs"
+    local f
+    for f in "$SKILLS_SRC/_bw-shared"/*.md; do
+      [[ -e "$f" ]] || continue
+      if [[ "$MODE" == "copy" ]]; then cp "$f" "$staged_docs/"; else ln -s "$f" "$staged_docs/$(basename "$f")"; fi
+    done
+    stage_replace "$target/_bw-shared" "$staged_docs"
   done
-  stage_replace "$SKILLS_TARGET/_bw-shared" "$staged_docs"
-
 }
 
 deploy_bwkit() {
@@ -200,12 +224,14 @@ uninstall_target() {
 }
 
 do_uninstall() {
-  local d
-  for d in "$SKILLS_TARGET"/bw-*/; do
-    [[ -d "$d" ]] || continue
-    uninstall_target "$d"
+  local d t
+  for t in "${SKILL_TARGETS[@]}"; do
+    for d in "$t"/bw-*/; do
+      [[ -d "$d" ]] || continue
+      uninstall_target "$d"
+    done
+    uninstall_target "$t/_bw-shared"
   done
-  uninstall_target "$SKILLS_TARGET/_bw-shared"
   uninstall_target "$BWKIT_TARGET"
   echo "uninstalled bewater-managed targets from $PROJECT_ROOT"
 }
@@ -237,7 +263,10 @@ main() {
   if (( ! SKILLS_ONLY )); then
     precheck_project_state
   fi
-  mkdir -p "$SKILLS_TARGET"
+  local t
+  for t in "${SKILL_TARGETS[@]}"; do
+    mkdir -p "$t"
+  done
   preflight_skill_targets
   prune_obsolete_skills
   deploy_units
@@ -248,14 +277,14 @@ main() {
   fi
 
   if [[ -n "$SKILL_FILTER" ]]; then
-    echo "installed skill $SKILL_FILTER into $SKILLS_TARGET (skills-only=$SKILLS_ONLY, mode=$MODE)"
+    echo "installed skill $SKILL_FILTER into ${SKILL_TARGETS[*]} (skills-only=$SKILLS_ONLY, mode=$MODE)"
   else
     local count=0 d
     for d in "$SKILLS_TARGET"/bw-*/; do [[ -d "$d" ]] || continue; ((count++)); done
     if (( SKILLS_ONLY )); then
-      echo "installed $count skill(s) into $SKILLS_TARGET (skills-only, mode=$MODE)"
+      echo "installed $count skill(s) into ${SKILL_TARGETS[*]} (skills-only, mode=$MODE)"
     else
-      echo "installed $count skill(s) into $SKILLS_TARGET, bwkit into $BWKIT_TARGET (mode=$MODE)"
+      echo "installed $count skill(s) into ${SKILL_TARGETS[*]}, bwkit into $BWKIT_TARGET (mode=$MODE)"
     fi
   fi
 }
