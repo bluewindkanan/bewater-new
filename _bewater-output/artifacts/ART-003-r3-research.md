@@ -1,19 +1,19 @@
 ---
 schema_version: 1
 artifact_id: ART-003
-revision: 2
-supersedes_ref: "artifact:ART-003@1"
+revision: 3
+supersedes_ref: "artifact:ART-003@2"
 kind: research
 stage: discover
 branch_id: BR-001
-document_status: draft
+document_status: final
 validation_status: unvalidated
 derived_from: ["artifact:ART-001@1"]
 signoffs: []
 stale_reason: null
 ---
 
-# Research Plan · 创始人 IP 短视频放大器（r2 · Sprint 1 综合 + Sprint 2 计划）
+# Research Plan · 创始人 IP 短视频放大器（r3 · Sprint 2 综合 + Insight Readiness）
 
 ## Research Objective
 
@@ -25,7 +25,6 @@ stale_reason: null
   - U2 放大器模式下"没流量"的实际改善幅度（方法论有效性）
   - U3 "每天 30 分钟"行为承诺的现实性
   - U4 AI 剪辑可达到的质感天花板
-  - U5 自有方法论能否显性化、产品化
   - T1 流量是结果但订阅续费取决于结果（承诺边界 vs 商业可持续）
   - T2 "让他选择" vs 选择本身即创始人最贵时间（总决策量可能不降反升）
   - T3 日更节奏 vs 每周批量拍摄的时序错位
@@ -106,31 +105,20 @@ stale_reason: null
 
 ## Next Sprint
 
-Sprint 2 = RM-004..RM-005，承接 Sprint Decision 的两个未决项（A-001 侧面基准、A-002 价位带矛盾的经济性裁决）；两个任务源空间相互独立；协调者按用户既有偏好**顺序内联执行**（不派并行 worker）。
+Sprint 2 后研究进入综合态：八个 Learning Objective 全部达到 answered / partial-with-explicit-gap / gap-accepted，desk 研究的边际战略学习已耗尽。剩余唯一活动为常设监控任务（非新 Sprint）：
 
 ```yaml
-- id: RM-004
-  learning_refs: [LP-006]
-  evidence_needed: 创始人/IP 内容方法论的公开框架（选题/文案/结构）、爆款拆解方法资源、方法论可组件化的证据
-  method_source_bundle: desk-document-research（collection）→ framework-mapping（analysis，ad-hoc：把公开方法论映射为可产品化组件清单）→ transferability-check（validation，外部框架对"自有方法论有效性"只能侧面证明）
-  exclusions: 不评估作者自有 know-how 本体（out-of-band 人工工作）；不购买付费课程内容；不做内容实测
+- id: RM-006
+  learning_refs: [LP-004]
+  evidence_needed: 即创/剪映/视频号官方能力与发布公告、新竞品进入"视频号×真人IP×全流程"组合的证据
+  method_source_bundle: signal-monitoring（collection，ad-hoc：官方公告定向复查，每次 1-2 次检索）
+  exclusions: 不做全面竞品复盘；不扩展新赛道扫描
   dependencies: []
   owner: coordinator
-  bounded_budget: 约 4-6 次检索
-  stop_condition: 得到可操作的方法论组件清单，或确认公开资源不足以支撑"选得更准"承诺的侧面基准
-  expected_output: Research Packet
-  limitation: 外部基准≠A-001 有效性验证；公开方法论质量无法实测
-- id: RM-005
-  learning_refs: [LP-008]
-  evidence_needed: LLM/语音/视频生成 API 公开价格、竞品 credit 消耗与用户实测成本、订阅定价锚点证据
-  method_source_bundle: pricing-benchmark（collection+analysis：竞品与工具层价位带，复用 K-001/K-005 定价事实）→ unit-economics-modeling（analysis，ad-hoc：单条生成边际成本量级估算）→ sensitivity-check（validation：对架构假设做高低两档）
-  exclusions: 不做完整财务模型（无架构决策前提）；不锁定具体供应商
-  dependencies: []
-  owner: coordinator
-  bounded_budget: 约 4-6 次检索
-  stop_condition: 单条生成成本的量级（数量级）确定，且订阅价位带约束可表述为明确区间
-  expected_output: Research Packet
-  limitation: API 价格有时效性；成本依赖未定架构，仅量级判断
+  bounded_budget: 每双周 1-2 次检索，持续 3 个月
+  stop_condition: 出现"官方全流程能力进入视频号"或"新竞品占位组合空缺"信号即升级为 kill/竞争评估并回写本计划；3 个月无信号则降频
+  expected_output: 简短信号备注（追加到 K-002 修订）
+  limitation: 监控非穷尽；stealth 产品不可见
 ```
 
 ## Research Progress
@@ -145,61 +133,64 @@ Sprint 2 = RM-004..RM-005，承接 Sprint Decision 的两个未决项（A-001 �
   answer_status: partial
   knowledge_refs: ["knowledge:K-005@1"]
   current_answer: 三层价位带结构（工具 ¥599-9800/年 × 服务 ¥1.5-3万/月 × 陪跑信任崩塌）；付费意愿存在但定价与定位强耦合
-  remaining_gap: 付费行为验证（L4）；中间价位带可占据性待 LP-008 经济性裁决
+  remaining_gap: 付费行为验证（L4）；锚点选择=定位决策移交 Define
 - learning_ref: LP-003
   answer_status: answered
   knowledge_refs: ["knowledge:K-001@1"]
   current_answer: 六组战略格局建立；空缺为组合空缺（视频号 × 创始人真人 IP × 全流程 copilot 无人占位）而非功能空缺
-  remaining_gap: 轻量持续追踪新增竞品与 stealth 产品
+  remaining_gap: RM-006 常设监控承接
 - learning_ref: LP-004
   answer_status: partial
   knowledge_refs: ["knowledge:K-002@1"]
   current_answer: kill signal 未触发但半触发：字节系（即创）全流程能力已存在、未进视频号；官方一条龙全部平台绑定且数字人导向
-  remaining_gap: 双周×3 月官方公告追踪（轻量监控，非 Sprint 主任务）
+  remaining_gap: RM-006 双周×3 月监控
 - learning_ref: LP-005
   answer_status: answered
   knowledge_refs: ["knowledge:K-003@1"]
   current_answer: 视频号无第三方发布 API（不可合规全自动发布）；AI 标识 2025-09 起强制；数字人受限/真人被鼓励；双推荐引擎社交裂变优先
-  remaining_gap: 政策时效监控；社交推荐对选题方法论的映射交 RM-004 一并考察
+  remaining_gap: 政策时效随 RM-006 一并观察
 - learning_ref: LP-006
-  answer_status: not-researched
-  knowledge_refs: []
-  current_answer: Not researched
-  remaining_gap: 方法论外部基准（Sprint 2 · RM-004；A-001 侧面检验）
+  answer_status: answered
+  knowledge_refs: ["knowledge:K-006@1"]
+  current_answer: 五类组件（结构/选题/拆解/视频号社交特化/AI×方法论先例）公开可组合=工程可行；但组件商品化→A-001 弱侧面支持+边界收窄（价值在组合×数据闭环，不在组件）
+  remaining_gap: 组件效果无公开数据；A-001 本体验证=dogfood L4
 - learning_ref: LP-007
-  answer_status: not-researched
+  answer_status: gap-accepted
   knowledge_refs: []
-  current_answer: Not researched
-  remaining_gap: 30 分钟行为预算；K-004 已确认无一手公开统计 → 预期 gap-accepted，dogfood L4 承接（Sprint 2 不排）
+  current_answer: 公开源确认不存在一手时间投入统计与同类工具使用时长数据；行为可行性验证移交 dogfood L4（Charter 首个成功信号即承接载体）
+  remaining_gap: dogfood 行为日志（环外，L4 durable obligation）
 - learning_ref: LP-008
-  answer_status: not-researched
-  knowledge_refs: []
-  current_answer: Not researched
-  remaining_gap: 订阅经济性（Sprint 2 · RM-005）；K-001/K-005 已提供竞品定价与价位带锚点
+  answer_status: answered
+  knowledge_refs: ["knowledge:K-007@1"]
+  current_answer: 真人素材架构单条边际成本 ¥1-10、日更月成本 ¥30-300，工具锚价位带内毛利率充足；"成本使订阅不可行"证伪信号不触发；OpusClip 教训=按产出单位计价
+  remaining_gap: 架构定型后精算；多轮交互 token 膨胀由 dogfood 顺带测量
 ```
 
 ## Sprint Decision
 
 **Learned**：
 
-- 赛道六组格局建立，端到端空缺真实但形态为**组合空缺**（视频号 × 创始人真人 IP × 全流程 copilot），功能链本身已被大厂填满（knowledge:K-001@1）
-- kill signal 未触发但**半触发**：字节系即创全流程能力已存在、仅差进入视频号；官方一条龙全部平台绑定（knowledge:K-002@1）
-- 视频号无第三方发布 API + AI 标识强制 + 数字人受限——运营环节不可合规全自动发布，产品契约必须内建"人点发布"与标识合规；该壁垒同时是对大厂吞噬的护城河（knowledge:K-003@1）
-- 自干派真实瓶颈重构为**全流程时间总和 × 正反馈延迟断更**，非单点技能缺失；放大器 30min 承诺命中的是断更问题（knowledge:K-004@1）
-- 付费三层结构：工具锚点低（≤¥1000/年）× 服务锚点高（¥1.5-3万/月）× 陪跑信任崩塌——"AI 干程序化 + 人做选择"落在信任缺口上（knowledge:K-005@1）
+- 方法论五类组件公开、结构化、可组合 → 产品化工程可行性高；"AI 找选题+人选择"哲学有公开先例（knowledge:K-006@1）
+- 组件商品化（蝉妈妈 AI 拆解/SkillHub 文案/剪映模板）→ 通用方法论组件不构成差异化，护城河论证必须转向"组合调优 × 视频号社交特化 × 数据闭环"（knowledge:K-006@1）
+- 单条边际成本量级 ¥1-10、日更月成本 ¥30-300：真人素材架构下订阅经济成立，架构约束与经济约束同向锁定真人路线（knowledge:K-007@1）
 
-**Contradicted / 保留矛盾**：
-
-- Charter"订阅 SaaS"商业形态与工具层低锚点价位带存在张力：按工具锚点难撑独立 SaaS，按服务替代对标则需重述价值主张——两极价位带之间的可占据区间未决，交 Sprint 2 · RM-005 经济性裁决（knowledge:K-005@1）
-- Assessment kill signal 定义的"字节系全流程能力"已存在但未进入视频号：信号处于半触发状态，双周追踪（knowledge:K-002@1）
+**Resolved（Sprint 1 保留矛盾的收敛）**：K-005 的"订阅 SaaS ↔ 工具低锚点"矛盾，经 K-007 排除经济不可行解释后，**收敛为纯定位选择**（工具锚 ¥50-800/月 vs 服务替代锚更高位定价）——这是 Define 阶段的战略选择输入，不再属于研究可裁决项。
 
 **Reframed**：
 
-- LP-001 从"工作流卡点"重构为"时间预算 × 断更"问题（knowledge:K-004@1）
-- LP-005 从"运营自动化程度"重构为"合规半自动 + 社交推荐方法论"（knowledge:K-003@1）
+- A-001 边界收窄：从"自有方法论有效吗"到"组合×数据闭环能否跑赢商品化组件"（knowledge:K-006@1）
+- A-003 半验证态：能力面（官方一条龙存在、程序化工序可压缩，knowledge:K-001@1/knowledge:K-002@1）+ 成本面（可行，knowledge:K-007@1）已清；唯行为面（30min 真人互动）留 dogfood L4（LP-007 gap-accepted）
 
-**Dropped / gap**：LP-007 一手时间统计确认不存在于公开源，预期 gap-accepted，dogfood L4 承接（Sprint 2 不排）。
+**Decision**: `synthesize`——desk 研究边际学习耗尽（4C+Technology+Economics 全镜头处置完毕，剩余不确定性全部为 L4 行为证据或 Define 阶段战略选择），Insight Readiness 达成，研究循环收口；仅保留 RM-006 常设监控。
 
-**New questions → Sprint 2**：方法论组件可产品化的外部基准（RM-004 → LP-006，A-001 侧面）；单条生成成本量级与订阅价位带区间（RM-005 → LP-008，裁决 K-005 矛盾）。
+## Insight Ingredients and Insight Readiness
 
-**Decision**: `continue`（深化 Company/Economics 两镜头，Sprint 2 = RM-004 + RM-005）。理由：三个根假设中 A-001 尚无任何侧面证据、A-002 的价位带矛盾需成本数据裁决——两者都是进入 Define 前的必要输入；Sprint 1 已覆盖的 Category/Channel/Consumer 镜头边际学习已明显下降。Insight Readiness 判定：**未达**（A-001 零侧面证据 + LP-008 未动），Sprint 2 后复评。
+**Insight Readiness 判定：达成**（8/8 Learning Objective 处置：answered ×4、partial-with-explicit-gap ×2、gap-accepted ×1；根假设 A-001 弱侧面+收窄、A-002 方向+矛盾定位化、A-003 能力/成本面已清行为面留 L4；剩余不确定性均不可由 desk 研究消解）。以下为移交 `bw-define` 的 Insight Ingredients（候选原料，非结论）：
+
+- **Patterns（证据支持的 pattern）**：组合空缺——"视频号×创始人真人IP×全流程copilot"无人占位，功能链本身已被大厂填满（knowledge:K-001@1）；信任缺口——服务付费意愿高但对人力交付信任崩塌，"AI 程序化+人选择"恰好落在缺口上（knowledge:K-005@1）；断更主因——瓶颈是时间总和×正反馈延迟，非单点技能（knowledge:K-004@1）
+- **Tensions（张力）**：定价锚两极（工具锚 ¥50-800/月 vs 服务替代锚 ¥3000+/月）（knowledge:K-005@1, knowledge:K-007@1）；"人点发布"硬约束 vs 运营自动化承诺（knowledge:K-003@1）；"让他选择"vs 选择即最贵时间（Charter T2，行为面未证，LP-007 gap）
+- **Anomalies（反常）**：陪跑信任崩塌与代运营混乱并存，但老板仍在为 IP 结果持续付大钱（knowledge:K-005@1）；视频号 API 缺失同时是竞品护城河与自身自动化枷锁（knowledge:K-002@1, knowledge:K-003@1）
+- **Challenged beliefs（被挑战的既有认知）："端到端功能空缺"→实为组合空缺（knowledge:K-001@1）；"自干派缺技能"→缺时间预算与正反馈（knowledge:K-004@1）；"自有方法论=护城河"→组件已商品化，壁垒在组合×数据（knowledge:K-006@1）
+- **Reframe candidates（重构候选）**：放大器=断更解药而非效率工具；运营环节=合规半自动+社交裂变设计（面向"值得点赞"而非算法）；定价=服务替代逻辑对标全案 1/5-1/3（knowledge:K-003@1, knowledge:K-004@1, knowledge:K-005@1）
+- **Strategic relevance（战略相关性）**：wedge 候选=组合空缺位（视频号首发成立，kill signal 半触发需 RM-006 监控）；商业化候选=按产出单位计价的订阅，锚点选择待 Define；方法论产品化候选=垂直组合+数据闭环优先（knowledge:K-001@1, knowledge:K-002@1, knowledge:K-006@1, knowledge:K-007@1）
+- **Remaining uncertainty（移交的剩余不确定性）**：L4 行为证据三缺口（30min 互动时长、dogfood 流量改善、付费行为）；RM-006 吞噬监控；政策时效（knowledge:K-003@1）

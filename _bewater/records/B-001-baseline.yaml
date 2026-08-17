@@ -1,0 +1,30 @@
+schema_version: 1
+baseline_id: B-001
+gate: G1
+decision_id: D-001
+branch_id: BR-001
+created_at: "2026-08-17T08:12:25Z"
+supersedes_ref: null
+input_refs:
+  strategy: artifact:ART-006@2
+  opportunity: artifact:ART-007@1
+  ledger_revision: 14
+depends_on_baseline: null
+checklist_result: []
+frozen:
+  strategy_statement: "在视频号上，以每天 30 分钟的真人选择会话交付代运营级结果，按服务替代定价——凡不服务于『坚持』与『方向盘在老板手里』的功能一律不做。"
+  opportunity_areas:
+  - {id: OA-001, name: "坚持装置 · 断更解药"}
+  - {id: OA-002, name: "视频号原生内容 · 为关系链而发"}
+  - {id: OA-003, name: "结果可控 · 服务替代"}
+  assumption_inventory:
+  - {id: A-001, layer: root, impact: high, uncertainty: high, l4: open}
+  - {id: A-002, layer: root, impact: high, uncertainty: high, l4: open}
+  - {id: A-003, layer: root, impact: high, uncertainty: high, l4: open}
+  - {id: A-004, layer: strategy, impact: high, uncertainty: high, l4: open}
+  - {id: A-005, layer: strategy, impact: high, uncertainty: high, l4: open}
+  - {id: A-006, layer: strategy, impact: high, uncertainty: high, l4: open}
+  - {id: A-007, layer: opportunity, impact: high, uncertainty: high, l4: open}
+  - {id: A-008, layer: opportunity, impact: high, uncertainty: high, l4: open}
+  - {id: A-009, layer: opportunity, impact: high, uncertainty: high, l4: open}
+  money_magic_judgment: "Magic 侧（先证明坚持装置，定价强度随后）"

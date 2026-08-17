@@ -1,43 +1,43 @@
-schema_version: 1
-revision: 5
-updated_at: "2026-08-14T05:06:00Z"
-updated_by: bw-immersion
-next_ids:
-  branch: 2
-  artifact: 3
-  experiment: 1
-  decision: 1
-  baseline: 1
-  backtrack: 1
-  action: 1
-  knowledge: 5
-project:
-  name: "创始人IP短视频Agent"
-  success_criteria: []
-decision_authority:
-  G1:
-    level: product-owner
-    accountable_person: null
-    accountable_role: null
-  G2:
-    level: investment-decision
-    accountable_person: null
-    accountable_role: null
 active_branch: BR-001
 active_execution_handoff: null
 branches:
   BR-001:
-    status: active
-    current_stage: discover
-    parent_ids: []
-    merged_into: null
+    active_baselines:
+      G1: B-001
+      G2: null
+    current_stage: shape
+    excluded_assumption_refs: []
     gate_due_at:
-      G1: null
+      G1: B-001
       G2: null
     inherited_assumption_refs: []
-    excluded_assumption_refs: []
     inherited_condition_ids: []
+    merged_into: null
     needs_rebase_refs: []
-    active_baselines:
-      G1: null
-      G2: null
+    parent_ids: []
+    status: active
+decision_authority:
+  G1:
+    accountable_person: 秋南Dylan
+    accountable_role: product-owner
+    level: product-owner
+  G2:
+    accountable_person: null
+    accountable_role: null
+    level: investment-decision
+next_ids:
+  action: 2
+  artifact: 11
+  backtrack: 1
+  baseline: 2
+  branch: 2
+  decision: 2
+  experiment: 10
+  knowledge: 8
+project:
+  name: 创始人IP短视频放大器
+  success_criteria: []
+revision: 17
+schema_version: 1
+updated_at: '2026-08-17T09:20:00Z'
+updated_by: bw-experiment

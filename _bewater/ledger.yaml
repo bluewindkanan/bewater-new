@@ -1,6 +1,1662 @@
 schema_version: 1
-revision: 1
-next_id: 1
-updated_at: "2026-08-14T04:38:57Z"
-updated_by: bwkit-init
-assumptions: {}
+revision: 74
+next_id: 40
+updated_at: '2026-08-17T04:07:32Z'
+updated_by: bw-immersion
+assumptions:
+  A-001:
+    id: A-001
+    statement: 产品作者的自有方法论（选题/文案/结构）能够显著改善粗糙自干派内容的流量结果——放大器承诺的核心
+    layer: root
+    category: consumer
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-003@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 1
+    source_concept_id: null
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history: []
+    l4_obligation_status: open
+    updated_at: null
+  A-002:
+    id: A-002
+    statement: 粗糙自干派中小企业老板对'每天 30 分钟全流程'放大器工具存在真实付费意愿，足以支撑订阅制 SaaS
+    layer: root
+    category: commercial
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-003@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 1
+    source_concept_id: null
+    side: money
+    supersedes_ref: null
+    risk_history: []
+    history: []
+    l4_obligation_status: open
+    updated_at: null
+  A-003:
+    id: A-003
+    statement: 当前 AI 能力已足以把选题→文案→剪辑→发布的程序化工序压缩到每天约 30 分钟的真人互动内
+    layer: root
+    category: technical
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-003@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 1
+    source_concept_id: null
+    side: both
+    supersedes_ref: null
+    risk_history: []
+    history: []
+    l4_obligation_status: open
+    updated_at: null
+  A-004:
+    id: A-004
+    statement: 服务替代锚定价（约 ¥3000+/月档，对标 ¥1.5万/月全案的分数价）能被目标老板接受——高于工具锚（¥50-800/月）一个数量级，定价即定位，二者不可兼得
+    layer: strategy
+    category: commercial
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-006@2
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: null
+    side: money
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-004
+      statement: 服务替代锚定价（约 ¥3000+/月档，对标 ¥1.5万/月全案的分数价）能被目标老板接受——高于工具锚（¥50-800/月）一个数量级，定价即定位，二者不可兼得
+      layer: strategy
+      category: commercial
+      impact: high
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-006@2
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-005:
+    id: A-005
+    statement: 视频号平台的政策与接口壁垒（无第三方发布 API、AI 标识强制、数字人压制）在可预见窗口内持续，结构性空位不消失（kill signal
+      半触发，以 RM-006 监控对冲）
+    layer: strategy
+    category: distribution
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-006@2
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: null
+    side: both
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-005
+      statement: 视频号平台的政策与接口壁垒（无第三方发布 API、AI 标识强制、数字人压制）在可预见窗口内持续，结构性空位不消失（kill signal
+        半触发，以 RM-006 监控对冲）
+      layer: strategy
+      category: distribution
+      impact: high
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-006@2
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-006:
+    id: A-006
+    statement: 窄而深的定位（视频号×真人×粗糙自干派老板）下目标人群可触达且获客成本可承受——获客规模不吞噬服务替代毛利（战略张力：窄而深 vs 获客规模）
+    layer: strategy
+    category: distribution
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-006@2
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: null
+    side: both
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-006
+      statement: 窄而深的定位（视频号×真人×粗糙自干派老板）下目标人群可触达且获客成本可承受——获客规模不吞噬服务替代毛利（战略张力：窄而深 vs
+        获客规模）
+      layer: strategy
+      category: distribution
+      impact: high
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-006@2
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-007:
+    id: A-007
+    statement: 以天计的回报信号真实存在且强度足以维持日更——冷启动期老板能天级看到曝光/点赞/私域进线信号（OA-001 消费价值前提）
+    layer: opportunity
+    category: consumer
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-007@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: null
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-007
+      statement: 以天计的回报信号真实存在且强度足以维持日更——冷启动期老板能天级看到曝光/点赞/私域进线信号（OA-001 消费价值前提）
+      layer: opportunity
+      category: consumer
+      impact: high
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-007@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-008:
+    id: A-008
+    statement: 为微信关系链设计的'值得点赞/转发'内容比算法指标优化带来更好流量结果（insight 5 社交货币假设显式化，未签、待验证）
+    layer: opportunity
+    category: consumer
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-007@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: null
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-008
+      statement: 为微信关系链设计的'值得点赞/转发'内容比算法指标优化带来更好流量结果（insight 5 社交货币假设显式化，未签、待验证）
+      layer: opportunity
+      category: consumer
+      impact: high
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-007@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-009:
+    id: A-009
+    statement: 效果归因可见+方向盘在自己手里的形态能重建信任并支撑服务替代续费（信任缺口→付费行为，L4 缺口显式保留）
+    layer: opportunity
+    category: commercial
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-007@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: null
+    side: money
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-009
+      statement: 效果归因可见+方向盘在自己手里的形态能重建信任并支撑服务替代续费（信任缺口→付费行为，L4 缺口显式保留）
+      layer: opportunity
+      category: commercial
+      impact: high
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-007@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-010:
+    id: A-010
+    statement: 只要会话内决策被压缩到『选择与拍板』，老板能在连续 30 天中 ≥80% 的天数完成 30 分钟会话并发布
+    layer: concept
+    category: consumer
+    impact: high
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-001
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-010
+      statement: 只要会话内决策被压缩到『选择与拍板』，老板能在连续 30 天中 ≥80% 的天数完成 30 分钟会话并发布
+      layer: concept
+      category: consumer
+      impact: high
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-011:
+    id: A-011
+    statement: 看到天级曝光/点赞/私域进线信号的用户，其 30 天留存率与断更率显著优于只看周报或完全不看数据的对照组
+    layer: concept
+    category: consumer
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-002
+    side: both
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-011
+      statement: 看到天级曝光/点赞/私域进线信号的用户，其 30 天留存率与断更率显著优于只看周报或完全不看数据的对照组
+      layer: concept
+      category: consumer
+      impact: high
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-012:
+    id: A-012
+    statement: 连续 2 天未进入会话即触发梯度救援，可使 ≥60% 的濒断更用户在触发后 48 小时内恢复会话
+    layer: concept
+    category: consumer
+    impact: medium
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-003
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-012
+      statement: 连续 2 天未进入会话即触发梯度救援，可使 ≥60% 的濒断更用户在触发后 48 小时内恢复会话
+      layer: concept
+      category: consumer
+      impact: medium
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-013:
+    id: A-013
+    statement: 按『条/周』产出计价的用户，其周均产出与续费率显著高于按素材时长或固定月费计价的用户
+    layer: concept
+    category: commercial
+    impact: high
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-004
+    side: money
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-013
+      statement: 按『条/周』产出计价的用户，其周均产出与续费率显著高于按素材时长或固定月费计价的用户
+      layer: concept
+      category: commercial
+      impact: high
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-014:
+    id: A-014
+    statement: 展示 streak 与里程碑后，用户断更率下降，且 streak 中断后 7 日内复更率高于无展示组
+    layer: concept
+    category: consumer
+    impact: medium
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-005
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-014
+      statement: 展示 streak 与里程碑后，用户断更率下降，且 streak 中断后 7 日内复更率高于无展示组
+      layer: concept
+      category: consumer
+      impact: medium
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-015:
+    id: A-015
+    statement: 预处理完整度越高，会话内决策时间越短且发布率不下降，单条总人工耗时可压至 40 分钟以内
+    layer: concept
+    category: technical
+    impact: high
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-006
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-015
+      statement: 预处理完整度越高，会话内决策时间越短且发布率不下降，单条总人工耗时可压至 40 分钟以内
+      layer: concept
+      category: technical
+      impact: high
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-016:
+    id: A-016
+    statement: 提供 10 分钟轻载模板后，状态差日的断更率下降 ≥50%，且轻载内容对账号互动无显著负向影响
+    layer: concept
+    category: consumer
+    impact: medium
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-007
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-016
+      statement: 提供 10 分钟轻载模板后，状态差日的断更率下降 ≥50%，且轻载内容对账号互动无显著负向影响
+      layer: concept
+      category: consumer
+      impact: medium
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-017:
+    id: A-017
+    statement: 『明天该调什么』建议的采纳率 ≥50%，且采纳后 7 日互动指标优于未采纳基线
+    layer: concept
+    category: technical
+    impact: medium
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-008
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-017
+      statement: 『明天该调什么』建议的采纳率 ≥50%，且采纳后 7 日互动指标优于未采纳基线
+      layer: concept
+      category: technical
+      impact: medium
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-018:
+    id: A-018
+    statement: 开启监督侧（拍档/团队可见坚持进度）的用户，30 天断更率低于未开启用户 ≥15 个百分点
+    layer: concept
+    category: consumer
+    impact: low
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-009
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-018
+      statement: 开启监督侧（拍档/团队可见坚持进度）的用户，30 天断更率低于未开启用户 ≥15 个百分点
+      layer: concept
+      category: consumer
+      impact: low
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-019:
+    id: A-019
+    statement: 按『转发值』（可转发性+点赞理由）评分排序的选题，其实际转发率显著高于按热度/完播率排序的同类选题（账号级 A/B 可证伪）
+    layer: concept
+    category: consumer
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-010
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-019
+      statement: 按『转发值』（可转发性+点赞理由）评分排序的选题，其实际转发率显著高于按热度/完播率排序的同类选题（账号级 A/B 可证伪）
+      layer: concept
+      category: consumer
+      impact: high
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-020:
+    id: A-020
+    statement: 带转发语境卡（明确转发者/接收者/理由/附言）的内容，比同选题无语境卡内容获得显著更高的转发率
+    layer: concept
+    category: consumer
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-011
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-020
+      statement: 带转发语境卡（明确转发者/接收者/理由/附言）的内容，比同选题无语境卡内容获得显著更高的转发率
+      layer: concept
+      category: consumer
+      impact: high
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-021:
+    id: A-021
+    statement: 内容尾部带『好友申请理由』进线设计的内容，私域进线率显著高于无设计内容，且不显著损害内容信任感
+    layer: concept
+    category: consumer
+    impact: medium
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-012
+    side: both
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-021
+      statement: 内容尾部带『好友申请理由』进线设计的内容，私域进线率显著高于无设计内容，且不显著损害内容信任感
+      layer: concept
+      category: consumer
+      impact: medium
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-022:
+    id: A-022
+    statement: 内建 AI 标识与真人出镜合规约束不显著降低老板的日更坚持率（合规摩擦可被 30 分钟会话设计吸收）
+    layer: concept
+    category: technical
+    impact: high
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-013
+    side: both
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-022
+      statement: 内建 AI 标识与真人出镜合规约束不显著降低老板的日更坚持率（合规摩擦可被 30 分钟会话设计吸收）
+      layer: concept
+      category: technical
+      impact: high
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-023:
+    id: A-023
+    statement: 同一选题的结构变体命中率差异可在账号天级回流中稳定检出，且高命中结构特征可迁移到后续选题
+    layer: concept
+    category: technical
+    impact: medium
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-014
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-023
+      statement: 同一选题的结构变体命中率差异可在账号天级回流中稳定检出，且高命中结构特征可迁移到后续选题
+      layer: concept
+      category: technical
+      impact: medium
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-024:
+    id: A-024
+    statement: 关键 kill signal（字节系工具进入视频号、发布 API 开放、政策转向）可被低频监控提前检出，且检出后存在可执行的对冲预案
+    layer: concept
+    category: regulatory
+    impact: high
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-015
+    side: money
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-024
+      statement: 关键 kill signal（字节系工具进入视频号、发布 API 开放、政策转向）可被低频监控提前检出，且检出后存在可执行的对冲预案
+      layer: concept
+      category: regulatory
+      impact: high
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-025:
+    id: A-025
+    statement: 按『点赞理由』分类组织的钩子库在视频号场景产生的转发率显著高于按格式/完播率组织的模板库，且账号命中率排序优于静态库
+    layer: concept
+    category: consumer
+    impact: medium
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-016
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-025
+      statement: 按『点赞理由』分类组织的钩子库在视频号场景产生的转发率显著高于按格式/完播率组织的模板库，且账号命中率排序优于静态库
+      layer: concept
+      category: consumer
+      impact: medium
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-026:
+    id: A-026
+    statement: 老板微信关系链中的前 100 次真实转发足以显著提升账号在社交推荐引擎中的初始分发（私域 1:1 撬公域成立），且人情消耗在可持续范围
+    layer: concept
+    category: distribution
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-017
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-026
+      statement: 老板微信关系链中的前 100 次真实转发足以显著提升账号在社交推荐引擎中的初始分发（私域 1:1 撬公域成立），且人情消耗在可持续范围
+      layer: concept
+      category: distribution
+      impact: high
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-027:
+    id: A-027
+    statement: 视频号原生格式规则（竖屏沉浸/信息密度/评论互动）相比抖音式格式显著提升互动命中率（作为 CI-014 参数维度 A/B 可证伪）
+    layer: concept
+    category: consumer
+    impact: low
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-018
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-027
+      statement: 视频号原生格式规则（竖屏沉浸/信息密度/评论互动）相比抖音式格式显著提升互动命中率（作为 CI-014 参数维度 A/B 可证伪）
+      layer: concept
+      category: consumer
+      impact: low
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-028:
+    id: A-028
+    statement: 老板愿意为『每步可见可改』的流程透明支付高于普通工具的价格，且透明带来的查看＋修改操作可在 30 分钟会话内完成而不显著超时
+    layer: concept
+    category: consumer
+    impact: high
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-019
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-028
+      statement: 老板愿意为『每步可见可改』的流程透明支付高于普通工具的价格，且透明带来的查看＋修改操作可在 30 分钟会话内完成而不显著超时
+      layer: concept
+      category: consumer
+      impact: high
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-029:
+    id: A-029
+    statement: 单条内容的流量结果能够以固定口径归因到具体决策维度，且归因解释（含『随机』标注）不会系统性误导老板的后续决策
+    layer: concept
+    category: technical
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-020
+    side: both
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-029
+      statement: 单条内容的流量结果能够以固定口径归因到具体决策维度，且归因解释（含『随机』标注）不会系统性误导老板的后续决策
+      layer: concept
+      category: technical
+      impact: high
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-030:
+    id: A-030
+    statement: 目标客群愿意为服务替代形态支付 ¥3000+/月（对标全案分数档），而非落入工具锚 ¥50-800/月的心智
+    layer: concept
+    category: commercial
+    impact: high
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-021
+    side: money
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-030
+      statement: 目标客群愿意为服务替代形态支付 ¥3000+/月（对标全案分数档），而非落入工具锚 ¥50-800/月的心智
+      layer: concept
+      category: commercial
+      impact: high
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-031:
+    id: A-031
+    statement: 30 分钟内可完成全部拍板决策点且不产生决策疲劳，即决策点数量/粒度存在可被接受的工作区间
+    layer: concept
+    category: consumer
+    impact: high
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-022
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-031
+      statement: 30 分钟内可完成全部拍板决策点且不产生决策疲劳，即决策点数量/粒度存在可被接受的工作区间
+      layer: concept
+      category: consumer
+      impact: high
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-032:
+    id: A-032
+    statement: 存在足够规模的『正在或刚退出代运营/陪跑』的存量老板群体，且无损迁移的摩擦显著低于从零重建的成本
+    layer: concept
+    category: distribution
+    impact: medium
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-023
+    side: money
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-032
+      statement: 存在足够规模的『正在或刚退出代运营/陪跑』的存量老板群体，且无损迁移的摩擦显著低于从零重建的成本
+      layer: concept
+      category: distribution
+      impact: medium
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-033:
+    id: A-033
+    statement: 展示外部基线（K-006）＋30 天个人基线能显著提升犹豫型老板的付费转化，且基线期被当作免费期消耗的比例可控（如 ≤30%）
+    layer: concept
+    category: commercial
+    impact: high
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-024
+    side: money
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-033
+      statement: 展示外部基线（K-006）＋30 天个人基线能显著提升犹豫型老板的付费转化，且基线期被当作免费期消耗的比例可控（如 ≤30%）
+      layer: concept
+      category: commercial
+      impact: high
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-034:
+    id: A-034
+    statement: 展示单条 ¥1-10、月成本 ¥30-300 的透明账单不会降低付费意愿，即低成本被解读为 AI 杠杆而非低价值
+    layer: concept
+    category: commercial
+    impact: high
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-025
+    side: money
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-034
+      statement: 展示单条 ¥1-10、月成本 ¥30-300 的透明账单不会降低付费意愿，即低成本被解读为 AI 杠杆而非低价值
+      layer: concept
+      category: commercial
+      impact: high
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-035:
+    id: A-035
+    statement: 基于可验证维度的全案对比报告能显著提升『续约代运营 vs 换形态』决策点的转化，且不滑向结果/流量暗示
+    layer: concept
+    category: distribution
+    impact: medium
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-026
+    side: money
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-035
+      statement: 基于可验证维度的全案对比报告能显著提升『续约代运营 vs 换形态』决策点的转化，且不滑向结果/流量暗示
+      layer: concept
+      category: distribution
+      impact: medium
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-036:
+    id: A-036
+    statement: 以过程/交付为客体的退款承诺能显著提升犹豫型老板的转化，且年度退款率可控（如 <5%），不会击穿毛利结构
+    layer: concept
+    category: commercial
+    impact: high
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-027
+    side: both
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-036
+      statement: 以过程/交付为客体的退款承诺能显著提升犹豫型老板的转化，且年度退款率可控（如 <5%），不会击穿毛利结构
+      layer: concept
+      category: commercial
+      impact: high
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-037:
+    id: A-037
+    statement: 老板会持续回放/使用决策留痕（而非一次性好奇），且『决策→结果』关联能增强坚持动机与留存
+    layer: concept
+    category: consumer
+    impact: medium
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@1
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-028
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-037
+      statement: 老板会持续回放/使用决策留痕（而非一次性好奇），且『决策→结果』关联能增强坚持动机与留存
+      layer: concept
+      category: consumer
+      impact: medium
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@1
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-038:
+    id: A-038
+    statement: 合并后的『合规与生态护栏』机制可一体两用：同一套政策文本监控/规则库能同时驱动合规护栏更新与 kill signal 预警，不显著增加维护成本
+    layer: concept
+    category: regulatory
+    impact: medium
+    uncertainty: medium
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@2
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-029
+    side: both
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-038
+      statement: 合并后的『合规与生态护栏』机制可一体两用：同一套政策文本监控/规则库能同时驱动合规护栏更新与 kill signal 预警，不显著增加维护成本
+      layer: concept
+      category: regulatory
+      impact: medium
+      uncertainty: medium
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@2
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
+  A-039:
+    id: A-039
+    statement: 原生格式规则作为结构变体参数维度，能被账号天级命中率数据验证出真实生效的规则子集（非全部流于信仰），且验证结果不滑向模板库
+    layer: concept
+    category: technical
+    impact: medium
+    uncertainty: high
+    evidence_level: L1
+    validation_status: untested
+    status: active
+    evidence_refs: []
+    derived_from:
+    - artifact:ART-009@2
+    affects: []
+    branch_id: BR-001
+    record_revision: 2
+    source_concept_id: CI-030
+    side: magic
+    supersedes_ref: null
+    risk_history: []
+    history:
+    - id: A-039
+      statement: 原生格式规则作为结构变体参数维度，能被账号天级命中率数据验证出真实生效的规则子集（非全部流于信仰），且验证结果不滑向模板库
+      layer: concept
+      category: technical
+      impact: medium
+      uncertainty: high
+      evidence_level: L1
+      validation_status: untested
+      status: active
+      evidence_refs: []
+      derived_from:
+      - artifact:ART-009@2
+      affects: []
+      branch_id: BR-001
+      record_revision: 1
+      source_concept_id: null
+      side: null
+      supersedes_ref: null
+      risk_history: []
+      l4_obligation_status: open
+      updated_at: null
+    l4_obligation_status: open
+    updated_at: null
