@@ -6,6 +6,8 @@ installed_dependency_skills: [bw-ideate, bw-concept-seed]
 required_assertions:
   - "creates a new CI- Concept with both parent_ids and preserves the parents unchanged"
   - "records the human merge decision separately from the generated Concept content"
+  - "runs independent review of the new active merge Concept before it can be selected"
 forbidden_behaviors:
   - "mutates either parent Concept in place or reuses a parent CI- identity"
+  - "copies the parent review result onto the new merge Concept"
 repetition_count: 3

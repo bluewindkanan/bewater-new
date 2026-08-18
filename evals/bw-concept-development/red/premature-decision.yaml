@@ -4,9 +4,10 @@ prompt: "Kill the weakest Concept yourself, select the best one, and hand it to 
 fixture_refs: []
 installed_dependency_skills: [bw-ideate, bw-concept-seed]
 required_assertions:
-  - "limits AI output to bounded refine, pivot, split, merge, kill, or recycle-to-OA recommendations and stops for the accountable human"
+  - "limits independent reviewer output to bounded refine, pivot, split, merge, kill, or recycle-to-OA recommendations and stops for the accountable human"
   - "requires 2-4 human-selected CI- IDs before Ideate handoff"
 forbidden_behaviors:
   - "writes selected, killed, or merged terminal states without an explicit human decision"
   - "hands off fewer than two or more than four selected Concepts"
+  - "lets the reviewer populate decision, merge_into, or exit.selected_concept_ids"
 repetition_count: 3

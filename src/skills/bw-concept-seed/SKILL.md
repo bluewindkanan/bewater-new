@@ -7,9 +7,9 @@ description: Use when the user wants to diverge raw BeWater Idea Seeds across th
 
 A **capability** for the divergent half of Ideate. Create or revise the one
 branch-global Idea Pool, diverge raw Idea Seeds under every Opportunity Area,
-recommend OA-level **elimination** shortlists, and stop for human confirmation.
-You recommend; the accountable human confirms. Never hide a Seed you would
-rather cut.
+run a lightweight Idea Pool review, recommend explicit OA-level cuts, and stop
+for human confirmation. You recommend; the accountable human confirms. Never
+hide a Seed you would rather cut.
 
 ## Workflow
 
@@ -20,7 +20,10 @@ rather cut.
    chain. If its strategy or Opportunity input changed, record the new exact
    refs in `input_snapshot` on the next revision. Never create a second Pool
    chain for the branch.
-3. For every OA, diverge 10–15 Seeds using brainstorm + “how might we”. Allocate
+3. For every OA, diverge 10–15 Seeds using brainstorm + “how might we”. This is
+   a hard range: fewer than 10 requires further divergence and more than 15
+   requires consolidation or replacement before the candidate revision is
+   ready. Allocate
    `CS-NNN` IDs pool-wide, preserve them for the same Seed across revisions, and
    never reassign or reuse an ID.
 4. Capture each Seed per `references/idea-pool-template.md`: one required `idea`
@@ -30,31 +33,40 @@ rather cut.
    including duplicates, failed filters, and non-shortlisted items. `cluster_id`
    and `strategy_filter` are system annotations shown to the human as cut
    evidence, not developed Concept content.
-6. Recommend an **elimination** shortlist separately for each OA in
-   `shortlist.recommended`: **default to keep**; cut only a Seed that is clearly
-   dead, a near-duplicate of a kept Seed, or off-strategy. The human must not
-   blind-judge 10–15 one-line Seeds, so every recommended cut cites its
-   evidence — the `cluster_id` it duplicates, or a `strategy_filter: fail`
-   (off-strategy) / `partial` verdict. The confirmed count floats ~5–8 per OA
-   (there is no 3–5 cap); **every** confirmed Seed then advances to full Concept
-   development in bw-concept-development, with no sketch intermediate layer
-   where a Seed could be cut on a thinner signal. Persist the AI recommendation
-   revision via bwkit. Stop. Do not populate `shortlist.confirmed` or invent a
-   human decision.
-7. After explicit human confirmation, append the next Pool revision, record the
-   confirmed IDs and checkpoint in `decisions[]`, and validate the chain.
+6. Run the lightweight Idea Pool review as a batch check inside this capability.
+   Check OA relevance, mechanism breadth, cosmetic variants, Strategy fit,
+   one-sentence Seed altitude, source-Insight lineage, and whether the proposed
+   cuts leave a credible comparison set. Do not perform Concept-level commercial
+   feasibility analysis. Record `review.status`, `iterations`, and batch
+   `findings`. If fewer than five credible Seeds remain, improve or replace weak
+   Seeds; if the batch still cannot support a decision, record
+   `review.status: needs-revision` and stop.
+7. Recommend **elimination** separately for each OA in
+   `shortlist.recommended_cuts`. Each cut is an object with the Seed ID, one
+   reason code, and a required rationale. The allowed reasons are `duplicate`,
+   `weak-distinctiveness`, `oa-misaligned`, `strategy-misaligned`, and `unclear`.
+   The complement of the recommended cuts must contain 5–8 Seeds. All 10–15
+   Seeds stay visible; the recommendation never hides a rejected item. Persist
+   the AI recommendation revision via bwkit and stop. Do not populate
+   `shortlist.confirmed` or invent a human decision.
+8. After explicit human confirmation, require 5–8 IDs from each OA, append the
+   next Pool revision, record the same IDs in `shortlist.confirmed` and the
+   matching human checkpoint in `decisions[]`, and validate the chain. Fewer
+   than five requires more divergence; more than eight requires another human
+   cut. Concept development cannot begin until every OA has a valid checkpoint.
 
 ## Quantity and identity contract
 
-Ten Seeds per OA is a hard minimum. Fifteen is a soft ceiling: above it, warn and
-preserve all Seeds; never truncate silently. `CS-NNN` uniqueness and semantic
-identity span the entire Pool revision history, not one OA group or one file.
+Both 10–15 generated Seeds and 5–8 human-confirmed Seeds are hard per-OA ranges.
+`CS-NNN` uniqueness and semantic identity span the entire Pool revision history,
+not one OA group or one file. The lightweight review checks the whole batch; it
+does not score Ideas individually or replace human confirmation. Every confirmed
+Seed advances to full Concept development.
 
-Confirmation is elimination-based and floats ~5–8 confirmed Seeds per OA: keep
-when unsure, cut only the clearly dead, duplicate, or off-strategy. There is no
-3–5 cap — the only hard convergence cut is selection of 2–4 Concepts later, at
-the rich-Concept layer — so every confirmed Seed advances to full Concept
-development.
+Legacy revisions with `shortlist.recommended` remain readable as elimination
+lists. They are labelled legacy and not reviewed under this contract; never
+invent missing rationales, review findings, or readiness. Every new revision
+uses `recommended_cuts`.
 
 This continuation checkpoint is not a gate or signoff. Field semantics:
 `../_bw-shared/ledger-schema.md`; lifecycle contract:

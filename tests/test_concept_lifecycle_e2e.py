@@ -27,7 +27,8 @@ def test_fixture_has_three_oas_one_pool_one_portfolio_and_two_solutions():
 
     concepts = data["concept_portfolio"]["concepts"]
     confirmed = set(data["idea_pool"]["confirmed_seed_ids"])
-    assert {concept["source_seed_id"] for concept in concepts.values()} <= confirmed
+    assert {concept["source_seed_id"] for concept in concepts.values()} == confirmed
+    assert len(concepts) == len(confirmed) == 15
     assert 2 <= len(data["concept_portfolio"]["selected_concept_ids"]) <= 4
 
     assert len(data["solutions"]) == 2
@@ -74,11 +75,24 @@ def _canonical_lifecycle():
     for group in pool_r1[1]["opportunity_areas"]:
         group["shortlist"]["confirmed"] = []
     pool_r1[1]["decisions"] = []
+    third_seeds = _seeds(21)
+    third_ids = [seed["id"] for seed in third_seeds]
     pool_r1[1]["opportunity_areas"].append(
         {
             "opportunity_area_id": "OA-003",
-            "seeds": _seeds(21),
-            "shortlist": {"recommended": ["CS-021"], "confirmed": []},
+            "seeds": third_seeds,
+            "review": {"status": "ready", "iterations": 1, "findings": []},
+            "shortlist": {
+                "recommended_cuts": [
+                    {
+                        "seed_id": seed_id,
+                        "reason": "weak-distinctiveness",
+                        "rationale": f"{seed_id} repeats a stronger mechanism.",
+                    }
+                    for seed_id in third_ids[5:]
+                ],
+                "confirmed": [],
+            },
         }
     )
 
@@ -87,47 +101,74 @@ def _canonical_lifecycle():
         {
             "opportunity_area_id": "OA-003",
             "seeds": _seeds(21),
-            "shortlist": {"recommended": ["CS-021"], "confirmed": ["CS-021"]},
+            "review": {"status": "ready", "iterations": 1, "findings": []},
+            "shortlist": {
+                "recommended_cuts": [
+                    {
+                        "seed_id": seed_id,
+                        "reason": "weak-distinctiveness",
+                        "rationale": f"{seed_id} repeats a stronger mechanism.",
+                    }
+                    for seed_id in third_ids[5:]
+                ],
+                "confirmed": third_ids[:5],
+            },
         }
     )
     pool_r2[1]["decisions"].append(
         {
             "type": "confirm-shortlist",
             "opportunity_area_id": "OA-003",
-            "seed_ids": ["CS-021"],
+            "seed_ids": third_ids[:5],
             "decided_by": {"type": "human", "name": "Accountable human", "role": "innovation lead"},
         }
     )
 
+    source_rows = [
+        *[(f"CS-{number:03d}", "OA-001") for number in range(1, 6)],
+        *[(f"CS-{number:03d}", "OA-002") for number in range(11, 16)],
+        *[(f"CS-{number:03d}", "OA-003") for number in range(21, 26)],
+    ]
+    portfolio_concepts = [
+        _concept(f"CI-{index:03d}", seed_id, area_id)
+        for index, (seed_id, area_id) in enumerate(source_rows, 1)
+    ]
+    for index, concept in enumerate(portfolio_concepts, 1):
+        concept["assumption_refs"] = [f"assumption:A-{index:03d}@1"]
+
     portfolio_r1 = deepcopy(_portfolio(revision=1))
-    portfolio_r1[1]["idea_pool_ref"] = "artifact:ART-011@1"
-    portfolio_r1[1]["concepts"] = []
+    portfolio_r1[1]["idea_pool_ref"] = "artifact:ART-011@2"
+    portfolio_r1[1]["concepts"] = deepcopy(portfolio_concepts)
+    portfolio_r1[1]["review"]["reviewed_concept_ids"] = [
+        concept["id"] for concept in portfolio_r1[1]["concepts"]
+    ]
     portfolio_r1[1]["decisions"] = []
     portfolio_r1[1]["exit"] = {"selected_concept_ids": []}
 
     portfolio_r2 = deepcopy(_portfolio(revision=2))
     portfolio_r2[1]["idea_pool_ref"] = "artifact:ART-011@2"
-    portfolio_r2[1]["concepts"] = [
-        _concept("CI-001", "CS-001", "OA-001", decision="selected"),
-        _concept("CI-002", "CS-011", "OA-002", decision="selected"),
-        _concept("CI-003", "CS-021", "OA-003", decision="selected"),
+    portfolio_r2[1]["concepts"] = deepcopy(portfolio_concepts)
+    selected_ids = ["CI-001", "CI-006", "CI-011"]
+    for concept in portfolio_r2[1]["concepts"]:
+        if concept["id"] in selected_ids:
+            concept["decision"] = "selected"
+    portfolio_r2[1]["review"]["reviewed_concept_ids"] = [
+        concept["id"] for concept in portfolio_r2[1]["concepts"]
     ]
-    portfolio_r2[1]["concepts"][1]["assumption_refs"] = ["assumption:A-004@1"]
-    portfolio_r2[1]["concepts"][2]["assumption_refs"] = ["assumption:A-005@1"]
     portfolio_r2[1]["decisions"] = [
         {
             "type": "select",
-            "concept_ids": ["CI-001", "CI-002", "CI-003"],
+            "concept_ids": selected_ids,
             "decided_by": {"name": "Accountable human", "role": "innovation lead"},
         }
     ]
-    portfolio_r2[1]["exit"] = {"selected_concept_ids": ["CI-001", "CI-002", "CI-003"]}
+    portfolio_r2[1]["exit"] = {"selected_concept_ids": selected_ids}
 
     artifacts = [opportunity, pool_r1, pool_r2, portfolio_r1, portfolio_r2]
     solutions = []
-    for artifact_id, path, concept_ids, solution_assumption in (
-        ("ART-020", "linear-refine", ["CI-001"], "A-002"),
-        ("ART-021", "hybridize", ["CI-002", "CI-003"], "A-003"),
+    for artifact_id, path, concept_ids, concept_assumptions, solution_assumption in (
+        ("ART-020", "linear-refine", ["CI-001"], ["A-001"], "A-016"),
+        ("ART-021", "hybridize", ["CI-006", "CI-011"], ["A-006", "A-011"], "A-017"),
     ):
         meta_r1, fm_r1 = deepcopy(_solution(validation_status="unvalidated"))
         meta_r1.artifact_id = artifact_id
@@ -138,11 +179,9 @@ def _canonical_lifecycle():
         fm_r1["content_gaps"] = [
             {"field_path": "definition.dimensions.branding", "reason": "Brand research is pending."}
         ]
-        fm_r1["validation"]["achilles_assumption_refs"] = (
-            ["assumption:A-001@1"]
-            if artifact_id == "ART-020"
-            else ["assumption:A-004@1", "assumption:A-005@1"]
-        )
+        fm_r1["validation"]["achilles_assumption_refs"] = [
+            *[f"assumption:{assumption_id}@1" for assumption_id in concept_assumptions],
+        ]
         solutions.append((meta_r1, fm_r1, render_solution_body(fm_r1)))
 
         meta_r2, fm_r2 = deepcopy(_solution(validation_status="validated"))
@@ -154,39 +193,24 @@ def _canonical_lifecycle():
         fm_r2["source_concepts"]["path"] = path
         fm_r2["source_concepts"]["concept_ids"] = concept_ids
         fm_r2["validation"]["achilles_assumption_refs"] = [
+            *[f"assumption:{assumption_id}@1" for assumption_id in concept_assumptions],
             f"assumption:{solution_assumption}@1",
         ]
-        if artifact_id == "ART-020":
-            fm_r2["validation"]["achilles_assumption_refs"].insert(0, "assumption:A-001@1")
-        else:
-            fm_r2["validation"]["achilles_assumption_refs"][:0] = [
-                "assumption:A-004@1",
-                "assumption:A-005@1",
-            ]
         solutions.append((meta_r2, fm_r2, render_solution_body(fm_r2)))
 
-    concept_assumption = _assumption(
-        "A-001",
-        layer="concept",
-        source_concept_id="CI-001",
-        derived_from=["artifact:ART-012@2"],
-    )
+    concept_assumptions = [
+        _assumption(
+            f"A-{index:03d}",
+            layer="concept",
+            source_concept_id=f"CI-{index:03d}",
+            derived_from=["artifact:ART-012@1"],
+        )
+        for index in range(1, 16)
+    ]
     ledger = _ledger(
-        concept_assumption,
-        _assumption("A-002", layer="solution", derived_from=["artifact:ART-020@2"]),
-        _assumption("A-003", layer="solution", derived_from=["artifact:ART-021@2"]),
-        _assumption(
-            "A-004",
-            layer="concept",
-            source_concept_id="CI-002",
-            derived_from=["artifact:ART-012@2"],
-        ),
-        _assumption(
-            "A-005",
-            layer="concept",
-            source_concept_id="CI-003",
-            derived_from=["artifact:ART-012@2"],
-        ),
+        *concept_assumptions,
+        _assumption("A-016", layer="solution", derived_from=["artifact:ART-020@2"]),
+        _assumption("A-017", layer="solution", derived_from=["artifact:ART-021@2"]),
     )
     return [*artifacts, *solutions], ledger
 

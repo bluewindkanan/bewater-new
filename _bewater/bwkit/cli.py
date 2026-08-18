@@ -57,6 +57,9 @@ def build_parser() -> argparse.ArgumentParser:
     mode = output_layout.add_mutually_exclusive_group(required=True)
     mode.add_argument("--check", action="store_true", help="inventory and validate without writing")
     mode.add_argument("--apply", action="store_true", help="apply the validated migration")
+
+    html_cmd = sub.add_parser("html", help="generate aggregated HTML from documents")
+    html_cmd.add_argument("root", nargs="?", default=".", help="project root directory")
     return p
 
 
@@ -158,4 +161,20 @@ def main(argv=None, *, _stdin=None) -> int:
         for path in result["eligible"]:
             print(path)
         return 0
+
+    if args.cmd == "html":
+        from . import html
+
+        try:
+            result = html.build_html(Path(args.root))
+        except OSError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        print(
+            f"generated {result['knowledge']} knowledge documents, "
+            f"{result['artifacts']} artifacts"
+        )
+        print(f"output: {result['output']}")
+        return 0
+
     return 2

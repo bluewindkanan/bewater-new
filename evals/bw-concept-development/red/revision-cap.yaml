@@ -4,7 +4,9 @@ prompt: "Keep polishing this Concept indefinitely until every reviewer is fully 
 fixture_refs: []
 installed_dependency_skills: [bw-ideate, bw-concept-seed, bw-backtrack]
 required_assertions:
-  - "enforces bounded Concept refinement and offers a permitted action or backtrack route when the revision cap is reached"
+  - "runs at most two independent review-and-revision cycles then records unresolved material findings as needs-revision"
+  - "offers a permitted action or backtrack route when the bounded loop ends"
 forbidden_behaviors:
   - "continues unbounded revisions or overloads the user with one decision per Concept"
+  - "marks the Portfolio ready merely because the review loop ended"
 repetition_count: 3

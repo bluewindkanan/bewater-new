@@ -1,15 +1,17 @@
 import pytest
-from pathlib import Path
+import yaml
+from test_concept_lifecycle import _opportunity, _pool, _seeds
 
-from bw import validate, ledger_ops, io, schema, paths
-
+from bw import io, ledger_ops, paths, schema, validate
 
 # --- helpers ---
 
 def _add(root, **over):
-    base = dict(statement="s", layer="root", category="consumer", impact="low",
-                uncertainty="low", evidence_level="L1", validation_status="untested",
-                evidence_refs=[], derived_from=[], affects=[], branch_id="BR-001")
+    base = {
+        "statement": "s", "layer": "root", "category": "consumer", "impact": "low",
+        "uncertainty": "low", "evidence_level": "L1", "validation_status": "untested",
+        "evidence_refs": [], "derived_from": [], "affects": [], "branch_id": "BR-001",
+    }
     base.update(over)
     return ledger_ops.add(root, base)
 
@@ -38,10 +40,12 @@ def _write_artifact(root, artifact_id, kind, status="final", dual_sided=None,
 
 def _add_raw(root, aid, **over):
     """Write an assumption directly, bypassing add()'s id/invariant guards."""
-    fields = dict(statement="s", layer="root", category="consumer", impact="low",
-                  uncertainty="low", evidence_level="L1", validation_status="untested",
-                  status="active", evidence_refs=[], derived_from=[], affects=[],
-                  branch_id="BR-001")
+    fields = {
+        "statement": "s", "layer": "root", "category": "consumer", "impact": "low",
+        "uncertainty": "low", "evidence_level": "L1", "validation_status": "untested",
+        "status": "active", "evidence_refs": [], "derived_from": [], "affects": [],
+        "branch_id": "BR-001",
+    }
     fields.update(over)
     fields["id"] = aid
     assumption = schema.Assumption.from_dict(fields)
@@ -117,7 +121,7 @@ def test_validate_flags_dangling_ref_in_derived_from(tmp_project):
     _add(tmp_project, derived_from=["GONE"])
     issues = validate.validate_all(tmp_project)
     assert any(i.kind == "dangling-ref" and i.scope == "A-001" for i in issues)
-    assert "GONE" in [i.message for i in issues if i.kind == "dangling-ref"][0]
+    assert "GONE" in next(i.message for i in issues if i.kind == "dangling-ref")
 
 
 def test_validate_flags_dangling_ref_in_affects(tmp_project):
@@ -359,6 +363,31 @@ def test_validate_flags_seed_pool_underfilled_from_file(tmp_project):
     p.write_text(f"---\n{fm}---\nbody\n")
     issues = validate.validate_all(tmp_project)
     assert any(i.kind == "seed-count" and i.scope == "ART-008" for i in issues)
+
+
+def test_validate_wires_strict_idea_pool_upper_bound_from_files(tmp_project):
+    opportunity = _opportunity()
+    pool = _pool()
+    group = pool[1]["opportunity_areas"][0]
+    group["seeds"] = _seeds(1, count=16)
+    group["shortlist"]["recommended_cuts"] = [
+        {
+            "seed_id": seed["id"],
+            "reason": "weak-distinctiveness",
+            "rationale": "A stronger mechanism remains visible.",
+        }
+        for seed in group["seeds"][5:]
+    ]
+
+    for meta, frontmatter in (opportunity, pool):
+        data = meta.to_dict()
+        data.update(frontmatter)
+        path = paths.output_dir(tmp_project) / f"{meta.artifact_id}-r1-{meta.kind.value}.md"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(f"---\n{yaml.safe_dump(data, sort_keys=False)}---\nbody\n")
+
+    issues = validate.validate_all(tmp_project)
+    assert any(issue.kind == "seed-count" and issue.scope == "ART-011" for issue in issues)
 
 
 def test_validate_idea_pool_is_not_a_top_level_dual_sided_kind(tmp_project):

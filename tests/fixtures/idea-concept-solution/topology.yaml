@@ -13,15 +13,30 @@ idea_pool:
     OA-001: [CS-001, CS-002, CS-003, CS-004, CS-005, CS-006, CS-007, CS-008, CS-009, CS-010]
     OA-002: [CS-011, CS-012, CS-013, CS-014, CS-015, CS-016, CS-017, CS-018, CS-019, CS-020]
     OA-003: [CS-021, CS-022, CS-023, CS-024, CS-025, CS-026, CS-027, CS-028, CS-029, CS-030]
-  confirmed_seed_ids: [CS-001, CS-011, CS-021]
+  confirmed_seed_ids:
+    [CS-001, CS-002, CS-003, CS-004, CS-005,
+     CS-011, CS-012, CS-013, CS-014, CS-015,
+     CS-021, CS-022, CS-023, CS-024, CS-025]
 concept_portfolio:
   artifact_id: ART-012
   source_ref: artifact:ART-011@2
   concepts:
     CI-001: {source_seed_id: CS-001, opportunity_area_id: OA-001}
-    CI-002: {source_seed_id: CS-011, opportunity_area_id: OA-002}
-    CI-003: {source_seed_id: CS-021, opportunity_area_id: OA-003}
-  selected_concept_ids: [CI-001, CI-002, CI-003]
+    CI-002: {source_seed_id: CS-002, opportunity_area_id: OA-001}
+    CI-003: {source_seed_id: CS-003, opportunity_area_id: OA-001}
+    CI-004: {source_seed_id: CS-004, opportunity_area_id: OA-001}
+    CI-005: {source_seed_id: CS-005, opportunity_area_id: OA-001}
+    CI-006: {source_seed_id: CS-011, opportunity_area_id: OA-002}
+    CI-007: {source_seed_id: CS-012, opportunity_area_id: OA-002}
+    CI-008: {source_seed_id: CS-013, opportunity_area_id: OA-002}
+    CI-009: {source_seed_id: CS-014, opportunity_area_id: OA-002}
+    CI-010: {source_seed_id: CS-015, opportunity_area_id: OA-002}
+    CI-011: {source_seed_id: CS-021, opportunity_area_id: OA-003}
+    CI-012: {source_seed_id: CS-022, opportunity_area_id: OA-003}
+    CI-013: {source_seed_id: CS-023, opportunity_area_id: OA-003}
+    CI-014: {source_seed_id: CS-024, opportunity_area_id: OA-003}
+    CI-015: {source_seed_id: CS-025, opportunity_area_id: OA-003}
+  selected_concept_ids: [CI-001, CI-006, CI-011]
 solutions:
   - artifact_id: ART-020
     path: linear-refine
@@ -30,7 +45,7 @@ solutions:
     validated_revision: 2
   - artifact_id: ART-021
     path: hybridize
-    source_concept_ids: [CI-002, CI-003]
+    source_concept_ids: [CI-006, CI-011]
     unvalidated_revision: 1
     validated_revision: 2
 g2:

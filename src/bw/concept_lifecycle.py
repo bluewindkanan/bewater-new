@@ -7,7 +7,7 @@ names or fragment-style global references.
 from __future__ import annotations
 
 import re
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Iterable
 from typing import Any
 
@@ -20,6 +20,16 @@ _POOL = schema.ArtifactKind.idea_pool
 _PORTFOLIO = schema.ArtifactKind.concept_portfolio
 _OPPORTUNITY = schema.ArtifactKind.opportunity
 _TERMINAL_DECISIONS = {"selected": "select", "killed": "kill", "merged": "merge"}
+_CUT_REASONS = {
+    "duplicate",
+    "weak-distinctiveness",
+    "oa-misaligned",
+    "strategy-misaligned",
+    "unclear",
+}
+_REVIEW_STATUSES = {"ready", "needs-revision"}
+_RECOMMENDED_ACTIONS = {"refine", "pivot", "split", "merge", "kill", "recycle-to-OA"}
+_REVIEW_FORBIDDEN_FIELDS = {"confirmed", "decision", "merge_into", "selected_concept_ids", "exit"}
 _OA_ID = re.compile(r"^OA-\d{3}$")
 _SEED_ID = re.compile(r"^CS-\d{3}$")
 _CONCEPT_ID = re.compile(r"^CI-\d{3}$")
@@ -116,6 +126,14 @@ def _opportunity_areas(frontmatter: dict) -> list[dict]:
 def _pool_groups(frontmatter: dict) -> list[dict]:
     groups = frontmatter.get("opportunity_areas")
     return [group for group in groups if isinstance(group, dict)] if isinstance(groups, list) else []
+
+
+def _is_strict_pool(frontmatter: dict) -> bool:
+    return any(
+        isinstance(group.get("shortlist"), dict)
+        and "recommended_cuts" in group["shortlist"]
+        for group in _pool_groups(frontmatter)
+    )
 
 
 def _seeds(frontmatter: dict):
@@ -248,6 +266,7 @@ def _pool_issues(
     if _parse_artifact_ref(snapshot.get("strategy_ref")) is None:
         issues.append(Issue(meta.artifact_id, "strategy-source-unresolved", "input_snapshot.strategy_ref is not exact"))
 
+    strict = _is_strict_pool(frontmatter)
     seen_seed_ids: set[str] = set()
     seen_group_ids: set[str] = set()
     for group in _pool_groups(frontmatter):
@@ -260,8 +279,13 @@ def _pool_issues(
             seen_group_ids.add(area_id)
 
         seeds = [seed for seed in group.get("seeds", []) if isinstance(seed, dict)] if isinstance(group.get("seeds"), list) else []
-        if len(seeds) < 10:
-            issues.append(Issue(meta.artifact_id, "seed-count", f"{area_id} has {len(seeds)} seeds (minimum 10)"))
+        if len(seeds) < 10 or (strict and len(seeds) > 15):
+            expected = "10-15" if strict else "at least 10"
+            issues.append(Issue(
+                meta.artifact_id,
+                "seed-count",
+                f"{area_id} has {len(seeds)} seeds (expected {expected})",
+            ))
 
         local_ids: set[str] = set()
         for seed in seeds:
@@ -282,18 +306,76 @@ def _pool_issues(
         if not isinstance(shortlist, dict):
             issues.append(Issue(meta.artifact_id, "shortlist-missing", f"{area_id} shortlist must be a mapping"))
             continue
-        for key in ("recommended", "confirmed"):
-            values = shortlist.get(key)
-            if not isinstance(values, list):
-                issues.append(Issue(meta.artifact_id, "shortlist-missing", f"{area_id} shortlist.{key} must be a list"))
-                continue
-            for seed_id in values:
-                if not isinstance(seed_id, str) or seed_id not in local_ids:
-                    issues.append(Issue(meta.artifact_id, "shortlist-source-unresolved", f"{key} seed {seed_id!r} is not in {area_id}"))
+
+        if strict:
+            issues.extend(_strict_group_review_issues(meta.artifact_id, area_id, group.get("review")))
+            if "recommended" in shortlist:
+                issues.append(Issue(
+                    meta.artifact_id,
+                    "shortlist-contract-mixed",
+                    f"{area_id} cannot mix recommended with recommended_cuts",
+                ))
+            issues.extend(_recommended_cut_issues(
+                meta.artifact_id,
+                area_id,
+                shortlist.get("recommended_cuts"),
+                local_ids,
+            ))
+        else:
+            recommended = shortlist.get("recommended")
+            if not isinstance(recommended, list):
+                issues.append(Issue(
+                    meta.artifact_id,
+                    "shortlist-missing",
+                    f"{area_id} shortlist.recommended must be a list",
+                ))
+            else:
+                for seed_id in recommended:
+                    if not isinstance(seed_id, str) or seed_id not in local_ids:
+                        issues.append(Issue(
+                            meta.artifact_id,
+                            "shortlist-source-unresolved",
+                            f"recommended seed {seed_id!r} is not in {area_id}",
+                        ))
+
         confirmed = shortlist.get("confirmed")
+        if not isinstance(confirmed, list):
+            issues.append(Issue(
+                meta.artifact_id,
+                "shortlist-missing",
+                f"{area_id} shortlist.confirmed must be a list",
+            ))
+            continue
+        for seed_id in confirmed:
+            if not isinstance(seed_id, str) or seed_id not in local_ids:
+                issues.append(Issue(
+                    meta.artifact_id,
+                    "shortlist-source-unresolved",
+                    f"confirmed seed {seed_id!r} is not in {area_id}",
+                ))
+        if strict and confirmed:
+            if not 5 <= len(confirmed) <= 8:
+                issues.append(Issue(
+                    meta.artifact_id,
+                    "confirmed-count",
+                    f"{area_id} confirmed {len(confirmed)} seeds (expected 5-8)",
+                ))
+            string_confirmed = [seed_id for seed_id in confirmed if isinstance(seed_id, str)]
+            if len(set(string_confirmed)) != len(string_confirmed):
+                issues.append(Issue(
+                    meta.artifact_id,
+                    "confirmed-duplicate",
+                    f"{area_id} confirmed shortlist contains duplicate IDs",
+                ))
+            review = group.get("review")
+            if not isinstance(review, dict) or review.get("status") != "ready":
+                issues.append(Issue(
+                    meta.artifact_id,
+                    "pool-review-not-ready",
+                    f"{area_id} cannot carry confirmation before review.status ready",
+                ))
         if (
-            isinstance(confirmed, list)
-            and confirmed
+            confirmed
             and not _has_human_shortlist_confirmation(frontmatter, area_id, confirmed)
         ):
             issues.append(Issue(
@@ -304,6 +386,88 @@ def _pool_issues(
 
     if opportunity is not None and seen_group_ids != opportunity_ids:
         issues.append(Issue(meta.artifact_id, "opportunity-group-mismatch", "Idea Pool OA groups do not equal its Opportunity snapshot"))
+    return issues
+
+
+def _strict_group_review_issues(artifact_id: str, area_id: Any, review: Any) -> list[Issue]:
+    if not isinstance(review, dict):
+        return [Issue(artifact_id, "pool-review-invalid", f"{area_id} review must be a mapping")]
+    status = review.get("status")
+    iterations = review.get("iterations")
+    findings = review.get("findings")
+    if (
+        status not in _REVIEW_STATUSES
+        or isinstance(iterations, bool)
+        or not isinstance(iterations, int)
+        or not 1 <= iterations <= 2
+        or not isinstance(findings, list)
+    ):
+        return [Issue(
+            artifact_id,
+            "pool-review-invalid",
+            f"{area_id} review requires status, 1-2 iterations, and findings[]",
+        )]
+    return []
+
+
+def _recommended_cut_issues(
+    artifact_id: str,
+    area_id: Any,
+    cuts: Any,
+    local_ids: set[str],
+) -> list[Issue]:
+    if not isinstance(cuts, list):
+        return [Issue(
+            artifact_id,
+            "shortlist-missing",
+            f"{area_id} shortlist.recommended_cuts must be a list",
+        )]
+
+    issues: list[Issue] = []
+    cut_ids: list[str] = []
+    for cut in cuts:
+        if not isinstance(cut, dict):
+            issues.append(Issue(
+                artifact_id,
+                "recommended-cut-shape",
+                f"{area_id} recommended cut must be a mapping",
+            ))
+            continue
+        seed_id = cut.get("seed_id")
+        if not isinstance(seed_id, str) or seed_id not in local_ids:
+            issues.append(Issue(
+                artifact_id,
+                "recommended-cut-source-unresolved",
+                f"recommended cut seed {seed_id!r} is not in {area_id}",
+            ))
+        else:
+            cut_ids.append(seed_id)
+        if cut.get("reason") not in _CUT_REASONS:
+            issues.append(Issue(
+                artifact_id,
+                "recommended-cut-reason",
+                f"{area_id} cut {seed_id!r} has invalid reason",
+            ))
+        if not str(cut.get("rationale", "")).strip():
+            issues.append(Issue(
+                artifact_id,
+                "recommended-cut-rationale",
+                f"{area_id} cut {seed_id!r} requires a rationale",
+            ))
+
+    if len(set(cut_ids)) != len(cut_ids):
+        issues.append(Issue(
+            artifact_id,
+            "recommended-cut-duplicate",
+            f"{area_id} recommended_cuts contains duplicate Seed IDs",
+        ))
+    remaining = len(local_ids - set(cut_ids))
+    if not 5 <= remaining <= 8:
+        issues.append(Issue(
+            artifact_id,
+            "recommended-remaining-count",
+            f"{area_id} recommended cuts leave {remaining} seeds (expected 5-8)",
+        ))
     return issues
 
 
@@ -330,6 +494,14 @@ def _portfolio_issues(
     if meta.branch_id != pool.get("branch_id"):
         issues.append(Issue(meta.artifact_id, "concept-branch-mismatch", "Concept Portfolio branch differs from Idea Pool"))
 
+    strict = _is_strict_pool(pool)
+    if strict and not _pool_confirmations_ready(pool):
+        issues.append(Issue(
+            meta.artifact_id,
+            "pool-confirmation-incomplete",
+            "Concept development requires 5-8 human-confirmed Seeds in every OA",
+        ))
+
     concepts = _concepts(frontmatter)
     decisions = _human_decisions(frontmatter)
     concept_ids: set[str] = set()
@@ -344,7 +516,17 @@ def _portfolio_issues(
             concept_ids.add(concept_id)
         issues.extend(_concept_source_issues(meta.artifact_id, concept_id, concept, pool))
         issues.extend(_concept_content_issues(meta.artifact_id, concept_id, concept))
-        issues.extend(_concept_decision_issues(meta.artifact_id, concept_id, concept, decisions))
+        issues.extend(_concept_decision_issues(
+            meta.artifact_id,
+            concept_id,
+            concept,
+            decisions,
+            strict=strict,
+        ))
+
+    if strict:
+        issues.extend(_initial_concept_issues(meta.artifact_id, concepts, pool))
+        issues.extend(_concept_review_issues(meta.artifact_id, frontmatter, concepts))
 
     merged_by_target: dict[str, set[str]] = defaultdict(set)
     concepts_by_id = {
@@ -373,6 +555,178 @@ def _portfolio_issues(
     return issues
 
 
+def _pool_confirmations_ready(pool: dict) -> bool:
+    for group in _pool_groups(pool):
+        review = group.get("review")
+        shortlist = group.get("shortlist")
+        if not isinstance(review, dict) or review.get("status") != "ready":
+            return False
+        if not isinstance(shortlist, dict):
+            return False
+        confirmed = shortlist.get("confirmed")
+        if not isinstance(confirmed, list) or not 5 <= len(confirmed) <= 8:
+            return False
+        if not all(isinstance(seed_id, str) for seed_id in confirmed):
+            return False
+        if len(set(confirmed)) != len(confirmed):
+            return False
+        local_ids = {
+            seed.get("id")
+            for seed in group.get("seeds", [])
+            if isinstance(seed, dict) and isinstance(seed.get("id"), str)
+        }
+        if any(not isinstance(seed_id, str) or seed_id not in local_ids for seed_id in confirmed):
+            return False
+        if not _has_human_shortlist_confirmation(
+            pool,
+            group.get("opportunity_area_id"),
+            confirmed,
+        ):
+            return False
+    return bool(_pool_groups(pool))
+
+
+def _initial_concept_issues(artifact_id: str, concepts: list[dict], pool: dict) -> list[Issue]:
+    confirmed: dict[str, str] = {}
+    for group in _pool_groups(pool):
+        area_id = group.get("opportunity_area_id")
+        shortlist = group.get("shortlist") if isinstance(group.get("shortlist"), dict) else {}
+        raw_confirmed = shortlist.get("confirmed", [])
+        if not isinstance(raw_confirmed, list):
+            continue
+        for seed_id in raw_confirmed:
+            if isinstance(seed_id, str):
+                confirmed[seed_id] = str(area_id)
+
+    issues: list[Issue] = []
+    for concept in concepts:
+        if not isinstance(concept.get("parent_ids"), list):
+            issues.append(Issue(
+                artifact_id,
+                "concept-parent-ids",
+                f"{concept.get('id')} parent_ids must be a list",
+            ))
+    roots = [concept for concept in concepts if concept.get("parent_ids") == []]
+    counts = Counter(
+        concept.get("source_seed_id")
+        for concept in roots
+        if isinstance(concept.get("source_seed_id"), str)
+    )
+    missing = sorted(seed_id for seed_id in confirmed if counts[seed_id] == 0)
+    duplicate = sorted(seed_id for seed_id in confirmed if counts[seed_id] > 1)
+    extra = sorted(seed_id for seed_id in counts if seed_id not in confirmed)
+    if missing:
+        issues.append(Issue(
+            artifact_id,
+            "initial-concept-missing",
+            f"confirmed Seeds missing an initial Concept: {', '.join(missing)}",
+        ))
+    if duplicate:
+        issues.append(Issue(
+            artifact_id,
+            "initial-concept-duplicate",
+            f"confirmed Seeds developed more than once: {', '.join(duplicate)}",
+        ))
+    if extra:
+        issues.append(Issue(
+            artifact_id,
+            "initial-concept-extra",
+            f"initial Concepts develop unconfirmed Seeds: {', '.join(extra)}",
+        ))
+    return issues
+
+
+def _concept_review_issues(artifact_id: str, frontmatter: dict, concepts: list[dict]) -> list[Issue]:
+    review = frontmatter.get("review")
+    if not isinstance(review, dict):
+        return [Issue(
+            artifact_id,
+            "concept-review-invalid",
+            "strict Concept Portfolio requires review metadata",
+        )]
+
+    issues: list[Issue] = []
+    forbidden = sorted(_REVIEW_FORBIDDEN_FIELDS.intersection(review))
+    if forbidden:
+        issues.append(Issue(
+            artifact_id,
+            "review-authority",
+            f"review payload contains human-only fields: {', '.join(forbidden)}",
+        ))
+
+    status = review.get("status")
+    iterations = review.get("iterations")
+    findings = review.get("portfolio_findings")
+    if (
+        status not in _REVIEW_STATUSES
+        or isinstance(iterations, bool)
+        or not isinstance(iterations, int)
+        or not 1 <= iterations <= 2
+        or not isinstance(findings, list)
+    ):
+        issues.append(Issue(
+            artifact_id,
+            "concept-review-invalid",
+            "review requires status, 1-2 iterations, and portfolio_findings[]",
+        ))
+
+    reviewed = review.get("reviewed_concept_ids")
+    active = {
+        concept.get("id")
+        for concept in concepts
+        if isinstance(concept.get("id"), str)
+        and concept.get("decision") not in {"killed", "merged"}
+    }
+    coverage_valid = (
+        isinstance(reviewed, list)
+        and all(isinstance(concept_id, str) for concept_id in reviewed)
+        and len(set(reviewed)) == len(reviewed)
+        and set(reviewed) == active
+    )
+    if not coverage_valid:
+        issues.append(Issue(
+            artifact_id,
+            "concept-review-coverage",
+            "reviewed_concept_ids must exactly cover current candidates",
+        ))
+
+    for concept in concepts:
+        if concept.get("id") not in active:
+            continue
+        evaluation = concept.get("evaluation")
+        if (
+            not isinstance(evaluation, dict)
+            or not isinstance(evaluation.get("hard"), dict)
+            or not evaluation.get("hard")
+            or not isinstance(evaluation.get("soft"), dict)
+            or not evaluation.get("soft")
+            or evaluation.get("recommended_action") not in _RECOMMENDED_ACTIONS
+        ):
+            issues.append(Issue(
+                artifact_id,
+                "concept-review-invalid",
+                f"{concept.get('id')} lacks reviewer-owned evaluation",
+            ))
+
+    terminal_present = any(
+        concept.get("decision") in _TERMINAL_DECISIONS
+        for concept in concepts
+    )
+    exit_block = frontmatter.get("exit")
+    exit_present = (
+        isinstance(exit_block, dict)
+        and isinstance(exit_block.get("selected_concept_ids"), list)
+        and bool(exit_block["selected_concept_ids"])
+    )
+    if status != "ready" and (terminal_present or exit_present):
+        issues.append(Issue(
+            artifact_id,
+            "concept-review-not-ready",
+            "human Concept decisions require review.status ready",
+        ))
+    return issues
+
+
 def _concept_source_issues(artifact_id: str, concept_id: str, concept: dict, pool: dict) -> list[Issue]:
     seed_id = concept.get("source_seed_id")
     area_id = concept.get("opportunity_area_id")
@@ -387,7 +741,8 @@ def _concept_source_issues(artifact_id: str, concept_id: str, concept: dict, poo
         issues: list[Issue] = []
         if area_id != pool_area_id:
             issues.append(Issue(artifact_id, "concept-oa-mismatch", f"{concept_id} OA does not match source seed {seed_id}"))
-        if seed_id not in shortlist.get("confirmed", []):
+        confirmed = shortlist.get("confirmed")
+        if not isinstance(confirmed, list) or seed_id not in confirmed:
             issues.append(Issue(artifact_id, "seed-not-confirmed", f"{concept_id} develops unconfirmed seed {seed_id}"))
         return issues
     return [Issue(artifact_id, "concept-source-unresolved", f"{concept_id} source seed {seed_id!r} does not resolve")]
@@ -433,14 +788,14 @@ def _has_human_shortlist_confirmation(frontmatter: dict, area_id: Any, confirmed
         return False
     if not all(isinstance(seed_id, str) for seed_id in confirmed):
         return False
-    expected = set(confirmed)
+    expected = Counter(confirmed)
     return any(
         isinstance(decision, dict)
         and decision.get("type") == "confirm-shortlist"
         and decision.get("opportunity_area_id") == area_id
         and isinstance(decision.get("seed_ids"), list)
         and all(isinstance(seed_id, str) for seed_id in decision["seed_ids"])
-        and set(decision["seed_ids"]) == expected
+        and Counter(decision["seed_ids"]) == expected
         and _is_human_actor(decision.get("decided_by"))
         for decision in decisions
     )
@@ -450,7 +805,7 @@ def _is_human_actor(actor: Any) -> bool:
     if not isinstance(actor, dict):
         return False
     actor_type = str(actor.get("type", actor.get("authority", "human"))).lower()
-    if actor_type in {"ai", "agent", "system", "assistant"}:
+    if actor_type in {"ai", "agent", "system", "assistant", "reviewer"}:
         return False
     person = str(actor.get("name", actor.get("person", ""))).strip()
     role = str(actor.get("role", "")).strip()
@@ -479,12 +834,23 @@ def _concept_decision_issues(
     concept_id: str,
     concept: dict,
     decisions: dict[str, set[str]],
+    *,
+    strict: bool,
 ) -> list[Issue]:
     decision = concept.get("decision")
     issues: list[Issue] = []
     if decision in _TERMINAL_DECISIONS and _TERMINAL_DECISIONS[decision] not in decisions.get(concept_id, set()):
         issues.append(Issue(artifact_id, "concept-decision-ownership", f"{concept_id} {decision} has no human decision"))
-    hard = (concept.get("evaluation") or {}).get("hard")
+    if strict and concept.get("merge_into") is not None and (
+        decision != "merged" or "merge" not in decisions.get(concept_id, set())
+    ):
+        issues.append(Issue(
+            artifact_id,
+            "concept-decision-ownership",
+            f"{concept_id} merge_into has no matching human merge decision",
+        ))
+    evaluation = concept.get("evaluation")
+    hard = evaluation.get("hard") if isinstance(evaluation, dict) else None
     if decision == "selected" and (not isinstance(hard, dict) or not hard or not all(bool(value) for value in hard.values())):
         issues.append(Issue(artifact_id, "selected-before-hard-pass", f"{concept_id} selected before hard criteria pass"))
     return issues

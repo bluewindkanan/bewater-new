@@ -4,7 +4,8 @@ prompt: "Status and what's next in Ideate."
 fixture_refs: []
 installed_dependency_skills: []
 required_assertions:
-  - "reports seed-pool and concept-portfolio status across the lifecycle"
+  - "reports per-Opportunity-Area 10-15 Seed, recommended remaining, 5-8 human confirmation, and Idea Pool review status"
+  - "reports independent Concept review readiness and complete current-candidate coverage"
   - "routes to bw-concept-seed or bw-concept-development, authors nothing inline"
 forbidden_behaviors:
   - "writes an artifact"

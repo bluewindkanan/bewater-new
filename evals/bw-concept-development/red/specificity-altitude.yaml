@@ -4,8 +4,9 @@ prompt: "Keep the Concepts vague and inspirational; omit the mechanism, visualiz
 fixture_refs: []
 installed_dependency_skills: [bw-ideate, bw-concept-seed]
 required_assertions:
-  - "identifies missing specificity, wrong pretest altitude, weak visualization, and missing design principles before convergence"
+  - "has the independent reviewer identify missing specificity, wrong pretest altitude, weak visualization, and missing design principles before convergence"
   - "keeps how_it_works at mechanism level rather than expanding into a complete Solution flow"
 forbidden_behaviors:
   - "presents slogans or complete Solutions as researchable Concepts"
+  - "lets the Concept producer award its own hard or soft evaluation"
 repetition_count: 3

@@ -1,49 +1,53 @@
 # Ideate stage
 
 Ideate runs an explicit concept lifecycle. Each opportunity area is diverged
-into a `concept-seed-pool` (10–15 seeds); the shortlist is an **elimination**
-cut (keep when unsure; cut only what is clearly dead, duplicate, or
-off-strategy), and **every** confirmed seed becomes a Concept Item in the single
-`concept-portfolio`, which is evaluated and converged to a 2–4 selected
-handoff. The only hard convergence cut in Ideate is this final 2–4 selection,
-at the rich-Concept layer — never earlier at the one-line Seed layer.
+into a 10–15 Seed hard range, receives a lightweight Idea Pool review, and gets
+explicit `recommended_cuts` whose complement is 5–8. The human confirms 5–8
+Seeds per OA. Every confirmed Seed becomes one initial Concept in the single
+`concept-portfolio`, which receives an independent Concept review before the
+human converges it to a global 2–4 selected handoff.
 
 ## Lifecycle
 
 ```
-seeded -> shortlisted -> developed -> evaluated
-                              ^            |
-                              |            v
-                       needs-revision <----+
+seeded -> pool-reviewed -> human-confirmed -> developed -> independently-reviewed
+                 ^                                  ^                 |
+                 |                                  |                 v
+           needs-revision                     needs-revision <--------+
                               |
                 selected / killed / merged  (human only)
 ```
 
-The AI proposes transitions and writes evaluation evidence; only the accountable
-human records `selected`, `killed`, or `merged`. After two failed AI revision
-proposals on one concept, the recommended action becomes `recycle-to-OA`, which
-stops and routes through bw-backtrack (it never edits an OA or bypasses G1).
+The Seed producer performs the lightweight batch check. A fresh-context
+independent reviewer owns Concept evaluation evidence and recommendations; only
+the accountable human records `selected`, `killed`, or `merged`. After at most
+two review-and-revision cycles, unresolved material findings remain
+`review.status: needs-revision`. `recycle-to-OA` stops and routes through
+bw-backtrack; it never edits an OA or bypasses G1.
 
 ## Capabilities to route to
 
 - **bw-concept-seed** — diverge 10–15 seeds per opportunity area (stable,
   pool-local `CS-` ids), cluster near-duplicates, keep every seed visible, and
-  recommend an elimination shortlist (keep when unsure; cut only the dead,
-  duplicate, or off-strategy, each citing its `cluster_id`/`strategy_filter`
-  evidence); stop for the human to confirm it.
+  run the Idea Pool review; recommend explicit cuts with reason and rationale
+  so 5–8 remain; stop for the human to confirm a valid 5–8.
 - **bw-concept-development** — develop **all** confirmed seeds into Concept
-  Items (`CI-` ids) inside the portfolio, run hard/soft criteria and a bounded
-  revision loop, then present one batch convergence view and stop before the
-  human `select / revise / merge / kill` decision.
+  Items (`CI-` ids) inside the portfolio, obtain an independent Concept review
+  and bounded verification, then present one batch convergence view only when
+  `review.status: ready`; stop before the human decision.
 
 ## Handoff to Shape (readiness check, no gate)
 
 - the `concept-portfolio` carries 2–4 `selected` Concept Items
-  (`exit.selected_concept_ids`), each with hard criteria passing;
+  (`exit.selected_concept_ids`), each with hard criteria passing, and a
+  new-contract Portfolio has `review.status: ready`;
 - ≥2 provoke healthy anxiety (human judgment). Fewer than two is a soft blocker:
   stop, show the count, and require explicit human override before routing to Shape;
 - all pass the locked-strategy filter.
 
 Hand the exact portfolio revision to Shape (bw-shape router). Shape consumes the
 portfolio and produces `solution` artifacts; it does not reselect concepts.
+Legacy Portfolios whose exact Idea Pool uses `shortlist.recommended` remain
+readable and are labelled not reviewed; do not infer findings or readiness that
+the Artifact does not contain.
 Lifecycle contract: `../_bw-shared/idea-concept-solution-lifecycle.md`.

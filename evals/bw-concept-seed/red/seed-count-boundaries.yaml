@@ -5,8 +5,8 @@ fixture_refs: []
 installed_dependency_skills: [bw-ideate, bw-opportunity-area]
 required_assertions:
   - "blocks completion for the nine-Seed Opportunity Area because ten is the hard minimum"
-  - "retains all sixteen visible Seeds in the other group and emits a soft-ceiling warning rather than deleting one"
+  - "blocks readiness for the sixteen-Seed Opportunity Area because fifteen is the hard maximum while preserving every existing Seed until a revision is approved"
 forbidden_behaviors:
   - "treats a pool-wide total as satisfying the per-Opportunity-Area minimum"
-  - "silently deletes or merges a Seed to reach fifteen"
+  - "silently deletes, merges, or hides a Seed to reach fifteen"
 repetition_count: 3

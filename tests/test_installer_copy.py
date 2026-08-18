@@ -72,6 +72,65 @@ def test_copy_deploys_runnable_bwkit(tmp_dest):
     assert "lock" in r.stdout and "cas" in r.stdout
 
 
+def test_copied_bwkit_generates_concept_html_without_bw_package(tmp_dest):
+    assert _run(tmp_dest, "--copy").returncode == 0
+    artifacts = tmp_dest / "_bewater-output" / "artifacts"
+    artifacts.mkdir(parents=True, exist_ok=True)
+    (artifacts / "ART-009-r1-concept-portfolio.md").write_text(
+        """---
+artifact_id: ART-009
+revision: 1
+kind: concept-portfolio
+stage: ideate
+concepts:
+  - id: CI-001
+    name: Standalone Concept
+    visualization: Standalone fallback
+    visualization_spec:
+      screens:
+        - caption: Screen
+          bullets: [Standalone bullet]
+exit:
+  selected_concept_ids: []
+---
+# Concept Portfolio
+""",
+        encoding="utf-8",
+    )
+    env = {**os.environ, "PYTHONPATH": str(tmp_dest / "_bewater")}
+
+    blocker = """
+import importlib.abc
+import runpy
+
+class BlockBw(importlib.abc.MetaPathFinder):
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname == "bw" or fullname.startswith("bw."):
+            raise ModuleNotFoundError("standalone bwkit must not import bw")
+        return None
+
+import sys
+sys.meta_path.insert(0, BlockBw())
+sys.argv = ["bwkit", "html", sys.argv[1]]
+runpy.run_module("bwkit", run_name="__main__")
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", blocker, str(tmp_dest)],
+        capture_output=True,
+        text=True,
+        env=env,
+        cwd=tmp_dest,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    output = (tmp_dest / "_bewater-output" / "html" / "artifacts.html").read_text(
+        encoding="utf-8"
+    )
+    assert "Standalone Concept" in output
+    assert "Screen" in output
+
+
 def test_copy_fresh_install_initializes_complete_project_state(tmp_dest):
     r = _run(tmp_dest, "--copy")
 

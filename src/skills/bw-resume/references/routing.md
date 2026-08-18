@@ -26,11 +26,20 @@ chains:
 - zero Idea Pools → route to **bw-ideate** / **bw-concept-seed**;
 - more than one Pool chain → corruption; fail closed;
 - stale Pool `input_snapshot` → revise that Pool chain via **bw-concept-seed**;
-- any OA with fewer than 10 Seeds, or an empty `shortlist.confirmed` → pending
-  divergence or human shortlist checkpoint;
+- for a new-contract Pool using `recommended_cuts`, any OA outside the 10–15
+  Seed hard range, any cut complement outside 5–8, `review.status:
+  needs-revision`, or a confirmed set outside 5–8 → **bw-concept-seed** or the
+  human shortlist checkpoint;
+- a legacy Pool using `shortlist.recommended` remains readable; report it as not
+  reviewed under the new contract and do not infer rationales, findings, or
+  readiness; an empty legacy `shortlist.confirmed` is still a human shortlist
+  checkpoint, but do not impose the new 5–8 range retroactively;
 - zero Concept Portfolios after confirmed Seeds → route to
   **bw-concept-development**;
 - more than one Portfolio chain → corruption; fail closed;
+- a new-contract Portfolio whose exact Pool uses `recommended_cuts` and whose
+  `review.status` is missing, `needs-revision`, or does not cover every current
+  candidate → **bw-concept-development**;
 - Concepts awaiting refine/pivot/split/merge/kill/recycle or a human convergence
   decision → route to **bw-concept-development**;
 - `exit.selected_concept_ids` outside 2–4, or any selected Concept whose hard
@@ -38,6 +47,9 @@ chains:
 
 Surface human checkpoints without writing them. Validate exact Pool, Seed,
 Opportunity, and OA lineage; never infer identity from Markdown headings.
+Legacy Concept Portfolios remain readable and are labelled not reviewed; do not
+infer missing reviewer findings or retroactively invalidate their downstream
+handoff solely because the new review block is absent.
 
 ## Shape lifecycle scan
 

@@ -17,6 +17,11 @@ validation_status: unvalidated
 strategy_ref: artifact:ART-006@2
 opportunity_ref: artifact:ART-007@1
 idea_pool_ref: artifact:ART-008@2
+review:
+  status: ready                       # ready | needs-revision
+  iterations: 1                      # at most 2 review-and-revision cycles
+  reviewed_concept_ids: [CI-001]     # exact current candidate set
+  portfolio_findings: []
 concepts:
   - id: CI-001
     item_revision: 1
@@ -32,7 +37,9 @@ concepts:
     how_it_works: ""                   # mechanism-level, not full Solution flow
     what_it_replaces: ""
     why_big: ""
-    visualization: ""
+    visualization: ""                   # one-line picture-in-words (alt + fallback)
+    visualization_spec:                 # optional: deterministic SVG wireframe input
+      screens: []                       #   [{caption: "", bullets: [""]}]
     design_principles: []
     dual_sided:
       magic:
@@ -44,10 +51,10 @@ concepts:
       tension: {statement: ""}
       balance_choice: ""
     evaluation:
-      hard: {}
-      soft: {}
+      hard: {}                        # independent reviewer only
+      soft: {}                        # independent reviewer only
       revision_attempts: 0
-      recommended_action: refine       # refine|pivot|split|merge|kill|recycle-to-OA
+      recommended_action: refine       # reviewer: refine|pivot|split|merge|kill|recycle-to-OA
     assumption_refs: []                # assumption:A-NNN@record_revision
     decision: null                     # null|selected|killed|merged; human only
     merge_into: null
@@ -62,6 +69,17 @@ stale_reason: null
 `opportunity_ref` must equal the referenced Idea Pool snapshot. Every Concept's
 OA must equal the OA group containing its confirmed source Seed. A merge creates
 a new Concept with both `parent_ids`; it does not mutate either parent.
+
+Every confirmed Seed in each OA's 5–8 set produces exactly one initial Concept,
+and no other initial Concept is allowed. `reviewed_concept_ids` equals all
+current candidates shown for convergence; killed and merged history remains in
+`concepts[]` but is excluded. `review.status: needs-revision` blocks a human
+selection prompt. The independent reviewer owns evaluation and recommendations;
+only explicit human input may populate terminal fields or the exit.
+
+Legacy Portfolios referencing an Idea Pool with `shortlist.recommended` remain
+readable and are labelled not reviewed under this contract. No consumer may
+infer missing review content.
 
 Field semantics: `../_bw-shared/ledger-schema.md`; lifecycle contract:
 `../_bw-shared/idea-concept-solution-lifecycle.md`.

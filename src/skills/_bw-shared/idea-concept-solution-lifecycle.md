@@ -29,6 +29,12 @@ and generated artifacts. BeWater deliberately distinguishes raw Idea Seeds from
 developed Concepts. New Invention does not bypass convergence: work outside the
 selected Concept boundaries returns to Ideate.
 
+Artifact Markdown is the single source of truth. YAML frontmatter holds
+canonical structured facts, lineage, review results, and decisions; the body
+may explain but cannot override them. HTML only projects Artifact content or
+deterministic calculations from it. It never invents, repairs, or persists
+business facts.
+
 ## Artifact topology
 
 | Stage | Kind | Cardinality | Local item IDs |
@@ -62,13 +68,29 @@ The active `branch_id` is the Pool uniqueness key. Its canonical fields are:
 - `input_snapshot.strategy_ref` and `input_snapshot.opportunity_ref`, both exact
   artifact revisions;
 - `opportunity_areas[]`, each with `opportunity_area_id`, `seeds`, and
-  `shortlist.recommended` / `shortlist.confirmed`;
+  lightweight `review`, `shortlist.recommended_cuts`, and
+  `shortlist.confirmed`;
 - `decisions[]` for the human shortlist checkpoint.
 
-Each OA group contains 10–15 visible Seeds. Ten is a hard minimum; above fifteen
-is allowed only with an explicit warning. Each Seed contains `id`, one required
+Each OA group contains 10–15 visible Seeds as a hard range. Each Seed contains
+`id`, one required
 `idea` sentence, `source_insight_refs`, optional `cluster_id`, and
 `strategy_filter`. Clustering and failed filters never remove Seeds.
+
+Idea Pool review is a lightweight batch check inside Seed production, not a new
+stage or Gate. It checks OA relevance, mechanism diversity, cosmetic variants,
+Strategy fit, one-sentence altitude, source lineage, and whether proposed cuts
+leave a credible decision set. It records `status: ready | needs-revision`,
+`iterations`, and `findings`; it does not perform Concept-level feasibility or
+replace human confirmation.
+
+Every `recommended_cuts[]` entry contains a same-OA `seed_id`, a reason from
+`duplicate | weak-distinctiveness | oa-misaligned | strategy-misaligned |
+unclear`, and a non-empty rationale. Its complement contains 5–8 Seeds. All
+Seeds remain visible. `shortlist.confirmed`, when populated, contains 5–8
+same-OA IDs and has a matching human decision. Fewer than five requires improved
+divergence; more than eight requires another human cut. Concept development is
+blocked until every OA has a valid confirmation.
 
 `CS-NNN` is unique pool-wide. Across revision history an ID may persist only for
 the same Seed and may never be reassigned or reused. AI may recommend a shortlist;
@@ -76,19 +98,28 @@ only the accountable human may populate `shortlist.confirmed`, in a later
 revision. If either input snapshot reference changes, revise the existing Pool
 chain. Never allocate a second Pool chain for that branch.
 
+Legacy revisions using `shortlist.recommended` remain readable as elimination
+lists and are labelled not reviewed under the new contract. Readers never infer
+their missing rationales, findings, or readiness. New revisions use
+`recommended_cuts`.
+
 ## Concept Portfolio
 
 The Portfolio records exact `strategy_ref`, `opportunity_ref`, and
-`idea_pool_ref`, plus canonical `concepts[]`, `decisions[]`, and
+`idea_pool_ref`, plus canonical batch `review`, `concepts[]`, `decisions[]`, and
 `exit.selected_concept_ids`.
 
-Only a human-confirmed Seed may become a Concept. Every Concept carries:
+Only a human-confirmed Seed may become a Concept. Every confirmed Seed produces
+exactly one initial Concept in the same OA; every initial Concept resolves one
+confirmed Seed. Each OA therefore begins independent review with 5–8 Concepts.
+Every Concept carries:
 
 - `id` (`CI-NNN`), `item_revision`, `opportunity_area_id`, `source_seed_id`, and
   `parent_ids`;
 - `name`, `pithy_description`, `consumer_insight`, `commercial_insight`,
   `idea_definition`, `who_its_for`, `how_it_works`, `what_it_replaces`,
-  `why_big`, `visualization`, and `design_principles`;
+  `why_big`, `visualization`, `visualization_spec` (optional), and
+  `design_principles`;
 - canonical `dual_sided`, `evaluation`, and pinned `assumption_refs`;
 - `decision` and `merge_into`, which remain null until a human decision.
 
@@ -97,6 +128,30 @@ Opportunity revision. A Concept's OA must equal the OA group containing its
 source Seed. `pithy_description` is five words or fewer where the language
 permits. Concept `how_it_works` stays mechanism-level; complete experience,
 operations, implementation, and commercial modeling belong to Solution.
+
+`visualization` is a one-line picture-in-words (alt text and fallback).
+`visualization_spec` is an optional structured input — `screens[]`, each a
+`caption` plus `bullets[]` — that a deterministic projector renders as an SVG
+wireframe. The artifact stores only this text; the SVG is a build-time
+projection, never stored content, so CAS integrity and diff are unaffected.
+A missing or malformed `visualization_spec` falls back to the `visualization`
+text.
+
+Production and evaluation are separate. A fresh-context independent reviewer
+receives the exact candidate Portfolio and referenced inputs, cannot mutate
+project state, and owns `evaluation.hard`, `evaluation.soft`, and
+`recommended_action`. Producer self-review is not equivalent. The reviewer
+checks exact lineage, completeness, mechanism distinction and overlap,
+Strategy/OA fit, Consumer Magic and Commercial Money, unresolved tension,
+falsifiable assumptions, test altitude, naming, visualization, comprehension,
+and batch comparability.
+
+The Portfolio review records `status: ready | needs-revision`, `iterations`,
+the exact current candidate set in `reviewed_concept_ids`, and
+`portfolio_findings`. Run at most two review-and-revision cycles. `ready`
+requires complete candidate coverage; unresolved material findings after the
+bounded loop remain visible as `needs-revision`, which blocks presentation of
+the next human decision.
 
 All hard criteria must pass before human convergence: exact lineage, one
 unresolved tension, a distinct mechanism, complete Who/What/How/What it
@@ -111,6 +166,12 @@ with both parents and never mutates a parent in place. AI stops after two
 revision proposals unless the human explicitly requests another pass. Only the
 accountable human may record `selected`, `killed`, or `merged`. The handoff to
 Shape requires two to four human-selected `CI-NNN` IDs.
+
+The reviewer cannot populate `shortlist.confirmed`, Concept `decision`,
+`merge_into`, Portfolio `decisions`, or `exit.selected_concept_ids`. Any new
+active merge or split must be independently reviewed before selection. Legacy
+Portfolios whose exact Idea Pool uses `shortlist.recommended` remain readable
+and are labelled not reviewed; missing review results are never invented.
 
 ## Solution
 

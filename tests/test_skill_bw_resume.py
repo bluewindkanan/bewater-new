@@ -123,3 +123,12 @@ def test_pending_g1_eval_uses_canonical_gate_record_fixture():
         "supersedes_ref:", "decided_at:", "validity: active", "change_history:",
     ]:
         assert token in text, f"canonical pending G1 fixture missing {token}"
+
+
+def test_resume_understands_new_ideate_review_contract_and_legacy_heads():
+    text = _resume_text().lower()
+    for token in [
+        "recommended_cuts", "5–8", "review.status", "needs-revision",
+        "legacy", "shortlist.recommended", "do not infer",
+    ]:
+        assert token in text, f"bw-resume missing Ideate compatibility token: {token}"

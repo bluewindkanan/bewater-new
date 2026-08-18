@@ -18,7 +18,8 @@ def test_idea_pool_template_has_lifecycle_fields():
             / "idea-pool-template.md").read_text()
     for token in ["kind: idea-pool", "input_snapshot:", "opportunity_areas:",
                   "opportunity_area_id: OA-001", "CS-001", "idea:",
-                  "recommended:", "confirmed:", "strategy_filter:"]:
+                  "review:", "status: ready", "recommended_cuts:",
+                  "reason:", "rationale:", "confirmed:", "strategy_filter:"]:
         assert token in text, f"idea-pool-template missing {token}"
 
 
@@ -28,3 +29,13 @@ def test_concept_seed_cites_lifecycle_contract():
     assert "10" in text and "15" in text
     assert "one" in text.lower() and "branch" in text.lower()
     assert "stop" in text.lower() and "confirm" in text.lower()
+
+
+def test_concept_seed_enforces_the_per_oa_hard_funnel_and_lightweight_review():
+    text = (skill_dir(REPO, "bw-concept-seed") / "SKILL.md").read_text().lower()
+    for token in [
+        "10–15", "hard range", "5–8", "recommended_cuts", "rationale",
+        "lightweight", "batch", "needs-revision", "never hide",
+    ]:
+        assert token in text, f"concept seed contract missing {token}"
+    assert "soft ceiling" not in text
