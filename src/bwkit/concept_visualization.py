@@ -25,10 +25,15 @@ _FONT = "'Avenir Next','Noto Sans CJK SC','PingFang SC','Microsoft YaHei',sans-s
 
 
 def render_concept_visualization(
-    spec: dict[str, Any] | None, *, caption: str = ""
+    spec: dict[str, Any] | None,
+    *,
+    caption: str = "",
+    fallback_text: str = "",
 ) -> str:
     """Return a deterministic SVG wireframe for ``spec``, or ``""``."""
     screens = _parse_screens(spec)
+    if not screens and fallback_text.strip():
+        screens = [(caption.strip(), [fallback_text.strip()])]
     if not screens:
         return ""
 

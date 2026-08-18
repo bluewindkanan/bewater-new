@@ -829,7 +829,7 @@ def test_concept_portfolio_renders_cards_and_svg_wireframe() -> None:
     assert "硬标准" in output
 
 
-def test_concept_portfolio_falls_back_to_text_without_spec() -> None:
+def test_concept_portfolio_projects_visualization_text_to_svg_without_spec() -> None:
     items = [
         {
             "artifact_id": "ART-009",
@@ -849,7 +849,8 @@ def test_concept_portfolio_falls_back_to_text_without_spec() -> None:
 
     assert "天级战报" in output
     assert "次日清晨一条战报" in output
-    assert "concept-wireframe" not in output
+    assert 'class="concept-wireframe"' in output
+    assert "concept-visualization-fallback" not in output
 
 
 def _seed(seed_id: str, *, idea: str | None = None) -> dict:
@@ -952,7 +953,7 @@ def test_idea_pool_renders_complete_oa_decision_evidence_and_read_only_filters()
     assert "请在对话中返回每个机会方向要确认的 5–8 个 CS- ID" in output
 
 
-def test_idea_pool_legacy_elimination_remains_visible_without_invented_review() -> None:
+def test_idea_pool_projects_existing_elimination_without_legacy_display() -> None:
     item = {
         "artifact_id": "ART-008",
         "revision": 2,
@@ -969,13 +970,13 @@ def test_idea_pool_legacy_elimination_remains_visible_without_invented_review() 
         ],
     }
 
-    output = html.generate_html([item], {"ART-008": "旧版正文理由"}, "Artifacts", "artifact")
+    output = html.generate_html([item], {"ART-008": "Artifact 正文理由"}, "Artifacts", "artifact")
 
-    assert "旧版淘汰建议" in output
-    assert "未按新契约审查" in output
+    assert "旧版" not in output
+    assert "未按新契约" not in output
     assert 'data-recommendation="cut"' in output
-    assert "未提供结构化淘汰理由" in output
-    assert "请在对话中返回每个机会方向" not in output
+    assert "Artifact 未提供结构化淘汰理由" in output
+    assert "请在对话中返回每个机会方向" in output
 
 
 def test_needs_revision_idea_pool_does_not_present_confirmation_handoff() -> None:
@@ -1094,8 +1095,8 @@ def test_concept_portfolio_groups_comparison_and_separates_active_history() -> N
     assert "请在对话中返回跨全部机会方向最终选择的 2–4 个 CI- ID" in output
 
 
-def test_concept_portfolio_legacy_review_and_needs_revision_handoffs() -> None:
-    legacy = {
+def test_concept_portfolio_existing_evaluation_and_needs_revision_handoffs() -> None:
+    existing = {
         "artifact_id": "ART-009",
         "revision": 1,
         "kind": "concept-portfolio",
@@ -1103,22 +1104,23 @@ def test_concept_portfolio_legacy_review_and_needs_revision_handoffs() -> None:
         "exit": {"selected_concept_ids": []},
     }
     needs_revision = {
-        **legacy,
+        **existing,
         "artifact_id": "ART-010",
         "review": {"status": "needs-revision", "portfolio_findings": []},
     }
 
     output = html.generate_html(
-        [legacy, needs_revision],
-        {"ART-009": "旧版", "ART-010": "待修订"},
+        [existing, needs_revision],
+        {"ART-009": "现有评价", "ART-010": "待修订"},
         "Artifacts",
         "artifact",
     )
 
-    legacy_section = output[output.index('<section id="ART-009"') : output.index('<section id="ART-010"')]
+    existing_section = output[output.index('<section id="ART-009"') : output.index('<section id="ART-010"')]
     needs_section = output[output.index('<section id="ART-010"') :]
-    assert "未按新契约独立 Review" in legacy_section
-    assert "请在对话中返回跨全部机会方向" not in legacy_section
+    assert "旧版" not in existing_section
+    assert "未按新契约" not in existing_section
+    assert "请在对话中返回跨全部机会方向" in existing_section
     assert "待修订，暂不进入最终 Concept 选择" in needs_section
     assert "请在对话中返回跨全部机会方向" not in needs_section
 
@@ -1174,7 +1176,7 @@ def test_artifact_reader_defaults_to_derived_case_journey() -> None:
     assert solution is not None and " hidden" in solution.group("attrs")
 
 
-def test_case_journey_does_not_treat_partially_missing_idea_review_as_ready() -> None:
+def test_case_journey_projects_missing_review_without_legacy_status() -> None:
     item = {
         "artifact_id": "ART-008",
         "revision": 1,
@@ -1196,7 +1198,8 @@ def test_case_journey_does_not_treat_partially_missing_idea_review_as_ready() ->
     journey_start = output.index('<section id="case-journey"')
     journey = output[journey_start : output.index('</section>', journey_start)]
 
-    assert "<small>legacy</small>" in journey
+    assert "legacy" not in journey
+    assert "<small>artifact</small>" in journey
     assert "<small>ready</small>" not in journey
 
 

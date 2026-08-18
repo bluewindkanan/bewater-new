@@ -34,6 +34,18 @@ def test_render_returns_empty_for_missing_or_malformed_spec() -> None:
     )
 
 
+def test_render_projects_fallback_text_to_a_wireframe() -> None:
+    output = render_concept_visualization(
+        None,
+        caption="天级战报",
+        fallback_text="次日清晨显示曝光、点赞和私域进线",
+    )
+
+    assert 'class="concept-wireframe"' in output
+    assert 'aria-label="天级战报"' in output
+    assert "次日清晨显示曝光、点赞" in output
+
+
 def test_render_includes_captions_bullets_and_arrow() -> None:
     output = render_concept_visualization(_spec(), caption="概念")
     assert "<svg" in output and "</svg>" in output

@@ -783,17 +783,25 @@ def _render_case_journey(items: list[dict[str, Any]]) -> str:
             )
             detail = f"{total} Ideas"
             reviews = [
-                str(area["review"].get("status") or "legacy")
+                str(area["review"].get("status") or "")
                 if isinstance(area.get("review"), dict)
-                else "legacy"
+                else ""
                 for area in typed_areas
             ]
+            all_confirmed = bool(typed_areas) and all(
+                bool(area["shortlist"].get("confirmed"))
+                if isinstance(area.get("shortlist"), dict)
+                else False
+                for area in typed_areas
+            )
             status = (
                 "needs-revision"
                 if "needs-revision" in reviews
                 else "ready"
                 if reviews and all(value == "ready" for value in reviews)
-                else "legacy"
+                else "confirmed"
+                if all_confirmed
+                else "artifact"
             )
         elif kind == "concept-portfolio":
             concepts = [concept for concept in item.get("concepts") or [] if isinstance(concept, dict)]
@@ -801,9 +809,11 @@ def _render_case_journey(items: list[dict[str, Any]]) -> str:
             detail = f"{len(active)} active Concepts"
             review = item.get("review")
             status = (
-                str(review.get("status") or "legacy")
+                str(review.get("status") or "artifact")
                 if isinstance(review, dict)
-                else "legacy"
+                else "selected"
+                if (item.get("exit") or {}).get("selected_concept_ids")
+                else "artifact"
             )
         label = _display_title(item, compact=True)
         nodes.append(
@@ -958,7 +968,6 @@ def _render_idea_pool_view(item: dict[str, Any]) -> str:
         shortlist = area.get("shortlist") if isinstance(area.get("shortlist"), dict) else {}
         confirmed = {str(seed_id) for seed_id in shortlist.get("confirmed") or []}
         new_cuts = shortlist.get("recommended_cuts")
-        legacy = not isinstance(new_cuts, list)
         cut_details: dict[str, dict[str, str]] = {}
         if isinstance(new_cuts, list):
             for entry in new_cuts:
@@ -975,7 +984,7 @@ def _render_idea_pool_view(item: dict[str, Any]) -> str:
                 cut_details[str(seed_id)] = {}
 
         review = area.get("review") if isinstance(area.get("review"), dict) else None
-        review_status = str(review.get("status") or "") if review else "legacy"
+        review_status = str(review.get("status") or "") if review else ""
         review_states.append(review_status)
         findings = review.get("findings") if review else []
         findings_html = ""
@@ -993,12 +1002,14 @@ def _render_idea_pool_view(item: dict[str, Any]) -> str:
             confirmation = "confirmed" if seed_id in confirmed else "unconfirmed"
             detail = cut_details.get(seed_id, {})
             if recommendation == "cut":
-                if legacy:
-                    rationale = "<span>未提供结构化淘汰理由</span>"
-                else:
+                if detail:
                     reason = escape(detail.get("reason") or "未分类")
-                    rationale_text = escape(detail.get("rationale") or "未提供结构化淘汰理由")
+                    rationale_text = escape(
+                        detail.get("rationale") or "Artifact 未提供结构化淘汰理由"
+                    )
                     rationale = f"<span>{reason}</span><span>{rationale_text}</span>"
+                else:
+                    rationale = "<span>Artifact 未提供结构化淘汰理由</span>"
             else:
                 rationale = '<span class="muted-value">—</span>'
             refs = seed.get("source_insight_refs")
@@ -1022,31 +1033,28 @@ def _render_idea_pool_view(item: dict[str, Any]) -> str:
         review_label = {
             "ready": "Review ready",
             "needs-revision": "Review needs-revision",
-            "legacy": "未按新契约审查",
-        }.get(review_status, review_status or "未设置")
-        legacy_label = '<span class="legacy-label">旧版淘汰建议</span>' if legacy else ""
+        }.get(review_status, review_status)
+        review_html = f'<p>{escape(review_label)}</p>' if review_label else ""
         rendered_areas.append(
             f'<section class="idea-oa" data-oa="{escape(oa_id, quote=True)}">'
             '<header class="idea-oa-header">'
             f'<h3>{escape(oa_id)}</h3>'
             f'<p>{len(seeds)} 个 Idea · 建议保留 {len(seeds) - len(cut_details)} · 已确认 {len(confirmed)}</p>'
-            f'<p>{escape(review_label)} {legacy_label}</p>{findings_html}'
+            f'{review_html}{findings_html}'
             "</header>"
             f'<div class="idea-rows">{"".join(rows)}</div></section>'
         )
 
     if not rendered_areas:
         return ""
-    if review_states and all(state == "ready" for state in review_states):
+    if "needs-revision" not in review_states:
         handoff = (
             '<p class="decision-handoff">'
             "请在对话中返回每个机会方向要确认的 5–8 个 CS- ID。"
             "</p>"
         )
-    elif "needs-revision" in review_states:
-        handoff = '<p class="decision-blocked">待修订，暂不进入人工确认。</p>'
     else:
-        handoff = '<p class="decision-blocked">旧版记录仅供查看，未按新契约审查。</p>'
+        handoff = '<p class="decision-blocked">待修订，暂不进入人工确认。</p>'
     return (
         '<section class="idea-pool-view">'
         '<header class="decision-view-header"><h2>Idea Pool 决策依据</h2>'
@@ -1098,9 +1106,13 @@ def _render_concept_cards(item: dict[str, Any]) -> str:
         return ""
 
     review = item.get("review") if isinstance(item.get("review"), dict) else None
-    review_status = str(review.get("status") or "") if review else "legacy"
+    review_status = str(review.get("status") or "") if review else ""
     reviewed = review.get("reviewed_concept_ids") if review else []
-    reviewed_count = len(reviewed) if isinstance(reviewed, list) else 0
+    reviewed_count = (
+        len(reviewed)
+        if isinstance(reviewed, list) and reviewed
+        else sum(isinstance(concept.get("evaluation"), dict) for concept in active)
+    )
     findings = review.get("portfolio_findings") if review else []
     findings = findings if isinstance(findings, list) else []
     finding_map: dict[str, list[dict[str, Any]]] = {}
@@ -1117,8 +1129,7 @@ def _render_concept_cards(item: dict[str, Any]) -> str:
     review_label = {
         "ready": "Independent Review ready",
         "needs-revision": "Independent Review needs-revision",
-        "legacy": "未按新契约独立 Review",
-    }.get(review_status, review_status or "未设置")
+    }.get(review_status, review_status or "Concept 评价")
     iterations = review.get("iterations") if review else None
     iteration_text = f" · {escape(str(iterations))} 轮" if iterations is not None else ""
     review_summary = (
@@ -1202,16 +1213,14 @@ def _render_concept_cards(item: dict[str, Any]) -> str:
             f'{history_cards}</div></details>'
         )
 
-    if review_status == "ready":
+    if review_status != "needs-revision":
         handoff = (
             '<p class="decision-handoff">'
             "请在对话中返回跨全部机会方向最终选择的 2–4 个 CI- ID。"
             "</p>"
         )
-    elif review_status == "needs-revision":
-        handoff = '<p class="decision-blocked">待修订，暂不进入最终 Concept 选择。</p>'
     else:
-        handoff = '<p class="decision-blocked">旧版记录仅供查看，未按新契约独立 Review。</p>'
+        handoff = '<p class="decision-blocked">待修订，暂不进入最终 Concept 选择。</p>'
 
     return (
         '<section class="concept-portfolio-view">'
@@ -1427,17 +1436,16 @@ def _render_concept_dual_sided(dual: Any) -> str:
 
 
 def _render_concept_visualization_block(concept: dict[str, Any]) -> str:
+    text = str(concept.get("visualization") or "").strip()
     svg = render_concept_visualization(
         concept.get("visualization_spec"),
         caption=str(concept.get("name") or ""),
+        fallback_text=text,
     )
     if svg:
-        return f'<div class="concept-visualization"><h4>概念速写</h4>{svg}</div>'
-    text = str(concept.get("visualization") or "").strip()
-    if text:
         return (
-            '<div class="concept-visualization concept-visualization-fallback">'
-            f"<h4>概念速写</h4><p>{escape(text)}</p></div>"
+            '<figure class="concept-visualization"><h4>概念速写</h4>'
+            f'{svg}<figcaption>{escape(text)}</figcaption></figure>'
         )
     return ""
 
@@ -2323,14 +2331,7 @@ STYLES = """
       max-width: 640px;
       display: block;
     }
-    .concept-visualization-fallback p {
-      margin: 0;
-      color: var(--body);
-      background: var(--code);
-      border-left: 3px solid var(--accent);
-      padding: .6rem .75rem;
-      border-radius: 0 6px 6px 0;
-    }
+    .concept-visualization figcaption { margin-top: .6rem; color: var(--body); }
     .chips {
       display: flex;
       flex-wrap: wrap;
@@ -2373,7 +2374,6 @@ STYLES = """
     .idea-row-fields dt { color: var(--muted); font-size: .78rem; }
     .idea-row-fields dd { margin: .15rem 0 0; }
     .idea-row-fields dd span { display: block; }
-    .legacy-label { display: inline-block; margin-left: .5rem; color: #6b5b1f; }
     .decision-handoff,
     .decision-blocked { border-left: 4px solid var(--accent); background: var(--accent-soft); padding: .8rem 1rem; }
     .decision-blocked { border-color: #9b6d24; background: #f4ecd9; }

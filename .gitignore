@@ -8,8 +8,11 @@ _bewater/.backup-*
 _bewater/.bw-lock
 _bewater/.tmp-*
 
-# rendered HTML reading copy of _bewater-output/ (regenerable via render script)
-/_bewater-html/
+# rendered HTML reading copy of _bewater-output/ (regenerable via scripts/html-build.sh)
+/_bewater-output/html/
+
+# superpowers SDD runtime state (task briefs/reports live in git history)
+/.superpowers/
 
 # misc / unrelated
 /Frog:f212\ General/

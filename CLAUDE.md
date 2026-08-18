@@ -91,7 +91,3 @@ python -m bw gate-scan <gate> <project> [--subject <solution-branch>]
 - Capabilities produce drafts and stop. Gates assemble evidence and stop. Human decides.
 - Installer deployment into an active project with incompatible generated lifecycle state requires
   separate regeneration authorization; source changes never hand-edit that state.
-- **Superpowers policy:** permitted superpowers skills are `brainstorming`, `writing-plans`, and
-  `verification-before-completion`. Do not invoke, recommend, or hand off to any other
-  `superpowers:*` skill, including `executing-plans`, `subagent-driven-development`,
-  `test-driven-development`, `systematic-debugging`, or `using-superpowers`.
