@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from html import escape
 from pathlib import Path
 from typing import Any
@@ -10,6 +11,7 @@ from typing import Any
 import markdown
 import yaml
 
+from .concept_images import AssetRef
 from .concept_visualization import render_concept_visualization
 
 KNOWLEDGE_REF = re.compile(r"knowledge:(K-\d+)@(\d+)")
@@ -1093,12 +1095,20 @@ _CONCEPT_SOFT_LABELS = {
 }
 
 
-def _render_concept_cards(item: dict[str, Any]) -> str:
-    """Render the Concept Portfolio's canonical comparison and cards."""
+def _render_concept_cards(
+    item: dict[str, Any],
+    concept_images: Mapping[str, AssetRef] | None = None,
+) -> str:
+    """Render a decision-first Concept Portfolio view."""
     concepts = item.get("concepts")
     if not isinstance(concepts, list) or not concepts:
         return ""
-    selected = set((item.get("exit") or {}).get("selected_concept_ids") or [])
+    selected_order = [
+        str(value)
+        for value in ((item.get("exit") or {}).get("selected_concept_ids") or [])
+        if str(value).strip()
+    ]
+    selected = set(selected_order)
     typed = [concept for concept in concepts if isinstance(concept, dict)]
     active = [concept for concept in typed if not _concept_is_history(concept)]
     history = [concept for concept in typed if _concept_is_history(concept)]
@@ -1168,33 +1178,51 @@ def _render_concept_cards(item: dict[str, Any]) -> str:
     )
 
     comparison_groups: list[str] = []
-    active_groups: list[str] = []
+    candidate_groups: list[str] = []
     for oa in sorted({str(concept.get("opportunity_area_id") or "未归类") for concept in active}):
         group = [
             concept
             for concept in active
             if str(concept.get("opportunity_area_id") or "未归类") == oa
         ]
-        rows = "".join(_render_concept_comparison_row(concept, selected, finding_map) for concept in group)
-        comparison_groups.append(
-            f'<section class="concept-comparison-group" data-oa="{escape(oa, quote=True)}">'
-            f'<h3>{escape(oa)}</h3><table><thead><tr><th>Concept</th><th>一句话</th>'
-            '<th>独特机制</th><th>Consumer Magic</th><th>Commercial Money</th>'
-            f'<th>Reviewer</th></tr></thead><tbody>{rows}</tbody></table></section>'
-        )
-        cards = "".join(
-            _render_concept_card(
-                concept,
-                selected,
-                status="active",
-                findings=finding_map.get(str(concept.get("id") or ""), []),
-            )
+        rows = "".join(
+            _render_concept_comparison_card(concept, selected, finding_map)
             for concept in group
         )
-        active_groups.append(
-            f'<section class="concept-card-group" data-oa="{escape(oa, quote=True)}">'
-            f'<h3>{escape(oa)}</h3><div class="concept-cards">{cards}</div></section>'
+        comparison_groups.append(
+            f'<section class="concept-comparison-group" data-oa="{escape(oa, quote=True)}">'
+            f'<h3>{escape(oa)}</h3>{rows}</section>'
         )
+        candidates = "".join(
+            _render_concept_collapsed_card(
+                concept,
+                selected,
+                findings=finding_map.get(str(concept.get("id") or ""), []),
+                show_visualization=concept_images is None or not selected,
+            )
+            for concept in group
+            if str(concept.get("id") or "") not in selected
+        )
+        if candidates:
+            candidate_groups.append(
+                f'<section class="concept-card-group" data-oa="{escape(oa, quote=True)}">'
+                f'<h3>{escape(oa)}</h3>{candidates}</section>'
+            )
+
+    selected_cards = "".join(
+        _render_concept_card(
+            concept,
+            selected,
+            status="active",
+            findings=finding_map.get(str(concept.get("id") or ""), []),
+            concept_images=concept_images,
+            show_visualization=True,
+            selected_card=True,
+        )
+        for concept_id in selected_order
+        for concept in active
+        if str(concept.get("id") or "") == concept_id
+    )
 
     history_html = ""
     if history:
@@ -1204,6 +1232,8 @@ def _render_concept_cards(item: dict[str, Any]) -> str:
                 selected,
                 status="history",
                 findings=finding_map.get(str(concept.get("id") or ""), []),
+                concept_images=concept_images,
+                show_visualization=False,
             )
             for concept in history
         )
@@ -1226,12 +1256,20 @@ def _render_concept_cards(item: dict[str, Any]) -> str:
         '<section class="concept-portfolio-view">'
         + review_summary
         + filters
+        + '<h2>已选概念</h2>'
+        + (
+            '<section class="selected-concepts" aria-label="已选概念">'
+            + selected_cards
+            + '</section>'
+            if selected_cards
+            else '<p class="decision-blocked">尚未记录最终选择。</p>'
+        )
         + '<h2>Concept 比较</h2><div class="concept-comparison">'
         + "".join(comparison_groups)
         + "</div>"
-        + '<h2 class="concept-cards-heading">完整概念卡</h2>'
-        + f'<p class="concept-cards-count">{len(active)} 个 active Concept</p>'
-        + "".join(active_groups)
+        + '<h2 class="concept-cards-heading">候选概念卡详情</h2>'
+        + f'<p class="concept-cards-count">{len(active) - len(selected)} 个未选 active Concept，默认折叠</p>'
+        + "".join(candidate_groups)
         + history_html
         + handoff
         + "</section>"
@@ -1293,12 +1331,79 @@ def _render_concept_comparison_row(
     )
 
 
+def _render_concept_comparison_card(
+    concept: dict[str, Any],
+    selected: set[str],
+    finding_map: dict[str, list[dict[str, Any]]],
+) -> str:
+    concept_id = str(concept.get("id") or "")
+    oa = str(concept.get("opportunity_area_id") or "未归类")
+    action = _concept_action(concept)
+    decision = _concept_decision(concept, selected)
+    findings = "；".join(
+        re.sub(r"<[^>]+>", "", _render_concept_finding(finding))
+        for finding in finding_map.get(concept_id, [])
+    )
+    values = (
+        ("概念", f"Concept {concept_id} · {concept.get('name') or ''!s}"),
+        ("一句话", str(concept.get("pithy_description") or "")),
+        ("机制 / Mechanism " + concept_id, str(concept.get("how_it_works") or "")),
+        ("Magic " + concept_id, _dual_statement(concept, "magic", "consumer_value_proposition")),
+        ("Money " + concept_id, _dual_statement(concept, "money", "commercial_value_proposition")),
+        ("Reviewer", action + ((" · " + findings) if findings else "")),
+    )
+    rows = "".join(
+        f'<p class="concept-compare-field"><span class="concept-compare-label">{escape(label)}</span>'
+        f'<span class="concept-compare-value">{escape(value) or "—"}</span></p>'
+        for label, value in values
+    )
+    badge = _concept_decision_badge(concept.get("decision"), concept_id in selected)
+    return (
+        f'<article class="concept-compare-card" data-concept-status="active" '
+        f'data-oa="{escape(oa, quote=True)}" data-action="{escape(action, quote=True)}" '
+        f'data-decision="{escape(decision, quote=True)}">{rows}{badge}</article>'
+    )
+
+
+def _render_concept_collapsed_card(
+    concept: dict[str, Any],
+    selected: set[str],
+    *,
+    findings: list[dict[str, Any]] | None = None,
+    show_visualization: bool = False,
+) -> str:
+    concept_id = str(concept.get("id") or "")
+    name = str(concept.get("name") or concept_id)
+    pithy = str(concept.get("pithy_description") or "")
+    action = _concept_action(concept)
+    oa = str(concept.get("opportunity_area_id") or "未归类")
+    decision = _concept_decision(concept, selected)
+    return (
+        f'<details class="concept-candidate-details" data-concept-status="active" '
+        f'data-oa="{escape(oa, quote=True)}" data-action="{escape(action, quote=True)}" '
+        f'data-decision="{escape(decision, quote=True)}">'
+        f'<summary><span><code>Concept {escape(concept_id)}</code> {escape(name)}</span>'
+        f'<small>{escape(pithy)}</small></summary>'
+        + _render_concept_card(
+            concept,
+            selected,
+            status="active",
+            findings=findings,
+            show_visualization=show_visualization,
+        )
+        + "</details>"
+    )
+
+
 def _render_concept_card(
     concept: dict[str, Any],
     selected: set[str],
     *,
     status: str = "active",
     findings: list[dict[str, Any]] | None = None,
+    concept_images: Mapping[str, AssetRef] | None = None,
+    show_visualization: bool = True,
+    selected_card: bool = False,
 ) -> str:
     concept_id = str(concept.get("id") or "")
     name = str(concept.get("name") or concept_id)
@@ -1349,9 +1454,14 @@ def _render_concept_card(
     dual = _render_concept_dual_sided(concept.get("dual_sided"))
     if dual:
         body_parts.append(dual)
-    visualization = _render_concept_visualization_block(concept)
-    if visualization:
-        body_parts.append(visualization)
+    if show_visualization:
+        visualization = _render_concept_visualization_block(
+            concept,
+            concept_images.get(concept_id) if concept_images is not None else None,
+            legacy_fallback=concept_images is None,
+        )
+        if visualization:
+            body_parts.append(visualization)
     evaluation = _render_concept_evaluation(concept.get("evaluation"))
     if evaluation:
         body_parts.append(evaluation)
@@ -1377,7 +1487,8 @@ def _render_concept_card(
     decision_state = _concept_decision(concept, selected)
 
     return (
-        f'<article class="concept-card" data-concept-status="{status}" '
+        f'<article class="concept-card{" concept-card--selected" if selected_card else ""}" '
+        f'data-concept-status="{status}" '
         f'data-oa="{escape(oa, quote=True)}" data-action="{escape(action, quote=True)}" '
         f'data-decision="{escape(decision_state, quote=True)}">'
         f'{header}{"".join(body_parts)}'
@@ -1435,8 +1546,32 @@ def _render_concept_dual_sided(dual: Any) -> str:
     )
 
 
-def _render_concept_visualization_block(concept: dict[str, Any]) -> str:
+def _render_concept_visualization_block(
+    concept: dict[str, Any],
+    image: AssetRef | None = None,
+    *,
+    legacy_fallback: bool = True,
+) -> str:
     text = str(concept.get("visualization") or "").strip()
+    if image and image.href:
+        status = "" if image.status == "gpt-image-2" else (
+            f'<span class="concept-image-status">{escape(image.status)}</span>'
+        )
+        return (
+            '<figure class="concept-visualization concept-visualization-image"><h4>概念故事板</h4>'
+            f'<a class="concept-image-link" href="{escape(image.href, quote=True)}" target="_blank" rel="noreferrer">'
+            f'<img class="concept-image" src="{escape(image.href, quote=True)}" alt="{escape(image.alt, quote=True)}" loading="lazy">'
+            "</a>"
+            f'{status}<figcaption>{escape(text)}</figcaption></figure>'
+        )
+    if image and image.status in {"missing", "stale"}:
+        return (
+            '<figure class="concept-visualization concept-visualization-fallback"><h4>概念故事板</h4>'
+            f'<div class="concept-image-placeholder"><strong>图片暂不可用</strong><span>{escape(image.status)}，已保留文字概念</span></div>'
+            f'<figcaption>{escape(text)}</figcaption></figure>'
+        )
+    if not legacy_fallback:
+        return ""
     svg = render_concept_visualization(
         concept.get("visualization_spec"),
         caption=str(concept.get("name") or ""),
@@ -1481,7 +1616,12 @@ def _render_concept_evaluation(evaluation: Any) -> str:
 
 
 def render_doc(
-    item: dict[str, Any], body: str, page_kind: str, *, active: bool = False
+    item: dict[str, Any],
+    body: str,
+    page_kind: str,
+    *,
+    active: bool = False,
+    concept_images: Mapping[str, AssetRef] | None = None,
 ) -> str:
     """Render one latest-revision document as a semantic article."""
     doc_id = _doc_id(item)
@@ -1493,9 +1633,9 @@ def render_doc(
     body_html = _fold_html_sections(body_html, kind)
     body_html = _promote_html_sections(body_html, kind)
     if kind == "idea-pool":
-        body_html = _render_idea_pool_view(item) + body_html
+        body_html = _render_idea_pool_view(item) + _render_source_record(body_html)
     elif kind == "concept-portfolio":
-        body_html = _render_concept_cards(item) + body_html
+        body_html = _render_concept_cards(item, concept_images) + _render_source_record(body_html)
     meta_pills = _metadata_pills(item)
     meta_html = f"      <div class=\"doc-meta\" aria-label=\"文档元数据\">\n        {meta_pills}\n      </div>" if meta_pills else ""
     classes = "doc-section"
@@ -1507,7 +1647,7 @@ def render_doc(
         "研究证据" if kind == "knowledge" else "项目资料",
     )
 
-    return f'''<section id="{escape(doc_id, quote=True)}" class="{classes}" data-source-title="{source_title}"{default_attr}{hidden}>
+    return f'''<section id="{escape(doc_id, quote=True)}" class="{classes}" data-kind="{escape(kind, quote=True)}" data-source-title="{source_title}"{default_attr}{hidden}>
   <article class="doc-article">
     <header class="doc-header">
       <p class="doc-context">{escape(group_label)}</p>
@@ -1517,8 +1657,17 @@ def render_doc(
     <div class="doc-body">
 {body_html}
     </div>
-  </article>
+    </article>
 </section>'''
+
+
+def _render_source_record(body_html: str) -> str:
+    if not body_html.strip():
+        return ""
+    return (
+        '<details class="artifact-source-record"><summary>Artifact 原文与记录</summary>'
+        f'<div class="artifact-source-body">{body_html}</div></details>'
+    )
 
 
 STYLES = """
@@ -2208,7 +2357,10 @@ STYLES = """
       }
 
       .detail-section > :not(summary),
-      .technical-details > :not(summary) {
+      .technical-details > :not(summary),
+      .artifact-source-record > :not(summary),
+      .concept-candidate-details > :not(summary),
+      .concept-history > :not(summary) {
         display: block !important;
       }
 
@@ -2379,11 +2531,48 @@ STYLES = """
     .decision-blocked { border-color: #9b6d24; background: #f4ecd9; }
     .concept-comparison { overflow-x: auto; }
     .concept-comparison table { min-width: 840px; }
+    body[data-reader-kind="artifact"] .docs { width: min(100%, 1180px); }
+    body[data-reader-kind="artifact"] .doc-article { max-width: 760px; margin-inline: auto; }
+    body[data-reader-kind="artifact"] .doc-section[data-kind="concept-portfolio"] .doc-article { max-width: 1180px; }
+    body[data-reader-kind="artifact"] .doc-section[data-kind="concept-portfolio"] .doc-body { line-height: 1.7; }
+    .selected-concepts { display: grid; gap: 1.25rem; }
+    .concept-card--selected { border-color: var(--accent); box-shadow: 0 8px 24px rgba(40, 102, 95, .08); }
+    .concept-compare-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(6rem, .28fr) minmax(0, 1fr);
+      gap: .45rem 1rem;
+      padding: 1rem 1.1rem;
+      border-bottom: 1px solid var(--rule);
+      background: #fff;
+    }
+    .concept-comparison-group { margin: 1rem 0 1.5rem; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+    .concept-comparison-group h3,
+    .concept-card-group h3 { margin: 0; padding: .7rem 1rem; color: var(--accent); background: var(--accent-soft); font-size: .9rem; }
+    .concept-compare-field { display: contents; }
+    .concept-compare-label { color: var(--muted); font-size: .8rem; font-weight: 700; }
+    .concept-compare-value { color: var(--body); overflow-wrap: anywhere; }
+    .concept-compare-card .concept-badge { position: absolute; top: .8rem; right: 1rem; margin: 0; }
+    .concept-candidate-details { margin: .75rem 0; border: 1px solid var(--rule); border-radius: 10px; background: #fff; overflow: hidden; }
+    .concept-candidate-details summary { display: grid; gap: .2rem; padding: .85rem 1rem; cursor: pointer; list-style: none; }
+    .concept-candidate-details summary::-webkit-details-marker { display: none; }
+    .concept-candidate-details summary small { color: var(--muted); overflow-wrap: anywhere; }
+    .concept-candidate-details[open] summary { border-bottom: 1px solid var(--rule); background: var(--accent-soft); }
+    .concept-candidate-details .concept-card { border: 0; border-radius: 0; }
+    .concept-image-link { display: block; }
+    .concept-image { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 8px; background: var(--code); }
+    .concept-image-status { display: inline-block; margin-top: .5rem; color: #9b6d24; font-size: .78rem; }
+    .concept-image-placeholder { display: grid; gap: .25rem; place-items: center; min-height: 13rem; padding: 1rem; border: 1px dashed var(--rule); border-radius: 8px; color: var(--muted); text-align: center; background: var(--code); }
+    .artifact-source-record { margin-top: 2rem; border-top: 1px solid var(--rule); color: var(--muted); }
+    .artifact-source-record summary { padding: .75rem 0; cursor: pointer; font-size: .85rem; font-weight: 700; }
+    .artifact-source-body { color: var(--body); }
     .concept-history { margin: 1.5rem 0; padding: 1rem; }
     .concept-history summary { cursor: pointer; font-weight: 700; }
     .review-findings { color: var(--body); }
     @media (max-width: 640px) {
       .concept-field { grid-template-columns: 1fr; gap: .15rem; }
+      .concept-compare-card { grid-template-columns: 1fr; gap: .15rem; }
+      .concept-compare-card .concept-badge { position: static; width: fit-content; margin-top: .4rem; }
     }
 """
 
@@ -2416,6 +2605,7 @@ def generate_html(
     bodies: dict[str, str],
     title: str,
     page_kind: str | None = None,
+    concept_images: Mapping[str, AssetRef] | None = None,
 ) -> str:
     """Generate one aggregated, self-contained HTML reader."""
     if page_kind is None:
@@ -2430,6 +2620,7 @@ def generate_html(
             bodies.get(_doc_id(item), ""),
             page_kind,
             active=_doc_id(item) == default_id,
+            concept_images=concept_images,
         )
         for item in items
     )
@@ -2450,7 +2641,7 @@ def generate_html(
   <style>
 {STYLES}  </style>
 </head>
-<body>
+<body data-reader-kind="{escape(page_kind, quote=True)}">
   <div class="reader-shell">
     <aside class="reader-sidebar">
 {toc}
@@ -2604,7 +2795,7 @@ def collect_docs(directory: Path) -> tuple[list[dict[str, Any]], dict[str, str]]
     return items, bodies
 
 
-def build_html(root: Path) -> dict[str, int | str]:
+def build_html(root: Path) -> dict[str, Any]:
     """Build the Knowledge and Artifact readers under ``_bewater-output/html``."""
     html_dir = root / "_bewater-output" / "html"
     html_dir.mkdir(parents=True, exist_ok=True)
@@ -2623,17 +2814,41 @@ def build_html(root: Path) -> dict[str, int | str]:
         (html_dir / "knowledge.html").write_text(output, encoding="utf-8")
 
     artifact_items, artifact_bodies = collect_docs(artifacts_dir)
+    image_report = None
+    concept_images: Mapping[str, AssetRef] | None = None
+    portfolio = next(
+        (item for item in artifact_items if _kind(item) == "concept-portfolio"),
+        None,
+    )
+    if portfolio is not None:
+        from .concept_images import ensure_concept_images
+
+        image_report = ensure_concept_images(root, portfolio)
+        concept_images = image_report.assets
     if artifact_items:
         output = generate_html(
             artifact_items,
             artifact_bodies,
             "Artifacts",
             "artifact",
+            concept_images=concept_images,
         )
         (html_dir / "artifacts.html").write_text(output, encoding="utf-8")
 
-    return {
+    result: dict[str, Any] = {
         "knowledge": len(knowledge_items),
         "artifacts": len(artifact_items),
         "output": str(html_dir),
     }
+    if image_report is not None:
+        result.update(
+            {
+                "images_generated": image_report.generated,
+                "images_cached": image_report.cached,
+                "images_svg_fallback": image_report.svg_fallback,
+                "images_stale": image_report.stale,
+                "images_missing": image_report.missing,
+                "image_warnings": image_report.warnings,
+            }
+        )
+    return result

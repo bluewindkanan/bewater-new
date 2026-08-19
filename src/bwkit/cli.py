@@ -174,6 +174,17 @@ def main(argv=None, *, _stdin=None) -> int:
             f"generated {result['knowledge']} knowledge documents, "
             f"{result['artifacts']} artifacts"
         )
+        if "images_generated" in result:
+            print(
+                "concept images: "
+                f"generated={result['images_generated']} "
+                f"cached={result['images_cached']} "
+                f"svg_fallback={result['images_svg_fallback']} "
+                f"stale={result['images_stale']} "
+                f"missing={result['images_missing']}"
+            )
+            for warning in result.get("image_warnings", []):
+                print(f"warning: {warning}", file=sys.stderr)
         print(f"output: {result['output']}")
         return 0
 

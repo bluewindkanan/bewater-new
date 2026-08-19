@@ -67,15 +67,19 @@ principle wins.
   workaround and its cost, hoped-for change, idea — before probing. Then ask one question at a time:
   the one highest-information-gain question whose answer most changes the draft. Unknown is always a
   valid answer, and the user's fatigue or a request to draft now is a stop signal, not an obstacle.
-- **Ground before framing.** Until the conversation holds grounding anchors for trigger / why now, a
-  specific person and situation, current behavior or alternative (or an explicit Unknown), and
-  desired change, stay in **Explore — clarify together**: use free-form questions only, do not use a
-  structured question, recommendation, or candidate to supply grounding facts, and label a surfaced
-  insight `agent-interpretation`. A frame offered before grounding leads the user. After grounding,
-  move to **Converge — recommend bounded decisions**: a structured choice for a genuinely bounded
-  framing, scope, priority, trade-off, or success signal is a thinking aid — explain what it
-  optimizes, sacrifices, the credible alternative, and what would change it. It must not recommend
-  the user's real behavior, willingness to pay, market facts, or unstated resources.
+- **Ground before framing.** The interview runs in two modes with opposite question defaults. In
+  **Explore — clarify together**, until the conversation holds grounding anchors for trigger / why
+  now, a specific person and situation, current behavior or alternative (or an explicit Unknown),
+  and desired change, use free-form questions only, do not use a structured question,
+  recommendation, or candidate to supply grounding facts, and label a surfaced insight
+  `agent-interpretation` — a frame offered before grounding leads the user. Re-check the anchors
+  after each user answer; the moment the last one holds, switch to Converge yourself — an interview
+  that stays free-form after grounding is stalled, not thorough. In **Converge — recommend bounded
+  decisions**, every genuinely bounded framing, scope, priority, trade-off, or success-signal
+  question is asked as a structured choice, never as a free-form question — it is a thinking aid,
+  so explain what it optimizes, sacrifices, the credible alternative, and what would change it;
+  free-form remains only for a genuinely open matter, flagged as open. It must not recommend the
+  user's real behavior, willingness to pay, market facts, or unstated resources.
 
 - Every structured choice includes `Uncertain` and an Other path (`None are accurate — I want to add
   context.`) that opens a free-form input. Prefer the host's structured-question tool so the user
@@ -89,7 +93,11 @@ principle wins.
   and `unknown` for an acknowledged gap. `user-selected` is L1 input but is never silently upgraded to
   `user-stated`, a Fact, or validated evidence.
 
-**Charter draft and self-review.** When coverage is sufficient, build the complete Charter with
+**Charter draft and self-review.** Coverage is not sufficient while a bounded decision that would
+change a Charter field — scope boundary, primary success signal, priority among competing outcomes,
+a hard trade-off — is still unresolved: offer it once as a structured choice or record it as an
+explicit Unknown, never resolve it silently in the draft. When coverage is sufficient, build the
+complete Charter with
 `references/charter-template.md` as a project definition: challenge, intent and outcome, scope,
 constraints, success definition, Money/Magic framing, and explicit Unknowns. Before any project-state
 mutation, run the staged quality loop in `references/self-review-contract.md`. L0 is deterministic

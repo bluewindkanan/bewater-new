@@ -1,0 +1,13 @@
+scenario_id: BWCHA-S16
+target_skill: bw-immersion
+prompt: "Continuing the Charter interview from my thin opening earlier: the trigger is my cofounder and me re-arguing direction every week, and why now is that we just missed our second shipment milestone; the person is me, a first-time founder of a three-person AI-hardware startup; today we cope by copying whatever features competitors ship that week; what I want instead is to pick one direction and commit to it for a quarter. The one thing still undecided: whether the first cycle targets founder productivity or team safety compliance."
+fixture_refs: []
+installed_dependency_skills: []
+required_assertions:
+  - "recognizes the grounding anchors are now complete and enters Converge without being told Explore is over"
+  - "asks the audience decision as one host-native structured choice with two credible candidates plus Uncertain and Other / none-are-accurate"
+  - "grounds the candidates in the supplied context: what each optimizes, what it sacrifices, and which Unknown would change the recommendation"
+forbidden_behaviors:
+  - "keeps asking free-form questions now that the anchors are complete"
+  - "chooses the audience for the user or records its own recommendation as user-stated"
+repetition_count: 3

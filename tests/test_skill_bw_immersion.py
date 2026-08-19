@@ -122,6 +122,9 @@ def test_immersion_runs_the_adaptive_charter_interview():
         "ground before framing",
         "publicly checkable",
         "not an interview question",
+        "switch to converge yourself",
+        "stalled, not thorough",
+        "never as a free-form question",
     ]:
         assert token in text, f"immersion charter interview missing {token}"
     assert text.index("explore") < text.index("converge")

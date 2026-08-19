@@ -45,9 +45,9 @@ independently testable and none can be satisfied by mechanically completing a ch
    opening is thin; then one question at a time — the highest-information-gain one. Unknown is a
    valid answer; fatigue or a request to draft now is a stop signal.
 3. **Ground before framing.** No structured question, recommendation, or candidate may supply
-   grounding facts (Explore); after grounding, a structured choice is a thinking aid that explains
-   its trade-offs (Converge) and never recommends the user's real behavior, willingness to pay, or
-   market facts.
+   grounding facts (Explore); once the anchors hold, the interview switches to Converge by itself,
+   and every bounded decision is asked as a structured choice — a thinking aid that explains its
+   trade-offs and never recommends the user's real behavior, willingness to pay, or market facts.
 
 Explore / Converge survive as mode names inside principle 3 because eval scenarios and the review
 rubric depend on them.
