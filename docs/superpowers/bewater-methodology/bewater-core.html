@@ -21,6 +21,25 @@ a { color: #1f5d7a; text-decoration: none; }
 ul, ol { padding-left: 1.5em; }
 li { margin: .25em 0; }
 strong { color: #142026; }
+.bw-layers { border: 1px solid #c9d4da; border-radius: 5px; overflow: hidden; margin: 1em 0; font-size: .9em; }
+.bw-layers > div { display: flex; align-items: baseline; gap: 1em; padding: .55em .9em; border-top: 1px solid #e3e8eb; }
+.bw-layers > div:first-child { border-top: none; }
+.bw-layers b { white-space: nowrap; color: #1f5d7a; }
+.bw-segs { display: flex; gap: .8em; margin: 1em 0; align-items: stretch; }
+.bw-seg { flex: 1 1 0; min-width: 0; border: 1px solid #c9d4da; border-radius: 5px; overflow: hidden; font-size: .88em; }
+.bw-seg-hd { padding: .35em .8em; font-weight: 600; color: #fff; background: #1f5d7a; }
+.bw-seg-exec .bw-seg-hd { background: #5a6b76; }
+.bw-seg-hd small { font-weight: 400; opacity: .85; margin-left: .5em; }
+.bw-seg-bd { padding: .7em .8em .8em; }
+.bw-mods { display: flex; flex-wrap: wrap; gap: .5em; margin-bottom: .65em; font-size: .9em; color: #33464f; }
+.bw-mods span { background: #eaf2f6; border-radius: 3px; padding: .1em .5em; white-space: nowrap; }
+.bw-flow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .35em .3em; }
+.bw-stage { background: #fff; border: 1px solid #9fb4bf; border-radius: 4px; padding: .18em .5em; text-align: center; line-height: 1.35; }
+.bw-stage small { display: block; font-size: .78em; color: #5a6b76; white-space: nowrap; }
+.bw-arrow { color: #5a6b76; }
+.bw-gate { background: #b53d2e; color: #fff; border-radius: 999px; padding: .1em .55em; font-size: .82em; font-weight: 600; white-space: nowrap; }
+.bw-loop { text-align: center; font-size: .88em; color: #33464f; margin: .4em 0 1em; }
+@media (max-width: 720px) { .bw-segs { flex-direction: column; } }
 @media print { body { max-width: none; padding: 0; } }
 </style></head><body><h1 id="bewater">bewater 创新方法论</h1>
 <blockquote>
@@ -118,24 +137,29 @@ strong { color: #142026; }
 <hr />
 <h2 id="1-bewater">1. 全景：一张图看懂 bewater</h2>
 <p>bewater 把"创新"当作<strong>可被种子化、打磨、测试、验证、交付、增长</strong>的 predictable 过程——挑战"创新是随机的"这个信念。架构分三层：</p>
-<pre><code>┌──────────────────────────────────────────────────────────────────────────┐
-│  哲学层  水的五重性：渗透（Money+Magic）· 流动（假设驱动）· 适应（Strategy=Choice）     │
-│         · 分流（广发散窄收敛）· 成势（归纳+消除法）                               │
-├──────────────────────────────────────────────────────────────────────────┤
-│  流程层  Start（Immersion）│ 4 模块 × 8 Stage │ 4 道门 │ 3 种循环                │
-├──────────────────────────────────────────────────────────────────────────┤
-│  知识层  产物链血缘 · 假设账本 · 知识库留底 · 交接协议 · 双学习环                  │
-└──────────────────────────────────────────────────────────────────────────┘
-</code></pre>
+<div class="bw-layers">
+<div><b>哲学层</b><span>水的五重性：渗透（Money+Magic）· 流动（假设驱动）· 适应（Strategy=Choice）· 分流（广发散窄收敛）· 成势（归纳+消除法）</span></div>
+<div><b>流程层</b><span>Start（Immersion）· 4 模块 × 8 Stage · 4 道门 · 3 种循环</span></div>
+<div><b>知识层</b><span>产物链血缘 · 假设账本 · 知识库留底 · 交接协议 · 双学习环</span></div>
+</div>
 <h3 id="11-vs">1.1 全链路：决策段 vs 执行段</h3>
-<pre><code>┌──────── 决策段：管理不确定性 ────────┐ ┌──── 执行段：管理确定性交付 ────┐
-│ Strategy 战略定位   Concept 概念创新  │ │ Realization 落地实现  Operation 市场运营│
-│                                      │ │                                  │
-│ Immersion → Discover ─→ Define ─G1─ Ideate ─→ Shape ─G2─               │ │ Design ─→ Build ─G3─ Launch ─→ Grow ─G4⟳ │
-│ 目标对齐     发现洞察    战略定义     探索概念   方案定义                 │ │ 设计方案   系统构建  部署发布   增长sustain│
-└──────────────────────────────────────┘ └──────────────────────────────────┘
-                    外环：Grow 的增长洞察 ⟶ 下一代 Immersion / Discover ◀──────
-</code></pre>
+<div class="bw-segs">
+<div class="bw-seg">
+<div class="bw-seg-hd">决策段：管理不确定性<small>Strategy + Concept</small></div>
+<div class="bw-seg-bd">
+<div class="bw-mods"><span>Strategy 战略定位</span><span>Concept 概念创新</span></div>
+<div class="bw-flow"><span class="bw-stage">Immersion<small>目标对齐</small></span><span class="bw-arrow">→</span><span class="bw-stage">Discover<small>发现洞察</small></span><span class="bw-arrow">→</span><span class="bw-stage">Define<small>战略定义</small></span><span class="bw-gate">G1</span><span class="bw-stage">Ideate<small>探索概念</small></span><span class="bw-arrow">→</span><span class="bw-stage">Shape<small>方案定义</small></span><span class="bw-gate">G2</span></div>
+</div>
+</div>
+<div class="bw-seg bw-seg-exec">
+<div class="bw-seg-hd">执行段：管理确定性交付<small>Realization + Operation</small></div>
+<div class="bw-seg-bd">
+<div class="bw-mods"><span>Realization 落地实现</span><span>Operation 市场运营</span></div>
+<div class="bw-flow"><span class="bw-stage">Design<small>设计方案</small></span><span class="bw-arrow">→</span><span class="bw-stage">Build<small>系统构建</small></span><span class="bw-gate">G3</span><span class="bw-stage">Launch<small>部署发布</small></span><span class="bw-arrow">→</span><span class="bw-stage">Grow<small>增长 sustain</small></span><span class="bw-gate">G4⟳</span></div>
+</div>
+</div>
+</div>
+<p class="bw-loop">外环：Grow 的增长洞察 ⟶ 下一代 Immersion / Discover</p>
 <ul>
 <li><strong>G1 战略门</strong>（Define → Ideate，判断题）：方向值得投入探索资源吗？</li>
 <li><strong>G2 概念门</strong>（Shape → Design，举证题，<strong>全流程最重</strong>）：概念被验证到值得投入建设资源了吗？本质是立项决策。</li>
