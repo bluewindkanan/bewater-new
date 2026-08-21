@@ -1,9 +1,16 @@
 # BeWater Realization — Global Design and Change-Driven Build
 
 - **Date**: 2026-08-21
-- **Status**: Draft for written-spec review
+- **Revision**: 2
+- **Status**: Draft for revised written-spec review
 - **Scope**: Post-G2 Design and Build architecture, with extension points for later realization stages
 - **Supersedes after approval**: `docs/superpowers/plans/2026-08-20-bx-realization-openspec-core-gsd-views.md`
+
+> **Revision 2:** restores a reference-pilot gate before native Change runtime implementation;
+> defines the Delivery Repo as the sole Realization project root; assigns canonical ownership
+> between normative Markdown and structured control state; types entity statuses and link review;
+> completes Handoff v2, provisional, multi-Solution, and upstream invalidation contracts; and
+> reduces the public CLI surface.
 
 ## 0. Decision Summary
 
@@ -30,7 +37,9 @@ The design combines four proven ideas without installing three overlapping opera
 4. **Requirements-management practice** contributes baselines, typed bidirectional traceability,
    impact analysis, suspect links, and separate lifecycle and verification status.
 
-BeWater does not depend on the GSD or OpenSpec CLI. Deterministic operations are reimplemented as
+The shipped system does not depend on the GSD or OpenSpec CLI. A time-bounded reference pilot may
+use the upstream tools inside an isolated Delivery Repo to validate the artifact flow before native
+Change runtime implementation. Only operations proven necessary by that pilot are reimplemented as
 native `python -m bw ...` commands. Agent judgment remains in skills. The OpenSpec core workflow is
 adapted rather than simplified away.
 
@@ -56,6 +65,8 @@ adapted rather than simplified away.
 - Let Build silently broaden the G2-approved product boundary.
 - Define detailed Launch, Grow, G3, or G4 behavior in this design.
 - Replace BeWater's existing evidence, gate, baseline, or backtrack governance.
+- Freeze speculative runtime contracts before a reference pilot exercises the complete artifact
+  flow.
 
 ## 2. Constitutional Boundaries
 
@@ -94,6 +105,43 @@ Design is intentionally progressive:
 Global Design must be sufficient to coordinate the whole product, but it must not attempt to
 pre-design every implementation detail. Change Design must conform to the active Design Baseline or
 trigger a governed design revision.
+
+### 2.4 Repository topology
+
+BeWater distinguishes the toolkit from the product being realized:
+
+```text
+Toolkit Repo (`bewater-new`)
+  = source and deployment home for skills and runtime
+  = never the canonical Realization store for another product
+
+Product Delivery Repo
+  = product code working tree
+  = sole Realization project root
+  = owner of its own `_bewater/` and `_bewater-output/`
+  = boundary for one lock, CAS protocol, validation run, and archive transaction
+```
+
+The Decision segment and Delivery segment may share one Product Delivery Repo. If they live in
+different repositories, the Decision Repo exports a portable Handoff package and the Delivery Repo
+imports a local snapshot. There is no cross-repository lock, CAS, atomic archive, or live state
+mutation. The Build capabilities always run in the Delivery Repo and modify product code only there.
+
+### 2.5 Canonical ownership
+
+Canonical truth is divided by field ownership, not duplicated:
+
+| Information | Canonical owner |
+|---|---|
+| Normative behavior, scenarios, and behavioral constraints | Markdown current specs |
+| Stable IDs, typed links, lifecycle state, approvals, digests, and baseline membership | Structured `_bewater/realization/` records |
+| Proposed future behavior | Active Change delta specs |
+| Planning, status, and traceability views | Generated from structured records plus normative specs |
+
+The runtime never infers lifecycle state, approval, or typed links from natural-language Markdown.
+Requirement and scenario IDs are explicit in validated spec and delta syntax. Archive updates the
+normative specs and their structured records in one transaction. A reconcile operation detects and
+reports drift; it does not guess which side should win.
 
 ## 3. Skill Architecture
 
@@ -172,7 +220,7 @@ not become first-class BeWater skills:
 
 - exploration is covered by `bw-brainstorm`;
 - creation, continuation, and apply-ready artifact generation are modes of `bw-change-propose`;
-- spec synchronization is a deterministic `bw change sync` operation used by archive;
+- spec synchronization is an internal deterministic archive operation;
 - onboarding is covered by `bw-project-design`;
 - bulk archive is deferred until real usage justifies it.
 
@@ -210,10 +258,50 @@ The current handoff schema is too thin for global planning. Version 2 must be po
 Path-only references are insufficient. A handoff copied to another delivery repository must remain
 understandable and verifiable without access to the original working tree.
 
-### 4.3 Compatibility
+`bw-concept-gate` is the only Handoff v2 emitter. On a formal G2 Go it writes the canonical source
+handoff and a materialized export package. When Decision and Delivery use different repositories,
+the Delivery Repo imports that package under:
+
+```text
+_bewater-output/realization/intake/<g2-baseline-id>/
+  handoff.yaml
+  manifest.yaml                # source project, refs, revisions, and relative materialized paths
+  digests.yaml                 # source digest and imported-byte digest for every file
+  source-artifacts/            # immutable copies required to interpret the handoff
+```
+
+Import verifies every byte against the exported digest, records the source project identity and G2
+Baseline, and refuses missing or extra declared files. Source and imported digests must match; the
+local realization digest may wrap that immutable source digest but never replace it.
+
+### 4.3 Decision status and Solution cardinality
+
+- A formal G2 Go may initialize Design and create a Design Baseline.
+- A Conditional Go may initialize a non-canonical Design draft only when its recorded conditions and
+  resource envelope explicitly authorize Design work. It cannot create an active Design Baseline,
+  enter Build, or present the Solution as validated.
+- Kill, Hold, and Recycle cannot initialize Realization.
+- One validated Solution creates one Realization stream and one active Design Baseline lineage by
+  default. If G2 approves two Solutions, they initialize separate Product Delivery Repo project
+  roots by default. Combining them in one root requires an explicit G2 decision that defines one
+  shared product boundary; Design cannot merge them on its own.
+
+### 4.4 Compatibility and invalidation
 
 The native CLI may read Handoff v1 only to produce a migration report. Initialization requires a v2
 handoff or an explicit, reviewed enrichment step; it must not invent missing G2 intent or scope.
+
+When an upstream G2 decision or baseline is invalidated in the same repo, the backtrack action also
+sets `realization.upstream_status: invalidated`, marks the active Design Baseline upstream-suspect,
+and suspends Build in the same resumable action plan. While suspended, status, trace, impact, and
+existing verification reports remain readable; propose, apply, verify, and archive are blocked.
+
+There is no automatic invalidation propagation across repositories. The Decision Repo emits a
+revocation or replacement Handoff package, and the Delivery Repo imports it explicitly.
+`bw-backtrack` emits the revocation package when it invalidates the active G2 decision;
+`bw-concept-gate` emits the replacement package after a later formal Go. Importing a replacement
+marks downstream links suspect and requires impact review plus a successor Design Baseline before
+Build resumes. This limitation must be visible in `bw-resume` status.
 
 ## 5. Global Product Design
 
@@ -224,17 +312,19 @@ handoff or an explicit, reviewed enrichment step; it must not invent missing G2 
 | Artifact | Purpose |
 |---|---|
 | `PROJECT.md` | product intent, G2 boundary, users, constraints, success outcomes, and non-goals |
-| `REQUIREMENTS.md` | human-readable requirement catalog grouped by capability and release intent |
+| `REQUIREMENTS.md` | human-readable requirement catalog grouped by capability and delivery intent |
 | `FEATURE-MAP.md` | independent user-value slices, parent/child relations, dependencies, and requirement coverage |
 | `ROADMAP.md` | outcome-oriented phases, entry/exit conditions, dependencies, and target features |
-| `ARCHITECTURE.md` | system boundaries, key flows, interfaces, data ownership, cross-cutting constraints, and ADR refs |
-| `STATE.md` | current milestone, active feature/Change, blockers, decisions pending, and next safe actions |
+| `ARCHITECTURE.md` | system boundaries, key flows, interfaces, data ownership, cross-cutting constraints, and stable `ADR-NNN` refs |
+| `STATUS.md` | generated current milestone, active feature/Change, blockers, pending approvals, and eligible actions |
 | `TRACEABILITY.md` | generated end-to-end coverage, gaps, suspect links, and verification summary |
 | current specs | normative capability behavior expressed as requirements and acceptance scenarios |
 
 The Markdown views are optimized for humans. Stable identity, typed links, statuses, digests, and
 baseline membership are stored as structured state and rendered into the views. Humans do not
-maintain duplicate status tables by hand.
+maintain duplicate status tables by hand. `STATUS.md` contains only deterministic facts and eligible
+actions; router recommendations remain conversational judgment and are never persisted as generated
+state.
 
 ### 5.2 Design Baseline
 
@@ -266,8 +356,9 @@ Validated Solution
 
 Feature --delivers----------> Requirement
         --scheduled_in------> Roadmap Phase
-        --implemented_by----> Change
-        --depends_on--------> Feature / Capability
+Change  --implements--------> Requirement
+        --realizes----------> Feature
+Feature --depends_on--------> Feature
 ```
 
 Core stable identities are:
@@ -277,41 +368,55 @@ Core stable identities are:
 - `FEAT-NNN`: independently valuable delivery slice;
 - `CHG-NNN`: one governed spec and implementation change;
 - `DB-NNN`: one immutable, human-approved Design Baseline;
-- stable scenario IDs scoped to their requirement;
+- `ADR-NNN`: one stable architecture decision;
+- `PHASE-NNN`: one stable roadmap phase;
+- `LNK-NNN`: one stable canonical typed link;
+- scenario IDs scoped as `REQ-NNN/S-NNN`;
+- task IDs scoped as `CHG-NNN/T-NNN`;
 - existing BeWater artifact, evidence, decision, and baseline refs for upstream lineage.
 
 ### 6.2 Typed links
 
-At minimum, the graph supports:
+Canonical forward link types and their allowed endpoints are:
 
-- `derived_from`;
-- `decomposes_to`;
-- `delivers` / `satisfies`;
-- `implemented_by`;
-- `verified_by`;
-- `depends_on`;
-- `affects` as a computed reverse view;
-- `scheduled_in`;
-- `released_in` when release support is later added.
+| Link | Source -> target |
+|---|---|
+| `derived_from` | Capability/Requirement -> validated Solution, G2 Baseline, or upstream artifact |
+| `decomposes_to` | Capability -> Requirement; parent Feature -> child Feature |
+| `delivers` | Feature -> Requirement |
+| `implements` | Change -> Requirement |
+| `realizes` | Change -> Feature |
+| `verified_by` | Requirement or Scenario -> test/evidence ref |
+| `depends_on` | Feature -> Feature; Capability -> Capability |
+| `scheduled_in` | Feature -> Roadmap Phase |
 
-The trace target is:
+`affects`, `implemented_by`, and other reverse relationships are computed views, never separately
+maintained links. Release links are added only when the Launch/Release contract is designed.
+
+The Design/Build v1 trace target is:
 
 ```text
 Concept -> Solution -> G2 Baseline -> Design Baseline -> Capability
-        -> Requirement -> Feature -> Change -> Task -> Commit/PR
-        -> Test Evidence -> Release
+        -> Requirement -> Feature -> Change -> scoped Task -> Commit/PR
+        -> Test Evidence
 ```
 
 ### 6.3 Independent status dimensions
 
-A single status field cannot represent delivery truth. Each managed item uses separate dimensions:
+A single shared enum cannot represent every entity. Status vocabularies are typed:
 
 ```yaml
-lifecycle_status: proposed | approved | planned | active | completed | deferred | removed
-verification_status: unverified | partial | passed | failed
-change_status: clean | changed | suspect
-release_status: unreleased | candidate | released
+Capability.status: proposed | approved | retired
+Requirement.status: proposed | approved | superseded | removed
+Requirement.verification: unverified | partial | passed | failed
+Feature.status: proposed | planned | active | blocked | completed | deferred | cancelled
+Change.status: draft | ready | applying | blocked | implemented | verified | archived | rejected
+Link.review_status: clean | suspect
 ```
+
+Design Baseline standing is derived from the manifest's active pointer, successor refs, and upstream
+status; it is not a mutable field inside an immutable baseline. Release status is intentionally
+absent until the Release contract exists.
 
 Completion rules are explicit:
 
@@ -334,15 +439,22 @@ requirement state.
 ### 6.5 Suspect links and impact
 
 When an upstream artifact changes, the runtime walks typed links and marks affected downstream links
-`suspect`. A suspect link means “review required,” not “invalid.” Reconciliation clears it only after
-the responsible capability records one of:
+`suspect`. A suspect link means “human review required,” not “invalid.” Authority is explicit:
 
-- still valid against the new revision;
-- updated to conform;
-- deferred or removed with approval;
-- routed to `bw-backtrack`.
+1. The CLI deterministically detects revision impact and marks the link suspect.
+2. The responsible capability drafts one disposition with evidence:
 
-This preserves bidirectional traceability without hand-maintaining reverse references.
+   - still valid against the new revision;
+   - updated to conform;
+   - deferred or removed with approval;
+   - routed to `bw-backtrack`.
+
+3. The accountable human approves or rejects the disposition.
+4. The CLI records the disposition and approval ref, then clears the suspect mark, updates the
+   affected entity, or opens the backtrack route.
+
+A capability cannot clear a suspect link by assertion, and reconcile cannot treat silence as
+approval. This preserves bidirectional traceability without hand-maintaining reverse references.
 
 ## 7. Change-Driven Build
 
@@ -406,7 +518,7 @@ inside implementation.
 |---|---|---|
 | Implementation detail with no externally observable behavior, requirement, architecture boundary, or roadmap impact | Update the active Change's `design.md` and `tasks.md`, then revalidate | No global Design revision |
 | Incomplete design for an approved requirement within the current Solution boundary | Pause apply; invoke `bw-project-design revise` | Smallest global Design revision; update the Change after approval |
-| New Feature or Requirement within the current Solution boundary | Pause or split the Change; invoke `bw-project-design revise` | Add requirement/feature, update roadmap/spec draft, analyze downstream impact |
+| New Feature or Requirement within the current Solution boundary | Pause the active Change; invoke `bw-project-design revise`; create a separate Change by default | Add requirement/feature, update roadmap and delta-spec plan, analyze downstream impact |
 | Change to target user, promised value, business logic, core mechanism, evidence conclusion, or G2-fixed scope | Invoke `bw-backtrack` | Reassess from the owning upstream artifact and re-pass affected gate |
 
 ### 8.2 Revision flow
@@ -419,7 +531,7 @@ bw-change-apply detects Design Gap
   -> impact and suspect-link report
   -> accountable human approves, rejects, or routes upstream
   -> create successor Design Baseline when global design changed
-  -> update or split the original Change
+  -> create a new Change; block or resume the original Change according to dependency
   -> revalidate and resume
 ```
 
@@ -427,40 +539,52 @@ Design documents therefore evolve, but approved baselines never mutate. Minor re
 be accumulated into a successor baseline at an approved milestone; a Change may not resume against
 an unapproved draft revision.
 
+An independently demonstrable new Feature never silently expands a Change already in Apply. It gets
+its own Change after the global Design revision. The current Change may be reopened and expanded only
+when the new behavior is inseparable from its approved acceptance scenarios; doing so resets it to
+`draft` and requires proposal validation, impact review, and human approval again.
+
 ## 9. Native BeWater CLI
 
 ### 9.1 Principle
 
-There is no `gsd` or `openspec` executable dependency. Upstream CLIs are behavioral references and
-possible test oracles only. The BeWater CLI owns deterministic realization operations so installed
-skills use one state, one lock protocol, one validation model, and one recovery path.
+The shipped toolkit has no `gsd` or `openspec` executable dependency. Upstream CLIs are permitted
+only in the isolated reference pilot as behavioral oracles. After pilot findings are accepted, the
+BeWater CLI owns the proven deterministic realization operations so installed skills use one state,
+one lock protocol, one validation model, and one recovery path.
 
 ### 9.2 Command surface
 
-The intended surface is:
+The candidate public v1 surface is intentionally narrow and must be confirmed by the reference
+pilot:
 
 ```text
 python -m bw design init <project>
 python -m bw design status <project> [--json]
 python -m bw design validate <project> [--strict]
 python -m bw design baseline <project> --approval-ref <ref>
-python -m bw design impact <project> <artifact-or-node>
 
-python -m bw requirement list/show/trace/impact/reconcile ...
-python -m bw feature list/status/next/block/unblock ...
+python -m bw requirement list|show ...
+python -m bw feature list|show|eligible|block|unblock ...
 
 python -m bw change new <change> [--feature <id>] [--requirement <id> ...]
 python -m bw change list
 python -m bw change status <change> [--json]
 python -m bw change instructions <change> <artifact> --json
 python -m bw change validate <change> --strict
-python -m bw change sync <change> --check|--apply
 python -m bw change archive <change> --approval-ref <ref>
 
+python -m bw realization import-handoff <package>
 python -m bw realization status
 python -m bw realization trace <id>
+python -m bw realization impact <id>
+python -m bw realization resolve-link <link-id> --disposition <value> --approval-ref <ref>
 python -m bw realization reconcile [--check|--apply]
 ```
+
+`feature eligible` computes the dependency-satisfied candidate set; it never selects priority.
+Delta synchronization is an internal archive operation, not a separate public workflow. Requirement,
+Feature, Design, and Change commands do not duplicate cross-entity trace, impact, or reconcile.
 
 Exact flags may be refined in the implementation plan, but the responsibility split is fixed:
 
@@ -501,6 +625,7 @@ _bewater/realization/
   capabilities/CAP-NNN.yaml
   requirements/REQ-NNN.yaml
   features/FEAT-NNN.yaml
+  phases/PHASE-NNN.yaml
   links.yaml                    # canonical forward typed links; reverse impact is computed
   baselines/DB-NNN.yaml         # immutable Design Baseline records
   actions/                      # resumable multi-file operations
@@ -523,8 +648,10 @@ _bewater-output/realization/
     FEATURE-MAP.md
     ROADMAP.md
     ARCHITECTURE.md
-    STATE.md
+    STATUS.md
     TRACEABILITY.md
+    adrs/ADR-NNN.md
+  intake/<g2-baseline-id>/      # imported Handoff package when Decision and Delivery repos differ
   specs/<capability-slug>/spec.md
   changes/CHG-NNN-<slug>/
     proposal.md
@@ -551,10 +678,11 @@ These invariants apply:
 - Interrupted multi-file operations record a resumable action plan.
 - Validation errors show the exact artifact, rule, and safe next action.
 - Apply stops on a Design Gap instead of marking the task complete.
-- Verify failure returns the Change to active or blocked state; it never auto-completes or archives.
+- Verify failure returns the Change to `applying` or `blocked`; it never auto-completes or archives.
 - Archive conflict leaves current specs and planning state unchanged.
 - Reconcile defaults to check/report unless `--apply` is explicitly requested.
 - Baseline-impact ambiguity routes to human review; it is never treated as in-boundary by default.
+- An invalidated upstream G2 Baseline suspends Build before any mutating Change command runs.
 
 ## 12. Verification Strategy
 
@@ -572,7 +700,10 @@ transitions receive direct branch and failure-path tests.
 - atomic archive rollback and resumable failure;
 - feature completion and roadmap roll-up rules;
 - deterministic view reconciliation and drift detection;
-- Handoff v2 digest and materialization verification.
+- Handoff v2 digest and materialization verification;
+- same-repo G2 invalidation suspension and replacement-baseline recovery;
+- cross-repo Handoff import, revocation, and explicit no-live-propagation behavior;
+- typed status transition rejection for every entity kind.
 
 ### 12.2 Skill evals
 
@@ -582,7 +713,8 @@ transitions receive direct branch and failure-path tests.
 - `bw-change-apply` stops on a Design Gap;
 - `bw-change-verify` does not archive or accept warnings as success;
 - `bw-change-archive` requires explicit approval and passing verification;
-- G2-boundary changes route to `bw-backtrack`.
+- G2-boundary changes route to `bw-backtrack`;
+- `bw-resume` reports active, provisional, suspended, suspect, and recoverable Realization states.
 
 ### 12.3 End-to-end fixtures
 
@@ -598,36 +730,63 @@ A second path injects an in-boundary Design Gap; a third injects a G2-boundary c
 the first creates a successor Design Baseline and the second routes to backtracking without corrupting
 Build state.
 
+A fourth fixture exports a Handoff from a Decision Repo, imports it into a separate Delivery Repo,
+then imports a revocation. It asserts that no cross-repo mutation occurs and that Delivery Build is
+suspended until a replacement is reviewed.
+
 ## 13. Delivery Decomposition
 
-This architecture is implemented as a sequence of separately reviewable plans:
+This architecture is implemented as separately reviewable plans with an evidence gate before native
+Change runtime work:
 
-1. **Contract and scope foundation**: update methodology scope and routing; define Handoff v2,
-   realization schemas, IDs, links, statuses, and storage contract.
-2. **Global Design**: implement Handoff enrichment, `bw-design`, `bw-project-design`, Design CLI,
-   planning views, current spec seed, and Design Baseline.
-3. **Change core**: adapt the four OpenSpec core skills and implement Change CLI, validation, delta
-   parsing, apply context, verify contract, and atomic archive.
-4. **Reconciliation and Build routing**: implement requirements/feature graph operations,
-   `bw-build`, suspect links, completion roll-ups, generated views, and Design Gap routing.
-5. **Hardening**: deployment, migrations, end-to-end fixtures, evals, documentation, and removal of
-   any temporary upstream CLI test dependency.
+1. **Contract and scope foundation**: update methodology and project scope, routing, `bw-resume`,
+   deployment contracts, Handoff v2 schema/emitter ownership, repository topology, canonical field
+   ownership, typed IDs/statuses/links, and verification wiring.
+2. **Global Design vertical slice**: implement formal/provisional Handoff handling, import and
+   materialization, `bw-design`, `bw-project-design`, the minimum Design CLI, planning views, current
+   spec seed, and Design Baseline. Do not implement the native Change graph or archive engine here.
+3. **Reference pilot**: in one actual Product Delivery Repo, use the Design vertical slice and the
+   upstream OpenSpec core temporarily to run propose -> apply -> verify -> archive for one bounded
+   Feature. Prefer the first formal G2 Go. If none exists, a reviewed high-fidelity fixture may test
+   mechanics, but product-fit findings remain open and native Change runtime does not start.
+4. **Native Change core**: only after the human approves the pilot findings, freeze the proven
+   artifact grammar and adapt the four OpenSpec core skills; implement only the Change CLI,
+   validation, delta merge, apply context, verification contract, and atomic archive operations the
+   pilot demonstrated.
+5. **Requirements graph and Build routing**: implement the proven entity/link operations,
+   `bw-build`, suspect-link review, completion roll-ups, generated views, Design Gap routing, and
+   upstream invalidation suspension.
+6. **Hardening and upstream retirement**: complete migrations, deployment, `bw-resume`, verify
+   scripts, end-to-end fixtures, evals, and documentation; prove installed workflows no longer need
+   the temporary upstream CLI.
 
-Each implementation plan must pass its own approval gate. No plan may weaken the contracts in this
-spec merely to reduce the first delivery slice.
+Each plan runs TDD, updates deployment and verification in the same slice, and passes its own human
+approval gate. Pilot evidence may simplify, remove, or amend an unproven contract through a reviewed
+Spec revision. It may not silently weaken gate authority, baseline immutability, explicit approval,
+transactional archive, or fail-closed behavior.
+
+The architecture-scale estimate is six plans and approximately 30–45 TDD tasks. This is a
+complexity range, not a schedule; each implementation plan must replace its portion with a concrete
+file/task estimate before approval.
 
 ## 14. Acceptance Criteria
 
 This design is realized when:
 
 1. A formal G2 Go can initialize a portable global Design without GSD or OpenSpec installed.
-2. The human can trace every planned Feature and normative Requirement to its Solution and baseline.
-3. `bw-project-design` creates a reviewable global plan and an approved immutable Design Baseline.
-4. `bw-build` can route a Feature through propose, apply, verify, and archive using BeWater-native
+2. Product code and all Realization state share one explicit Delivery Repo project root.
+3. Normative Markdown and structured control records have non-overlapping canonical field ownership;
+   archive updates both atomically and reconcile never guesses state from prose.
+4. The human can trace every planned Feature and normative Requirement to its Solution and baseline.
+5. `bw-project-design` creates a reviewable global plan and an approved immutable Design Baseline.
+6. A reference pilot completes one end-to-end Change and its findings are approved before native
+   Change runtime implementation begins.
+7. `bw-build` can route a Feature through propose, apply, verify, and archive using BeWater-native
    OpenSpec-derived skills.
-5. Archiving updates current specs and all planning views atomically.
-6. Feature completion requires verified scenarios and archived Changes, not only completed tasks.
-7. An in-boundary design discovery creates a governed Design revision and successor baseline.
-8. A discovery that changes G2-fixed intent or scope routes to `bw-backtrack`.
-9. Typed traceability and suspect-link impact analysis work across Design and Build.
-10. New deterministic runtime code meets the 80% coverage floor and all end-to-end fixtures pass.
+8. Archiving updates current specs and all planning views atomically.
+9. Feature completion requires verified scenarios and archived Changes, not only completed tasks.
+10. An in-boundary new Feature creates a governed Design revision and a separate Change by default.
+11. A discovery that changes G2-fixed intent or scope routes to `bw-backtrack`.
+12. Invalidating G2 suspends downstream Build, including across repos after explicit revocation import.
+13. Typed traceability and human-approved suspect-link resolution work across Design and Build.
+14. New deterministic runtime code meets the 80% coverage floor and all end-to-end fixtures pass.
